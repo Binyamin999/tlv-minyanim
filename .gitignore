@@ -1,0 +1,4 @@
+data/seed-*.json
+node_modules/
+.env*
+.next/
