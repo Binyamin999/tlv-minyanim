@@ -76,13 +76,15 @@
     <div style="font-size: 12.5px; font-weight: 700; color: #0E6B7D; min-height: 44px; display: flex; align-items: center;">שנה מיקום</div>
   </div>
 
-  <!-- Filters — pill language, no borders. Chrome stays soft. -->
+  <!-- Filters — pill language, no borders. Chrome stays soft. Service-type row uses a sea tint
+       for its inactive state (never literal foam): foam is reserved everywhere on this screen for
+       nusach/identity alone, so the same pale fill never has to mean two different things. -->
   <div style="display: flex; flex-direction: column; gap: 10px; padding: 0 20px 18px;">
     <div style="display: flex; gap: 7px;">
       <div style="flex-grow: 1; min-height: 44px; display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 700; border-radius: 999px; background: #0E6B7D; color: #FFFFFF;">מנחה</div>
-      <div style="flex-grow: 1; min-height: 44px; display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 600; border-radius: 999px; background: #CFE8EA; color: #0E6B7D;">שחרית</div>
-      <div style="flex-grow: 1; min-height: 44px; display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 600; border-radius: 999px; background: #CFE8EA; color: #0E6B7D;">ערבית</div>
-      <div style="flex-grow: 1; min-height: 44px; display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 600; border-radius: 999px; background: #CFE8EA; color: #0E6B7D;">שבת</div>
+      <div style="flex-grow: 1; min-height: 44px; display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 600; border-radius: 999px; background: rgba(14,107,125,0.10); color: #0E6B7D;">שחרית</div>
+      <div style="flex-grow: 1; min-height: 44px; display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 600; border-radius: 999px; background: rgba(14,107,125,0.10); color: #0E6B7D;">ערבית</div>
+      <div style="flex-grow: 1; min-height: 44px; display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 600; border-radius: 999px; background: rgba(14,107,125,0.10); color: #0E6B7D;">שבת</div>
     </div>
     <div style="display: flex; gap: 7px; flex-wrap: wrap;">
       <div style="min-height: 44px; display: flex; align-items: center; padding: 0 15px; font-size: 11.5px; font-weight: 700; border-radius: 999px; background: #0E6B7D; color: #FFFFFF;">כל הנוסחים</div>
@@ -110,7 +112,7 @@
         </div>
         <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 3px;">
           <div class="tnum" style="font-size: 20px; font-weight: 700; line-height: 1;">19:06</div>
-          <div style="font-size: 10.5px; font-weight: 700; padding: 2px 9px; border-radius: 999px; background: #CFE8EA; color: #0E6B7D;">מנחה</div>
+          <div style="font-size: 10.5px; font-weight: 700; padding: 2px 9px; border-radius: 999px; background: rgba(14,107,125,0.10); color: #0E6B7D;">מנחה</div>
         </div>
       </div>
       <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; border-top: 1px solid rgba(26,29,33,0.08); padding-top: 8px;">
@@ -127,7 +129,7 @@
         </div>
         <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 3px;">
           <div class="tnum" style="font-size: 20px; font-weight: 700; line-height: 1;">13:55</div>
-          <div style="font-size: 10.5px; font-weight: 700; padding: 2px 9px; border-radius: 999px; background: #CFE8EA; color: #0E6B7D;">מנחה</div>
+          <div style="font-size: 10.5px; font-weight: 700; padding: 2px 9px; border-radius: 999px; background: rgba(14,107,125,0.10); color: #0E6B7D;">מנחה</div>
         </div>
       </div>
       <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; border-top: 1px solid rgba(26,29,33,0.08); padding-top: 8px;">
@@ -144,7 +146,7 @@
         </div>
         <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 3px;">
           <div class="tnum" style="font-size: 20px; font-weight: 700; line-height: 1;">13:00</div>
-          <div style="font-size: 10.5px; font-weight: 700; padding: 2px 9px; border-radius: 999px; background: #CFE8EA; color: #0E6B7D;">מנחה</div>
+          <div style="font-size: 10.5px; font-weight: 700; padding: 2px 9px; border-radius: 999px; background: rgba(14,107,125,0.10); color: #0E6B7D;">מנחה</div>
         </div>
       </div>
       <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; border-top: 1px solid rgba(26,29,33,0.08); padding-top: 8px;">
@@ -190,7 +192,7 @@ class Component extends DCLogic {
     return {
       heroRule:    sunset ? '#E8743B' : '#0E6B7D',
       heroTime:    sunset ? '#B85325' : '#1A1D21',
-      heroPillBg:  sunset ? 'rgba(232,116,59,0.16)' : '#CFE8EA',
+      heroPillBg:  sunset ? 'rgba(232,116,59,0.16)' : 'rgba(14,107,125,0.12)',
       heroPillInk: sunset ? '#B85325' : '#0E6B7D',
       heroFoam:    sunset ? 'rgba(232,116,59,0.10)' : '#CFE8EA',
       heroLeft:    sunset ? '8' : '46'
