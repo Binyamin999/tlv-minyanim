@@ -5,3 +5,6 @@ node_modules/
 
 # Design canvas seeded output (regenerated from the .dc.html working files)
 tlv-minyanim-homepage.html
+
+# Generated artboard preview (rebuild with scripts/render-artboards.py)
+design/_preview.html
