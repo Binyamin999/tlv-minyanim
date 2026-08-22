@@ -1,39 +1,32 @@
 {
   "artboards": [
-    {
-      "file": "Main.dc.html",
-      "title": "Mobile — 375",
-      "x": 0,
-      "y": 0,
-      "w": 375,
-      "h": 1230
-    },
-    {
-      "file": "Desktop.dc.html",
-      "title": "Desktop — 1280",
-      "x": 470,
-      "y": 0,
-      "w": 1280,
-      "h": 980
-    }
+    { "file": "Main.dc.html", "title": "A · Rothschild Formal — 375", "x": 0, "y": 0, "w": 375, "h": 1230 },
+    { "file": "Florentin.dc.html", "title": "B · Florentin Grit — 375", "x": 470, "y": 0, "w": 375, "h": 1300 },
+    { "file": "Shoreline.dc.html", "title": "C · Mediterranean Shoreline — 375", "x": 940, "y": 0, "w": 375, "h": 1330 },
+    { "file": "Desktop.dc.html", "title": "A · Rothschild — desktop 1280", "x": 1410, "y": 0, "w": 1280, "h": 980 }
   ],
   "annotations": [
     {
-      "id": "sunset-toggle",
+      "id": "how-to-choose",
       "x": 0,
-      "y": -150,
-      "w": 420,
-      "text": "Both artboards carry a Sunset toggle.\n\nOff = the normal state (sea blue, 46 min left).\nOn = shkia approaching — the rule, the time and the countdown all warm to coral, 8 min left.\n\nThat is the signature behaviour: the colour tells you your window is closing."
+      "y": -210,
+      "w": 470,
+      "text": "Three homepages, same content and the same real Ramat Aviv data — only the visual language differs. Pick one.\n\nEach carries a Sunset toggle: off is the normal state (46 min left), on is shkia approaching, where the time and countdown warm to coral with 8 min left.\n\nThe desktop artboard shows direction A at full width. Whichever you pick gets the same treatment."
+    },
+    {
+      "id": "florentin-caveat",
+      "x": 470,
+      "y": -210,
+      "w": 375,
+      "text": "Note on B: Florentin's ground IS kurkar sand — that is the direction, not a decoration. So it does not fit a strict white / sea / sunset palette. If those three colours are firm, B is out by definition and the real choice is A or C."
     },
     {
       "id": "unknown-time-row",
-      "x": 1770,
-      "y": 300,
-      "w": 300,
-      "text": "הרמב״ם is the honest row. The source data says only \"בזמן\" — the offset was never published — so it shows as unknown with a prompt to correct it, never as a guessed time."
+      "x": 940,
+      "y": -210,
+      "w": 375,
+      "text": "In all three, הרמב״ם is the honest row: the source says only \"בזמן\", so it shows as unknown with a prompt to correct it — never a guessed time. Compare how loudly each direction treats an absence."
     }
   ],
-  "launch": {
-    "view": "canvas"
-  }
+  "launch": { "view": "canvas" }
 }
