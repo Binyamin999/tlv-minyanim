@@ -1,31 +1,33 @@
 {
   "artboards": [
-    { "file": "Main.dc.html", "title": "A · Rothschild Formal — 375", "x": 0, "y": 0, "w": 375, "h": 1230 },
-    { "file": "Florentin.dc.html", "title": "B · Florentin Grit — 375", "x": 470, "y": 0, "w": 375, "h": 1300 },
-    { "file": "Shoreline.dc.html", "title": "C · Mediterranean Shoreline — 375", "x": 940, "y": 0, "w": 375, "h": 1330 },
-    { "file": "Desktop.dc.html", "title": "A · Rothschild — desktop 1280", "x": 1410, "y": 0, "w": 1280, "h": 980 }
+    { "file": "Main.dc.html", "title": "A · Rothschild Formal", "x": 0, "y": 0, "w": 375, "h": 1230 },
+    { "file": "HybridD.dc.html", "title": "D · conservative blend", "x": 460, "y": 0, "w": 375, "h": 1280 },
+    { "file": "HybridE.dc.html", "title": "E · warmer blend", "x": 920, "y": 0, "w": 375, "h": 1380 },
+    { "file": "Shoreline.dc.html", "title": "C · Mediterranean Shoreline", "x": 1380, "y": 0, "w": 375, "h": 1330 },
+    { "file": "Florentin.dc.html", "title": "B · Florentin Grit — ruled out by palette", "x": 0, "y": 1560, "w": 375, "h": 1300 },
+    { "file": "Desktop.dc.html", "title": "A · Rothschild — desktop reference", "x": 460, "y": 1560, "w": 1280, "h": 980 }
   ],
   "annotations": [
     {
-      "id": "how-to-choose",
+      "id": "the-spectrum",
       "x": 0,
-      "y": -210,
-      "w": 470,
-      "text": "Three homepages, same content and the same real Ramat Aviv data — only the visual language differs. Pick one.\n\nEach carries a Sunset toggle: off is the normal state (46 min left), on is shkia approaching, where the time and countdown warm to coral with 8 min left.\n\nThe desktop artboard shows direction A at full width. Whichever you pick gets the same treatment."
+      "y": -230,
+      "w": 560,
+      "text": "The top row is the decision, left to right along one axis:\n\nA — flat, hairline, institutional\nD — A's bones, with the sunset mechanism promoted sitewide and foam as flat blocks\nE — Shoreline's air and a curved sea field, with A's flat discipline kept in the results rows\nC — soft, coastal, pill-shaped throughout\n\nSame content and the same real Ramat Aviv records in all four. Flip the Sunset toggle on each — that is where they differ most."
     },
     {
-      "id": "florentin-caveat",
-      "x": 470,
-      "y": -210,
-      "w": 375,
-      "text": "Note on B: Florentin's ground IS kurkar sand — that is the direction, not a decoration. So it does not fit a strict white / sea / sunset palette. If those three colours are firm, B is out by definition and the real choice is A or C."
+      "id": "d-and-e-seams",
+      "x": 920,
+      "y": -230,
+      "w": 460,
+      "text": "The designer named its own weak point in each.\n\nD: the zmanim ribbon now carries a permanent sea tint, so the top of the page is no longer stark white — a feature or a compromise depending on how much you liked A's plainness.\n\nE: the results rows use an 8px radius, chosen by eye between the hero's 24px and A's 2px. Worth judging whether that reads as considered or as neither-nor."
     },
     {
-      "id": "unknown-time-row",
-      "x": 940,
-      "y": -210,
+      "id": "florentin-out",
+      "x": 0,
+      "y": 1330,
       "w": 375,
-      "text": "In all three, הרמב״ם is the honest row: the source says only \"בזמן\", so it shows as unknown with a prompt to correct it — never a guessed time. Compare how loudly each direction treats an absence."
+      "text": "B is kept for the record but is out of the running: its ground is kurkar sand, which the white / sea / sunset palette excludes."
     }
   ],
   "launch": { "view": "canvas" }
