@@ -2,3 +2,6 @@ data/seed-*.json
 node_modules/
 .env*
 .next/
+
+# Design canvas seeded output (regenerated from the .dc.html working files)
+tlv-minyanim-homepage.html

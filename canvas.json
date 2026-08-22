@@ -1,0 +1,39 @@
+{
+  "artboards": [
+    {
+      "file": "Main.dc.html",
+      "title": "Mobile — 375",
+      "x": 0,
+      "y": 0,
+      "w": 375,
+      "h": 1230
+    },
+    {
+      "file": "Desktop.dc.html",
+      "title": "Desktop — 1280",
+      "x": 470,
+      "y": 0,
+      "w": 1280,
+      "h": 980
+    }
+  ],
+  "annotations": [
+    {
+      "id": "sunset-toggle",
+      "x": 0,
+      "y": -150,
+      "w": 420,
+      "text": "Both artboards carry a Sunset toggle.\n\nOff = the normal state (sea blue, 46 min left).\nOn = shkia approaching — the rule, the time and the countdown all warm to coral, 8 min left.\n\nThat is the signature behaviour: the colour tells you your window is closing."
+    },
+    {
+      "id": "unknown-time-row",
+      "x": 1770,
+      "y": 300,
+      "w": 300,
+      "text": "הרמב״ם is the honest row. The source data says only \"בזמן\" — the offset was never published — so it shows as unknown with a prompt to correct it, never as a guessed time."
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}
