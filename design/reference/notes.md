@@ -127,3 +127,36 @@ URL context, so the crop could not be confirmed against the actual pixels.
 **Action for next session:** enable the basename `tlv-night-skyline.jpg` against
 `cand3.jpg`, then nudge the two inset values while looking at the rendered
 result — do not trust the numbers above past "first estimate."
+
+## Third pass — superseded by user-supplied photographs, panel not band
+
+The cand3 question above is moot: the user supplied `tlv-day.jpg` (aerial,
+genuine midday, 679px wide) and `tlv-night.jpg` (promenade at dusk, portrait,
+416x738) directly as canvas assets — see `design/reference/day.png` /
+`night.png` for what was actually looked at. Both are small; at 1280px desktop
+that's a 1.9x / 3.1x upscale, not shippable stretched across a header.
+
+**Resolution fix:** put the photo in a panel at or under its own native width
+beside the hero card (the move `PhotographicDesktop.dc.html` already used),
+not a band wider than the source. `PhotoDayDesktop.dc.html`'s panel is a fixed
+600px (≈0.884x of 679px). `PhotoNightDesktop.dc.html`'s panel is 340x600
+(≈0.817x / 0.813x of 416x738) — and because the source is portrait, the panel
+is tall and narrow beside the hero card rather than matched to its height
+(`align-items: flex-start`, not `stretch`, on that row). At that size the crop
+is almost nonexistent. Both desktop headers went back to a painted treatment
+(day: DaySea's gradient, unchanged; night: a new painted dusk gradient with a
+soft amber horizon glow) — a stretched photo in the header was the thing that
+forced the upscale in the first place, and the panel is where sharp photography
+now lives on desktop.
+
+**Day mode takes the photo now.** The earlier "no photograph" call on
+`PhotoDayDesktop.dc.html` was correct for cand1/cand2, not a standing
+preference for the gradient. `tlv-day.jpg` clears both disqualifiers (genuine
+midday, no identifiable face — it's an aerial). The gradient's status changed
+from "the answer" to a **deliberate, first-class fallback**: neighbourhoods
+without a local photo on file get the full painted band and no side panel,
+not a broken image icon.
+
+**No licence information was supplied with either file** — no credit line is
+shown for `tlv-day.jpg` / `tlv-night.jpg` anywhere in the mobile or desktop
+builds. Confirm attribution/rights before shipping publicly.

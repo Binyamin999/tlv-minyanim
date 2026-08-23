@@ -18,32 +18,39 @@
 
 <!--
   PAIR FILE 1 of 2 — PhotoDayDesktop.dc.html / PhotoNightDesktop.dc.html.
-  Same direction, two grounds. Shared structure: masthead + mode switch + zmanim
-  ribbon inside a "sky" band, hero card with a curved balcony corner overlapping
-  that band, a schematic walking-radius map beside it, filters + six result cards,
-  footer. What changes between the two files is the ground, the surface material
-  of the cards, the accent hue-family, and — the one asymmetry — what fills the
-  sky band.
+  Revised: real photography is now in play (tlv-day.jpg / tlv-night.jpg, user-
+  supplied), and the resolution problem that blocked this file is solved not by
+  stretching a small source across a wide header, but by putting it in a PANEL
+  narrower than its own native width — the crisp-photo-panel move this direction
+  first used in PhotographicDesktop.dc.html, beside the hero card, instead of
+  the schematic map that lived here before. The header band stays painted (see
+  below) — a photo belongs in the one place it can be shown at native scale or
+  smaller, never stretched past 1x.
 
-  THE PHOTOGRAPHY QUESTION FOR THIS FILE, ANSWERED PLAINLY: this file uses NO
-  PHOTOGRAPH. Three candidates were reviewed (design/reference/candidates/cand1.jpg,
-  cand2.jpg) plus the promenade options already in design/reference/notes.md.
-  Every honest daylight option available had a disqualifying flaw:
-    - cand1 (golden-hour beach, Jaffa on the horizon) is beautiful but it is
-      SUNSET, not midday. Using it to represent "day" would make the whole site
-      look like it's permanently 19:15, which directly undercuts the sunset-warming
-      signal this product depends on elsewhere (see PhotoNightDesktop's comment on
-      that collision).
-    - cand2 (ground-level promenade at midday) is genuinely daylight, but it is
-      cluttered street-level clutter AND has identifiable people in the close
-      foreground (a man on a bench, a woman mid-stride) — a privacy problem the
-      moment it ships, not just an aesthetic one.
-  So: DaySeaDesktop.dc.html's painted sky-to-sea gradient is not a placeholder
-  standing in for a photo we haven't found yet. It is the correct answer. A flat
-  saturated gradient with a real horizon line and sun glare reads as "midday on
-  the coast" without lying about the hour and without a single identifiable face
-  in it. It is borrowed near-verbatim from DaySea/DaySeaDesktop per instruction,
-  not reinvented.
+  PANEL WIDTH, STATED: 600px fixed. tlv-day.jpg is 679px native, so 600px is a
+  600/679 ≈ 0.884x downscale — genuinely sharp, comfortably under 1x.
+
+  QUESTION ANSWERED, "does day mode take the photo now that one exists?": YES.
+  The earlier "no photograph" call on this file was correct for the photos that
+  existed then, not a standing preference for paint over photography. That call
+  rested on two disqualifiers — cand1 was golden hour (would make "day" look
+  like permanent sunset) and cand2 had identifiable bystanders in close
+  foreground. tlv-day.jpg clears both: it's a genuine midday aerial (soft,
+  near-overhead shadow angle, not a raking sunset one), and an aerial view has
+  no identifiable face in it by construction. It is also exactly the
+  "horizontal, sea-facing" read the brief asked for — coastline curve, umbrella
+  rows, the dense white city grid behind. Keeping the gradient here anyway would
+  have been nostalgia for a constraint that no longer applies.
+
+  THE FALLBACK, DESIGNED DELIBERATELY: not every neighbourhood will have a real
+  photograph — Ramat Aviv might, Kfar Shalem might not, for a long time. The
+  painted sky-to-sea gradient this file used to run full-bleed (still exactly
+  DaySeaDesktop.dc.html's treatment) is that fallback, and it is kept doing real
+  work here: it is still the entire header band. A neighbourhood with no local
+  photo on file gets the full painted band and no side panel at all (the hero
+  card alone, full width) — a complete, unapologetic state, not a broken one
+  with a missing-image icon in it. A neighbourhood with a photo gets this panel
+  in addition. Two honest states, not one correct design and one degraded one.
 -->
 
 <div dir="rtl" style="width: 1280px; background: #FFFFFF; color: #12181C; font-family: 'Assistant', -apple-system, 'Segoe UI', Arial, sans-serif; display: flex; flex-direction: column;">
@@ -115,10 +122,10 @@
     <div style="height: 34px;"></div>
   </div>
 
-  <!-- Hero band: balcony card overlaps the band edge; map card stays flush and rectilinear beside it -->
+  <!-- Hero band: balcony card overlaps the band edge; photo panel stays flush and rectilinear beside it -->
   <div style="position: relative; z-index: 1; display: flex; align-items: stretch; gap: 40px; padding: 0 48px 26px; border-block-end: 1px solid rgba(18,24,28,0.12); margin-block-start: -38px;">
 
-    <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 12px; max-width: 560px;">
+    <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 12px; max-width: 544px;">
       <div style="font-size: 11.5px; font-weight: 700; letter-spacing: 0.04em; opacity: 0.68; color: #FFFFFF; text-shadow: 0 1px 4px rgba(0,0,0,0.18);">המניין הבא לידך</div>
 
       <div style="background: #FFFFFF; border: 1px solid rgba(18,24,28,0.10); border-radius: 2px; border-start-start-radius: 34px; border-block-start: 3px solid {{heroRule}}; padding: 20px 22px; display: flex; align-items: flex-start; gap: 28px; box-shadow: 0 16px 32px rgba(14,147,174,0.22);">
@@ -140,46 +147,32 @@
       </div>
     </div>
 
-    <!-- Map card: the same drawn schematic as the night file, recoloured for daylight — a warm terracotta pin family instead of amber-on-ink, because this is the "data" panel and should read as ours in either mode, not a mood board -->
-    <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 12px; margin-block-start: 64px;">
+    <!--
+      Photo panel: fixed 600px wide (≈0.884x of tlv-day.jpg's native 679px —
+      downscale, never up). align-items:stretch on the row makes this match the
+      hero card's natural height, so object-fit:cover crops top/bottom only;
+      the crop stays inside the same width-bound scale, so still never upscaled.
+      object-position biased toward the coastline/sea half of the frame, per the
+      brief's "sea-facing" instinct — first-pass, nudge after a real render.
+    -->
+    <div style="flex: 0 0 600px; width: 600px; display: flex; flex-direction: column; gap: 12px;">
       <div style="font-size: 11.5px; font-weight: 700; letter-spacing: 0.04em; opacity: 0.6;">רמת אביב · 16 בתי כנסת</div>
-      <div style="flex-grow: 1; min-height: 176px; background: #FFFFFF; border: 1px solid rgba(18,24,28,0.12); border-radius: 2px; position: relative; overflow: hidden;">
-
-        <!-- sea edge along the map's inline-start edge -->
-        <div style="position: absolute; inset-block: 0; inset-inline-start: 0; width: 46px; background: linear-gradient(90deg, rgba(14,147,174,0.16) 0%, rgba(14,147,174,0) 100%);"></div>
-
-        <!-- loose street lattice -->
-        <svg width="100%" height="100%" viewBox="0 0 560 176" preserveAspectRatio="none" style="position: absolute; inset: 0; opacity: 0.6;">
-          <path d="M46 0 L46 176 M120 0 L112 176 M210 0 L222 176 M310 0 L302 176 M400 0 L410 176 M486 0 L480 176" stroke="rgba(18,24,28,0.08)" stroke-width="1"/>
-          <path d="M0 30 L560 24 M0 76 L560 84 M0 122 L560 114 M0 158 L560 164" stroke="rgba(18,24,28,0.08)" stroke-width="1"/>
-        </svg>
-
-        <!-- walking-radius rings -->
-        <svg width="100%" height="100%" viewBox="0 0 560 176" style="position: absolute; inset: 0;">
-          <circle cx="266" cy="96" r="34" fill="none" stroke="rgba(14,147,174,0.4)" stroke-width="1" stroke-dasharray="3 4"/>
-          <circle cx="266" cy="96" r="66" fill="none" stroke="rgba(14,147,174,0.24)" stroke-width="1" stroke-dasharray="3 4"/>
-        </svg>
-
-        <!-- you-are-here -->
-        <div style="position: absolute; inset-inline-start: 258px; inset-block-start: 88px; width: 16px; height: 16px; border-radius: 50%; background: rgba(14,147,174,0.18); display: flex; align-items: center; justify-content: center;">
-          <div style="width: 7px; height: 7px; border-radius: 50%; background: #0E93AE; box-shadow: 0 0 8px 2px rgba(14,147,174,0.45);"></div>
-        </div>
-
-        <!-- synagogue pins -->
-        <div style="position: absolute; inset-inline-start: 218px; inset-block-start: 46px; width: 9px; height: 9px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: #C0603A; box-shadow: 0 0 6px 1px rgba(192,96,58,0.35);"></div>
-        <div style="position: absolute; inset-inline-start: 340px; inset-block-start: 62px; width: 9px; height: 9px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: #C0603A; box-shadow: 0 0 6px 1px rgba(192,96,58,0.35);"></div>
-        <div style="position: absolute; inset-inline-start: 300px; inset-block-start: 128px; width: 9px; height: 9px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: #C0603A; box-shadow: 0 0 6px 1px rgba(192,96,58,0.35);"></div>
-        <div style="position: absolute; inset-inline-start: 176px; inset-block-start: 118px; width: 9px; height: 9px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: #C0603A; box-shadow: 0 0 6px 1px rgba(192,96,58,0.35);"></div>
-        <div style="position: absolute; inset-inline-start: 398px; inset-block-start: 108px; width: 9px; height: 9px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: #0E93AE; box-shadow: 0 0 6px 1px rgba(14,147,174,0.4);"></div>
-
-        <div style="position: absolute; inset-inline-start: 16px; inset-block-end: 12px; display: flex; align-items: center; gap: 8px;">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0E93AE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <div style="flex-grow: 1; min-height: 176px; background: #C7DDE2; border: 1px solid rgba(18,24,28,0.12); border-radius: 2px; position: relative; overflow: hidden;">
+        <img
+          src="tlv-day.jpg"
+          alt="מבט אווירי על חוף רמת אביב"
+          style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 55%;"
+        >
+        <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(8,20,26,0.04) 0%, rgba(8,20,26,0.16) 55%, rgba(8,20,26,0.84) 100%);"></div>
+        <div style="position: absolute; inset-inline-start: 16px; inset-block-end: 14px; display: flex; align-items: center; gap: 8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
             <circle cx="12" cy="10" r="3"></circle>
           </svg>
-          <div style="font-size: 11.5px; font-weight: 700; opacity: 0.8;">רמת אביב, מפת הליכה</div>
+          <div style="font-size: 12px; font-weight: 700; color: #FFFFFF; text-shadow: 0 1px 4px rgba(0,0,0,0.5);">רמת אביב, מבט אל הים</div>
         </div>
-        <div style="position: absolute; inset-inline-end: 14px; inset-block-end: 12px; font-size: 10px; opacity: 0.62;">300 מ׳ ≈ 4 דק׳ הליכה</div>
+        <!-- no credit line: tlv-day.jpg is a user-supplied asset, no licence
+             information passed along this round — confirm before shipping publicly -->
       </div>
     </div>
 

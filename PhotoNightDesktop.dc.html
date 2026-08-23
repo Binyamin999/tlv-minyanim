@@ -17,62 +17,49 @@
 </helmet>
 
 <!--
-  PAIR FILE 2 of 2 — see PhotoDayDesktop.dc.html for the shared-structure rationale.
-  This file is the one that keeps the photograph, because darkness is the one
-  condition where a documentary photo of the real skyline beats a painted gradient:
-  the actual texture of which windows are lit is the whole content, not decoration.
+  PAIR FILE 2 of 2 — see PhotoDayDesktop.dc.html for the shared rationale on the
+  painted-header/photo-panel split and the fallback design.
 
-  IMAGE, ANSWERED: still `tlv-blue-hour.jpg` in this build (Martin Furtschegger,
-  CC BY 3.0 — see design/reference/notes.md #1), NOT the requested cand3 swap, and
-  that is a deliberate choice, not an oversight — read on.
+  cand3.jpg is moot now — the user supplied tlv-night.jpg directly, so the whole
+  "which Commons candidate" question from the previous round is superseded.
 
-  cand3.jpg (design/reference/candidates/cand3.jpg, moonlit skyline from Jaffa,
-  CC BY-SA 3.0) is, on content alone, the stronger dark-mode image: it actually
-  has the sea, an actual coastline curve, and a lit skyline together in one frame.
-  tlv-blue-hour.jpg has none of the sea — it's an inland tower and a pedestrian
-  bridge — plus two identifiable people mid-crossing and a hot-red neon rail that
-  fights this palette rather than supporting it (the neon was noted as a *happy
-  accident* in notes.md, not a reason to keep the photo). On the brief's own
-  terms, cand3 is the better photograph.
+  HEADER, CHANGED: the header band no longer stretches a photograph. It used to
+  run tlv-blue-hour.jpg full-bleed across 1280px, and that source is 720px native
+  — a ~1.78x upscale, exactly the thing this direction now rules out. The band
+  is a painted dusk gradient instead (deep dusk blue at the top fading to this
+  page's own near-black ground), with a soft warm glow low in the band standing
+  in for the distant shoreline lights — the night equivalent of DaySeaDesktop's
+  sun-glare circle. Atmosphere stays here; the photograph moved to the panel.
 
-  It isn't swapped in here because the crop is genuinely hard and unverified: a
-  gnarled foreground tree occupies roughly the right third of cand3's frame and
-  climbs across the top, and this header is a very wide, short letterbox (banner
-  aspect, not the photo's native ~3:2). Getting the tree fully out of frame in a
-  letterbox needs the image deliberately over-zoomed and panned — object-fit:cover
-  alone cannot do it here, because at this aspect ratio cover is width-bound, which
-  means the *entire* source width shows regardless of object-position and the tree
-  cannot be cropped away by position alone. The commented-out block below is that
-  pan-and-zoom, worked out by measurement against the reference image, but I
-  can't render this specific asset through the canvas pipeline this session to
-  confirm the crop lands where intended, and shipping a guessed crop of someone's
-  real photograph — possibly cutting a building in half or leaving a branch across
-  the skyline — is worse than shipping the photo we already know works. Recommend:
-  enable the basename `tlv-night-skyline.jpg` for cand3.jpg, then uncomment the
-  block, delete the current <img>, and nudge the two inset values while looking at
-  it — they're a first estimate, not a measurement.
+  PANEL, THE INTERESTING CALL: tlv-night.jpg is portrait, 416x738 — its natural
+  panel is TALL AND NARROW, not a wide strip matched to the hero card's height.
+  Rather than force it into the same shape as the day file's landscape panel,
+  this hero row breaks from align-items:stretch to align-items:flex-start: the
+  hero card sits at its own natural (shorter) height, top-aligned, and the photo
+  panel stands beside it as its own tall column — 340px wide x 600px tall, which
+  against the 416x738 source is a 340/416 ≈ 0.817x downscale (never upscaled;
+  see full arithmetic in the panel's own comment below). At that size the crop
+  is almost nonexistent — nearly the entire photograph shows, sky to sand.
 
-  <div style="position: absolute; inset: 0; overflow: hidden;">
-    <img src="tlv-night-skyline.jpg" alt=""
-      style="position: absolute; inset-block-start: -840px; inset-inline-end: 0;
-             width: 2100px; height: auto; opacity: 0.6;">
-  </div>
-  (assumes ~3:2 source; width 2100 makes only the left ~61% of the frame visible,
-  which should sit just short of where the tree starts; inset-block-start: -840px
-  aims the visible band at the building line and the water beneath it, sacrificing
-  the moon and the upper clouds on purpose — they aren't the evidence this image
-  was chosen for.)
+  JUDGEMENT: this is the most interesting composition in either mode. A short
+  horizontal block and a tall vertical block, unevenly sized, side by side, is a
+  literal massing move out of the buildings this whole direction is supposed to
+  evoke — a low wing next to a tower — rather than a decorative crop choice. The
+  empty space beside the hero card, below its bottom edge, is left as genuine
+  negative space rather than padded out with invented content: asymmetric but
+  balanced, which is the one part of the original Bauhaus premise that was never
+  actually wrong.
 -->
 
 <div dir="rtl" style="width: 1280px; background: #0B131C; color: #F2EFE7; font-family: 'Assistant', -apple-system, 'Segoe UI', Arial, sans-serif; display: flex; flex-direction: column;">
 
-  <div style="position: relative; overflow: hidden;">
-    <img
-      src="tlv-blue-hour.jpg"
-      alt=""
-      style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 32%; opacity: 0.6;"
-    >
-    <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(6,10,16,0.78) 0%, rgba(6,10,16,0.42) 36%, rgba(6,10,16,0.32) 58%, rgba(6,10,16,0.88) 100%);"></div>
+  <!-- Painted dusk band — see top comment. Deep dusk blue easing into this page's
+       own near-black ground, plus a low, soft amber glow standing in for distant
+       shoreline lights (the sampled "amber + lit windows at night" observation
+       in design/reference/notes.md, made paint instead of photograph). -->
+  <div style="position: relative; overflow: hidden; background: linear-gradient(180deg, #1E3A5C 0%, #16293F 42%, #0F1B29 72%, #0B131C 100%);">
+    <div style="position: absolute; inset-inline-start: 8%; inset-block-end: -60px; width: 620px; height: 220px; border-radius: 50%; background: radial-gradient(ellipse, rgba(240,180,92,0.22) 0%, rgba(240,180,92,0) 72%); pointer-events: none;"></div>
+    <div style="position: absolute; inset-inline-end: -60px; inset-block-start: -80px; width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 70%); pointer-events: none;"></div>
 
     <!-- Masthead -->
     <div style="position: relative; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 20px 48px 6px;">
@@ -111,7 +98,8 @@
       </div>
     </div>
 
-    <!-- Extra vertical room: the photograph's own moment, mid-strength scrim, nothing over it but sky/skyline -->
+    <!-- Extra vertical room: lets the painted dusk gradient and its horizon glow breathe
+         between the masthead and the ribbon, echoing the day file's own generous band. -->
     <div style="position: relative; height: 108px;"></div>
 
     <!-- Zmanim ribbon -->
@@ -128,17 +116,16 @@
       </div>
     </div>
 
-    <div style="position: absolute; inset-inline-end: 20px; inset-block-end: 6px;">
-      <div style="font-size: 8.5px; color: rgba(255,255,255,0.55);">צילום: Martin Furtschegger · Wikimedia Commons · CC BY 3.0</div>
-    </div>
   </div>
 
-  <!-- Hero band: same curved-balcony card shape as the day file, in the night file's own
-       glass surface — translucent over the flat charcoal ground below the photo, rather
-       than opaque plaster, because that surface distinction is the point of the pair. -->
-  <div style="display: flex; align-items: stretch; gap: 40px; padding: 28px 48px 26px; border-block-end: 1px solid rgba(255,255,255,0.14);">
+  <!-- Hero band: curved-balcony card in the night file's own glass surface — translucent
+       over the flat charcoal ground, rather than opaque plaster, because that surface
+       distinction is the point of the pair. align-items:flex-start (not stretch) this
+       time — see top comment for why the tall photo panel dictates its own height instead
+       of matching the hero card's. -->
+  <div style="display: flex; align-items: flex-start; gap: 40px; padding: 28px 48px 26px; border-block-end: 1px solid rgba(255,255,255,0.14);">
 
-    <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 12px; max-width: 560px;">
+    <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 12px; max-width: 780px;">
       <div style="font-size: 11.5px; font-weight: 700; letter-spacing: 0.04em; opacity: 0.68;">המניין הבא לידך</div>
 
       <div style="background: rgba(255,255,255,0.05); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.16); border-radius: 2px; border-start-start-radius: 34px; border-block-start: 3px solid {{heroRule}}; padding: 20px 22px; display: flex; align-items: flex-start; gap: 28px; box-shadow: 0 10px 32px rgba(0,0,0,0.4);">
@@ -160,43 +147,32 @@
       </div>
     </div>
 
-    <!-- Map card: drawn schematic, unchanged from PhotographicMapDesktop — see that file's
-         comment for why a satellite crop was rejected in favour of keeping this panel data,
-         not atmosphere. -->
-    <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 12px;">
+    <!--
+      Photo panel: tall and narrow, dictated by tlv-night.jpg's own portrait shape
+      (416x738 native) rather than forced to match the hero card's height. Fixed
+      340x600 — 340/416 ≈ 0.817x, 600/738 ≈ 0.813x, both comfortably under 1x, so
+      object-fit:cover here is barely cropping at all (≈1% of the frame): sky at
+      the top, the lit promenade running the full length, the beach at the foot,
+      essentially the whole photograph, close to as shot.
+    -->
+    <div style="flex: 0 0 340px; width: 340px; display: flex; flex-direction: column; gap: 12px;">
       <div style="font-size: 11.5px; font-weight: 700; letter-spacing: 0.04em; opacity: 0.68;">רמת אביב · 16 בתי כנסת</div>
-      <div style="flex-grow: 1; min-height: 176px; background: #101923; border: 1px solid rgba(255,255,255,0.16); border-radius: 2px; position: relative; overflow: hidden;">
-
-        <div style="position: absolute; inset-block: 0; inset-inline-start: 0; width: 46px; background: linear-gradient(90deg, rgba(63,203,221,0.22) 0%, rgba(63,203,221,0) 100%);"></div>
-
-        <svg width="100%" height="100%" viewBox="0 0 560 176" preserveAspectRatio="none" style="position: absolute; inset: 0; opacity: 0.5;">
-          <path d="M46 0 L46 176 M120 0 L112 176 M210 0 L222 176 M310 0 L302 176 M400 0 L410 176 M486 0 L480 176" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
-          <path d="M0 30 L560 24 M0 76 L560 84 M0 122 L560 114 M0 158 L560 164" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
-        </svg>
-
-        <svg width="100%" height="100%" viewBox="0 0 560 176" style="position: absolute; inset: 0;">
-          <circle cx="266" cy="96" r="34" fill="none" stroke="rgba(63,203,221,0.35)" stroke-width="1" stroke-dasharray="3 4"/>
-          <circle cx="266" cy="96" r="66" fill="none" stroke="rgba(63,203,221,0.2)" stroke-width="1" stroke-dasharray="3 4"/>
-        </svg>
-
-        <div style="position: absolute; inset-inline-start: 258px; inset-block-start: 88px; width: 16px; height: 16px; border-radius: 50%; background: rgba(63,203,221,0.22); display: flex; align-items: center; justify-content: center;">
-          <div style="width: 7px; height: 7px; border-radius: 50%; background: #3FCBDD; box-shadow: 0 0 8px 2px rgba(63,203,221,0.6);"></div>
-        </div>
-
-        <div style="position: absolute; inset-inline-start: 218px; inset-block-start: 46px; width: 9px; height: 9px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: #F0B45C; box-shadow: 0 0 8px 2px rgba(240,180,92,0.4);"></div>
-        <div style="position: absolute; inset-inline-start: 340px; inset-block-start: 62px; width: 9px; height: 9px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: #F0B45C; box-shadow: 0 0 8px 2px rgba(240,180,92,0.4);"></div>
-        <div style="position: absolute; inset-inline-start: 300px; inset-block-start: 128px; width: 9px; height: 9px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: #F0B45C; box-shadow: 0 0 8px 2px rgba(240,180,92,0.4);"></div>
-        <div style="position: absolute; inset-inline-start: 176px; inset-block-start: 118px; width: 9px; height: 9px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: #F0B45C; box-shadow: 0 0 8px 2px rgba(240,180,92,0.4);"></div>
-        <div style="position: absolute; inset-inline-start: 398px; inset-block-start: 108px; width: 9px; height: 9px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: #3FCBDD; box-shadow: 0 0 8px 2px rgba(63,203,221,0.4);"></div>
-
-        <div style="position: absolute; inset-inline-start: 16px; inset-block-end: 12px; display: flex; align-items: center; gap: 8px;">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3FCBDD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <div style="width: 340px; height: 600px; background: #101923; border: 1px solid rgba(255,255,255,0.16); border-radius: 2px; position: relative; overflow: hidden;">
+        <img
+          src="tlv-night.jpg"
+          alt="הטיילת בשעת בין הערביים, מבט אל קו הרקיע"
+          style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 45%;"
+        >
+        <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(6,10,16,0.06) 0%, rgba(6,10,16,0.1) 45%, rgba(6,10,16,0.8) 100%);"></div>
+        <div style="position: absolute; inset-inline-start: 16px; inset-block-end: 14px; display: flex; align-items: center; gap: 8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3FCBDD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
             <circle cx="12" cy="10" r="3"></circle>
           </svg>
-          <div style="font-size: 11.5px; font-weight: 700; color: #FFFFFF; opacity: 0.88;">רמת אביב, מפת הליכה</div>
+          <div style="font-size: 12px; font-weight: 700; color: #FFFFFF; text-shadow: 0 1px 4px rgba(0,0,0,0.5);">רמת אביב, מבט אל הטיילת</div>
         </div>
-        <div style="position: absolute; inset-inline-end: 14px; inset-block-end: 12px; font-size: 10px; opacity: 0.62;">300 מ׳ ≈ 4 דק׳ הליכה</div>
+        <!-- no credit line: tlv-night.jpg is a user-supplied asset, no licence
+             information passed along this round — confirm before shipping publicly -->
       </div>
     </div>
 

@@ -1,6 +1,10 @@
 {
   "pages": [
     {
+      "id": "modes",
+      "name": "Day & night — your photographs"
+    },
+    {
       "id": "v2",
       "name": "Directions — from photographs"
     },
@@ -10,6 +14,42 @@
     }
   ],
   "artboards": [
+    {
+      "file": "PhotoNightMobile.dc.html",
+      "title": "Night — mobile",
+      "page": "modes",
+      "x": 0,
+      "y": 0,
+      "w": 375,
+      "h": 1560
+    },
+    {
+      "file": "PhotoDayMobile.dc.html",
+      "title": "Day — mobile",
+      "page": "modes",
+      "x": 460,
+      "y": 0,
+      "w": 375,
+      "h": 1360
+    },
+    {
+      "file": "PhotoNightDesktop.dc.html",
+      "title": "Night — desktop",
+      "page": "modes",
+      "x": 920,
+      "y": 0,
+      "w": 1280,
+      "h": 1100
+    },
+    {
+      "file": "PhotoDayDesktop.dc.html",
+      "title": "Day — desktop",
+      "page": "modes",
+      "x": 2280,
+      "y": 0,
+      "w": 1280,
+      "h": 1060
+    },
     {
       "file": "Photographic.dc.html",
       "title": "Photographic — mobile",
@@ -130,6 +170,13 @@
   ],
   "annotations": [
     {
+      "id": "modes-brief",
+      "x": 0,
+      "y": -250,
+      "w": 620,
+      "text": "The photographic direction in two modes, using your own photographs.\n\nThe switch is driven by the clock, not a preference — the site turns dark at real shkia and light again at netz, the same way the Hebrew date rolls at sunset. The small sun/moon button beside the language switch lets you override it.\n\nNo photograph is stretched: every one renders below its native size. The night frame is portrait, so it gets a tall header on mobile and a tall narrow panel on desktop rather than being cropped into a letterbox."
+    },
+    {
       "id": "v2-brief",
       "x": 0,
       "y": -230,
@@ -168,6 +215,6 @@
   ],
   "launch": {
     "view": "canvas",
-    "page": "v2"
+    "page": "modes"
   }
 }
