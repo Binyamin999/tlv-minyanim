@@ -161,6 +161,36 @@ ornament. Tel Aviv is the opposite city, and that still holds.
 --tlv-terra:   #C0603A;  /* roof tiles */
 ```
 
+### Two cyans, split by job — not by taste
+
+The photographed cyan is a *sea* colour, and the sea is bright. Sampled straight
+from the photo it is too light to carry text on a pale ground. So the palette
+carries two, and which one you reach for depends on what the colour is *doing*:
+
+```css
+--tlv-sea:      #0E93AE;  /* DECORATION only — gradients, map glow, bare strokes */
+--tlv-sea-ink:  #0A6C82;  /* anything where cyan is doing the job of text */
+--tlv-terra-ink:#AD5634;  /* the darker terracotta, for the "update the time" CTA */
+```
+
+Non-text needs only 3:1, so `--tlv-sea` is correct in a gradient and wrong on a
+label. Never darken `--tlv-sea` itself to make a label pass — that flattens the
+sea and solves the wrong problem.
+
+**Pick the darker value against the hardest background, not the easiest.** Cyan
+text usually sits on a faintly cyan-tinted pill, not on white. `#0B7B93` passes
+on white at 4.92 and fails on the tint at 4.28. `#0A6C82` clears both — 6.03 and
+5.25. Measured, both modes: 104 elements, zero failures, worst 5.05 light /
+6.34 dark.
+
+**The honest-unknown row is quiet on purpose and passes anyway** (default ink at
+75% = 7.9:1). If a contrast sweep ever seems to point at it, check what is
+actually failing — most likely the *action* next to it. Do not "fix" the unknown
+state by making it louder; its quietness is the design saying we don't know.
+
+Re-measure with `scripts/contrast-audit.js` in a browser, never by hand from the
+source — real contrast depends on what is painted behind the label.
+
 ### Superseded — the original Bauhaus hypothesis
 
 ```css
