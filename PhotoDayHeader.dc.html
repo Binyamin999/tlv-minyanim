@@ -97,9 +97,9 @@
       <img
         src="tlv-day.jpg"
         alt=""
-        style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 55%; filter: blur(10px) saturate(0.8) contrast(1.12) brightness(0.78);"
+        style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 55%; filter: saturate(1.02) contrast(1.04) brightness(0.86);"
       >
-      <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(8,42,48,0.58) 0%, rgba(8,42,48,0.4) 40%, rgba(8,42,48,0.6) 68%, rgba(8,32,38,0.88) 100%);"></div>
+      <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(6,34,42,0.82) 0%, rgba(6,34,42,0.74) 26%, rgba(8,42,48,0.34) 52%, rgba(8,42,48,0.30) 66%, rgba(6,28,34,0.90) 100%);"></div>
     </div>
 
     <!-- APPROACH B: partial width at native-or-below scale, painted gradient for the rest -->
@@ -409,7 +409,7 @@
 </div>
 </x-dc>
 
-<script data-dc-script data-props='{"sunset":{"editor":"boolean","default":false,"section":"State"},"bleed":{"editor":"boolean","default":false,"section":"State"}}'>
+<script data-dc-script data-props='{"sunset":{"editor":"boolean","default":false,"section":"State"},"bleed":{"editor":"boolean","default":true,"section":"State"}}'>
 class Component extends DCLogic {
   renderVals() {
     const sunset = this.props.sunset ?? false;
