@@ -1,23 +1,132 @@
 {
   "pages": [
-    { "id": "v2", "name": "Directions — from photographs" },
-    { "id": "v1", "name": "Superseded — Bauhaus premise" }
+    {
+      "id": "v2",
+      "name": "Directions — from photographs"
+    },
+    {
+      "id": "v1",
+      "name": "Superseded — Bauhaus premise"
+    }
   ],
   "artboards": [
-    { "file": "Photographic.dc.html", "title": "Photographic — mobile", "page": "v2", "x": 0, "y": 0, "w": 375, "h": 1400 },
-    { "file": "NightCity.dc.html", "title": "Night City — mobile", "page": "v2", "x": 460, "y": 0, "w": 375, "h": 1280 },
-    { "file": "DaySea.dc.html", "title": "Day Sea — mobile", "page": "v2", "x": 920, "y": 0, "w": 375, "h": 1320 },
-
-    { "file": "PhotographicDesktop.dc.html", "title": "Photographic — desktop", "page": "v2", "x": 0, "y": 1560, "w": 1280, "h": 1040 },
-    { "file": "NightCityDesktop.dc.html", "title": "Night City — desktop", "page": "v2", "x": 1380, "y": 1560, "w": 1280, "h": 1040 },
-    { "file": "DaySeaDesktop.dc.html", "title": "Day Sea — desktop", "page": "v2", "x": 2760, "y": 1560, "w": 1280, "h": 1040 },
-
-    { "file": "Main.dc.html", "title": "A · Rothschild Formal", "page": "v1", "x": 0, "y": 0, "w": 375, "h": 1230 },
-    { "file": "HybridD.dc.html", "title": "D · conservative blend", "page": "v1", "x": 460, "y": 0, "w": 375, "h": 1280 },
-    { "file": "HybridE.dc.html", "title": "E · warmer blend", "page": "v1", "x": 920, "y": 0, "w": 375, "h": 1380 },
-    { "file": "Shoreline.dc.html", "title": "C · Mediterranean Shoreline", "page": "v1", "x": 1380, "y": 0, "w": 375, "h": 1330 },
-    { "file": "Florentin.dc.html", "title": "B · Florentin Grit", "page": "v1", "x": 1840, "y": 0, "w": 375, "h": 1300 },
-    { "file": "Desktop.dc.html", "title": "A · Rothschild — desktop", "page": "v1", "x": 0, "y": 1500, "w": 1280, "h": 980 }
+    {
+      "file": "Photographic.dc.html",
+      "title": "Photographic — mobile",
+      "page": "v2",
+      "x": 0,
+      "y": 0,
+      "w": 375,
+      "h": 1400
+    },
+    {
+      "file": "NightCity.dc.html",
+      "title": "Night City — mobile",
+      "page": "v2",
+      "x": 460,
+      "y": 0,
+      "w": 375,
+      "h": 1280
+    },
+    {
+      "file": "DaySea.dc.html",
+      "title": "Day Sea — mobile",
+      "page": "v2",
+      "x": 920,
+      "y": 0,
+      "w": 375,
+      "h": 1320
+    },
+    {
+      "file": "PhotographicDesktop.dc.html",
+      "title": "Photographic — desktop",
+      "page": "v2",
+      "x": 0,
+      "y": 1560,
+      "w": 1280,
+      "h": 1040
+    },
+    {
+      "file": "NightCityDesktop.dc.html",
+      "title": "Night City — desktop",
+      "page": "v2",
+      "x": 1380,
+      "y": 1560,
+      "w": 1280,
+      "h": 1040
+    },
+    {
+      "file": "DaySeaDesktop.dc.html",
+      "title": "Day Sea — desktop",
+      "page": "v2",
+      "x": 2760,
+      "y": 1560,
+      "w": 1280,
+      "h": 1040
+    },
+    {
+      "file": "PhotographicMapDesktop.dc.html",
+      "title": "Photographic + map — desktop",
+      "page": "v2",
+      "x": 0,
+      "y": 2700,
+      "w": 1280,
+      "h": 1060
+    },
+    {
+      "file": "Main.dc.html",
+      "title": "A · Rothschild Formal",
+      "page": "v1",
+      "x": 0,
+      "y": 0,
+      "w": 375,
+      "h": 1230
+    },
+    {
+      "file": "HybridD.dc.html",
+      "title": "D · conservative blend",
+      "page": "v1",
+      "x": 460,
+      "y": 0,
+      "w": 375,
+      "h": 1280
+    },
+    {
+      "file": "HybridE.dc.html",
+      "title": "E · warmer blend",
+      "page": "v1",
+      "x": 920,
+      "y": 0,
+      "w": 375,
+      "h": 1380
+    },
+    {
+      "file": "Shoreline.dc.html",
+      "title": "C · Mediterranean Shoreline",
+      "page": "v1",
+      "x": 1380,
+      "y": 0,
+      "w": 375,
+      "h": 1330
+    },
+    {
+      "file": "Florentin.dc.html",
+      "title": "B · Florentin Grit",
+      "page": "v1",
+      "x": 1840,
+      "y": 0,
+      "w": 375,
+      "h": 1300
+    },
+    {
+      "file": "Desktop.dc.html",
+      "title": "A · Rothschild — desktop",
+      "page": "v1",
+      "x": 0,
+      "y": 1500,
+      "w": 1280,
+      "h": 980
+    }
   ],
   "annotations": [
     {
@@ -48,7 +157,17 @@
       "w": 460,
       "page": "v1",
       "text": "Kept for the record. All five were rejected as not looking like Tel Aviv — the palette is a desaturated version of the real thing."
+    },
+    {
+      "id": "photo-map-note",
+      "x": 0,
+      "y": 2560,
+      "w": 620,
+      "text": "Photographic with the map restored. The photograph moves entirely to the header band; the map returns to its own slot.\n\nThe designer deliberately kept the map as a drawn schematic rather than satellite imagery — its argument being that two photographs would leave the page with no functional layer at all, which is the opposite of what you asked for."
     }
   ],
-  "launch": { "view": "canvas", "page": "v2" }
+  "launch": {
+    "view": "canvas",
+    "page": "v2"
+  }
 }

@@ -1,0 +1,126 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>TLV Minyanim — two structural concepts</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&family=Frank+Ruhl+Libre:wght@400;500;700&display=swap">
+<style>
+ body{margin:0;background:#20232a;font-family:'Assistant',system-ui,sans-serif;padding:28px;color:#fff}
+ h1{font-size:17px;margin:0 0 4px} p.sub{color:#9aa3ad;font-size:12.5px;margin:0 0 26px;max-width:760px;line-height:1.6}
+ .row{display:flex;gap:34px;flex-wrap:wrap;align-items:flex-start}
+ .item{display:flex;flex-direction:column;gap:10px;max-width:375px}
+ .lab{font-size:13px;font-weight:700} .note{color:#9aa3ad;font-size:11.5px;line-height:1.55}
+ .frame{width:375px;border-radius:14px;overflow:hidden;box-shadow:0 12px 34px rgba(0,0,0,.45)}
+ .tnum{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+</style></head><body>
+<h1>Two structural concepts — rough sketches, not finished design</h1>
+<p class="sub">These are about the SHAPE of the page, not colour or polish. Same real Ramat Aviv data in both. Current time in these sketches is 12:47, so you can see the afternoon minyanim, the long gap, and the cluster before sunset.</p>
+<div class="row">
+
+<!-- ============ DEPARTURE BOARD ============ -->
+<div class="item">
+  <div class="lab">1 — Departure board</div>
+  <div class="note">Like the board at Ben Gurion. Sorted by what leaves next. Time dominates; the shul name is the destination; walking minutes are the "gate". Unknown times sit in their own row, honestly.</div>
+  <div class="frame">
+    <div dir="rtl" style="width:375px;background:#0B0E13;color:#E8EDF2;padding-block:18px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;padding-inline:18px;padding-block-end:14px;border-block-end:1px solid #232A33">
+        <div style="font-family:'Frank Ruhl Libre',serif;font-size:17px;font-weight:700">מניינים · רמת אביב</div>
+        <div class="tnum" style="font-size:15px;font-weight:700;color:#F0B45C">12:47</div>
+      </div>
+      <div style="display:grid;grid-template-columns:auto 1fr auto;gap:0 12px;padding-inline:18px;padding-block:9px;font-size:10px;color:#7C8894;font-weight:700;letter-spacing:.05em;border-block-end:1px solid #232A33">
+        <div>שעה</div><div>בית כנסת</div><div>הליכה</div>
+      </div>
+      <div style="display:grid;grid-template-columns:auto 1fr auto;gap:14px 12px;padding:14px 18px;align-items:center">
+        <div class="tnum" style="font-size:27px;font-weight:800;color:#3FCBDD;line-height:1">13:00</div>
+        <div><div style="font-family:'Frank Ruhl Libre',serif;font-size:15px">תהילת אביב</div><div style="font-size:10.5px;color:#7C8894">שרגא פרידמן 1 · עדות המזרח</div></div>
+        <div class="tnum" style="font-size:13px;font-weight:700;color:#F0B45C">14 דק׳</div>
+
+        <div class="tnum" style="font-size:27px;font-weight:800;line-height:1">13:55</div>
+        <div><div style="font-family:'Frank Ruhl Libre',serif;font-size:15px">אוניברסיטת תל אביב</div><div style="font-size:10.5px;color:#7C8894">חיים לבנון 42 · אשכנז</div></div>
+        <div class="tnum" style="font-size:13px;font-weight:700;color:#7C8894">11 דק׳</div>
+
+        <div class="tnum" style="font-size:27px;font-weight:800;line-height:1">14:00</div>
+        <div><div style="font-family:'Frank Ruhl Libre',serif;font-size:15px">המרכזי רמת אביב ג׳</div><div style="font-size:10.5px;color:#7C8894">אבא אחימאיר 31 · אשכנז</div></div>
+        <div class="tnum" style="font-size:13px;font-weight:700;color:#7C8894">17 דק׳</div>
+
+        <div class="tnum" style="font-size:27px;font-weight:800;line-height:1">15:15</div>
+        <div><div style="font-family:'Frank Ruhl Libre',serif;font-size:15px">תומכי תמימים · חב״ד</div><div style="font-size:10.5px;color:#7C8894">טאגור 32 · חב״ד</div></div>
+        <div class="tnum" style="font-size:13px;font-weight:700;color:#7C8894">8 דק׳</div>
+      </div>
+      <div style="margin-inline:18px;padding-block:11px;border-block-start:1px solid #232A33;display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:12.5px;color:#8A94A0">הרמב״ם</div>
+        <div style="font-size:11.5px;color:#8A94A0;font-weight:700">בזמן — טרם פורסם</div>
+      </div>
+      <div style="margin:12px 18px 0;padding:11px 13px;background:#16202A;border-inline-start:3px solid #E8743B;display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:11.5px;color:#C9D3DC">שקיעה</div>
+        <div class="tnum" style="font-size:14px;font-weight:800;color:#E8743B">19:21</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TIMELINE ============ -->
+<div class="item">
+  <div class="lab">2 — Timeline of the day</div>
+  <div class="note">The day drawn as a line from now until nightfall. You see the shape: three minyanim this afternoon, a long empty gap, then a cluster around sunset. Answers "when can I go?" without reading a single row.</div>
+  <div class="frame">
+    <div dir="rtl" style="width:375px;background:#F7F9FA;color:#12181C;padding:18px 0 22px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;padding-inline:18px;padding-block-end:16px">
+        <div style="font-family:'Frank Ruhl Libre',serif;font-size:17px;font-weight:700">היום ברמת אביב</div>
+        <div class="tnum" style="font-size:13px;font-weight:700;color:#0E93AE">עכשיו 12:47</div>
+      </div>
+      <div style="position:relative;margin-inline:18px;padding-inline-start:56px">
+        <div style="position:absolute;inset-block:0;inset-inline-start:22px;width:2px;background:linear-gradient(#0E93AE 0%,#0E93AE 62%,#E8743B 82%,#2A3742 100%)"></div>
+
+        <div style="display:flex;align-items:center;gap:12px;margin-block-end:4px;margin-inline-start:-56px">
+          <div class="tnum" style="width:44px;text-align:end;font-size:12px;font-weight:800;color:#0E93AE">12:47</div>
+          <div style="width:12px;height:12px;border-radius:50%;background:#0E93AE;box-shadow:0 0 0 4px rgba(14,147,174,.18)"></div>
+          <div style="font-size:11.5px;font-weight:700;color:#0E93AE">עכשיו</div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;margin-block:14px 0;margin-inline-start:-56px">
+          <div class="tnum" style="width:44px;text-align:end;font-size:13px;font-weight:800">13:00</div>
+          <div style="width:10px;height:10px;border-radius:50%;background:#12181C"></div>
+          <div><div style="font-family:'Frank Ruhl Libre',serif;font-size:14.5px">תהילת אביב</div><div style="font-size:10.5px;color:#5A6672">14 דק׳ הליכה</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;margin-block:14px 0;margin-inline-start:-56px">
+          <div class="tnum" style="width:44px;text-align:end;font-size:13px;font-weight:800">13:55</div>
+          <div style="width:10px;height:10px;border-radius:50%;background:#12181C"></div>
+          <div><div style="font-family:'Frank Ruhl Libre',serif;font-size:14.5px">אוניברסיטת תל אביב</div><div style="font-size:10.5px;color:#5A6672">11 דק׳ הליכה</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;margin-block:14px 0;margin-inline-start:-56px">
+          <div class="tnum" style="width:44px;text-align:end;font-size:13px;font-weight:800">15:15</div>
+          <div style="width:10px;height:10px;border-radius:50%;background:#12181C"></div>
+          <div><div style="font-family:'Frank Ruhl Libre',serif;font-size:14.5px">תומכי תמימים · חב״ד</div><div style="font-size:10.5px;color:#5A6672">8 דק׳ הליכה</div></div>
+        </div>
+
+        <div style="margin-block:16px;margin-inline-start:-56px;padding-inline-start:56px">
+          <div style="font-size:11px;color:#8A96A2;font-weight:600;padding-block:16px;border-block:1px dashed #D3DBE1;text-align:center">אין מניינים · כ־3.5 שעות</div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;margin-block:14px 0;margin-inline-start:-56px">
+          <div class="tnum" style="width:44px;text-align:end;font-size:13px;font-weight:800;color:#C4562A">19:01</div>
+          <div style="width:12px;height:12px;border-radius:50%;background:#E8743B"></div>
+          <div><div style="font-family:'Frank Ruhl Libre',serif;font-size:14.5px">לכלל ישראל</div><div style="font-size:10.5px;color:#C4562A;font-weight:700">שקיעה פחות 20 דק׳ · 6 דק׳ הליכה</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;margin-block:14px 0;margin-inline-start:-56px">
+          <div class="tnum" style="width:44px;text-align:end;font-size:13px;font-weight:800">19:06</div>
+          <div style="width:10px;height:10px;border-radius:50%;background:#12181C"></div>
+          <div><div style="font-family:'Frank Ruhl Libre',serif;font-size:14.5px">היכל חיים</div><div style="font-size:10.5px;color:#5A6672">6 דק׳ הליכה</div></div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;margin-block:16px 0;margin-inline-start:-56px">
+          <div class="tnum" style="width:44px;text-align:end;font-size:12px;font-weight:800;color:#E8743B">19:21</div>
+          <div style="width:8px;height:8px;background:#E8743B;transform:rotate(45deg)"></div>
+          <div style="font-size:11.5px;font-weight:700;color:#C4562A">שקיעה</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;margin-block:12px 0;margin-inline-start:-56px">
+          <div class="tnum" style="width:44px;text-align:end;font-size:12px;font-weight:700;color:#5A6672">19:41</div>
+          <div style="width:8px;height:8px;background:#2A3742;transform:rotate(45deg)"></div>
+          <div style="font-size:11.5px;color:#5A6672">צאת הכוכבים</div>
+        </div>
+      </div>
+      <div style="margin:18px 18px 0;padding-block-start:12px;border-block-start:1px solid #E2E8ED;font-size:10.5px;color:#7B8792">הרמב״ם — שעה טרם פורסמה, לא מופיע על הציר</div>
+    </div>
+  </div>
+</div>
+
+</div></body></html>
