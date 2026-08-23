@@ -94,9 +94,16 @@
     <div style="position: absolute; inset-inline: 16px; inset-block-end: 16px;">
       <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.04em; color: rgba(255,255,255,0.78); margin-bottom: 9px;">המניין הבא לידך</div>
       <div style="background: rgba(8,14,22,0.62); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.22); border-radius: 2px; border-block-start: 3px solid {{heroRule}}; padding: 16px; display: flex; flex-direction: column; gap: 8px;">
-        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
           <div style="font-size: 12px; font-weight: 700; color: {{heroRule}};">מנחה</div>
-          <div style="font-size: 11px; opacity: 0.75;">כ־6 דק׳ הליכה</div>
+          <!-- Directions control: see PhotoDayMobile.dc.html for the full argument
+               (the walking-time text itself becomes the tappable element). #FF7A45
+               already passes contrast against this dark glass card, so it is used
+               as-is rather than needing a day-file-style darker substitute. -->
+          <a href="https://www.google.com/maps/dir/?api=1&destination=32.12615,34.80099&travelmode=walking" target="_blank" rel="noopener" aria-label="ניווט הליכה אל לכלל ישראל" style="display: inline-flex; align-items: center; gap: 5px; min-height: 44px; padding-inline-start: 6px; font-size: 11px; font-weight: 700; color: #FF7A45; text-decoration: none;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="8" cy="7" rx="2.1" ry="3" transform="rotate(-15 8 7)"></ellipse><ellipse cx="16" cy="15" rx="2.1" ry="3" transform="rotate(15 16 15)"></ellipse></svg>
+            כ־6 דק׳ הליכה
+          </a>
         </div>
         <div class="tnum" style="font-size: 42px; font-weight: 700; line-height: 1; color: {{heroTime}};">19:01</div>
         <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
@@ -154,7 +161,14 @@
       <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
         <div style="display: flex; flex-direction: column; gap: 2px;">
           <div style="font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: 18px;">היכל חיים</div>
-          <div style="font-size: 11.5px; opacity: 0.72;">אופנהיימר 5 · כ־6 דק׳</div>
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px;">
+            <span style="opacity: 0.72;">אופנהיימר 5</span>
+            <span style="opacity: 0.42;" aria-hidden="true">·</span>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=32.11922,34.79983&travelmode=walking" target="_blank" rel="noopener" aria-label="ניווט הליכה אל היכל חיים" style="display: inline-flex; align-items: center; gap: 4px; min-height: 44px; font-weight: 700; color: #FF7A45; text-decoration: none;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="8" cy="7" rx="2.1" ry="3" transform="rotate(-15 8 7)"></ellipse><ellipse cx="16" cy="15" rx="2.1" ry="3" transform="rotate(15 16 15)"></ellipse></svg>
+              כ־6 דק׳
+            </a>
+          </div>
         </div>
         <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 3px;">
           <div class="tnum" style="font-size: 20px; font-weight: 700; line-height: 1; color: #F2EFE7;">19:06</div>
@@ -171,7 +185,14 @@
       <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
         <div style="display: flex; flex-direction: column; gap: 2px;">
           <div style="font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: 18px;">אוניברסיטת תל אביב · צימבליסטה</div>
-          <div style="font-size: 11.5px; opacity: 0.72;">חיים לבנון 42 · כ־11 דק׳</div>
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px;">
+            <span style="opacity: 0.72;">חיים לבנון 42</span>
+            <span style="opacity: 0.42;" aria-hidden="true">·</span>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=32.10925,34.80213&travelmode=walking" target="_blank" rel="noopener" aria-label="ניווט הליכה אל אוניברסיטת תל אביב · צימבליסטה" style="display: inline-flex; align-items: center; gap: 4px; min-height: 44px; font-weight: 700; color: #FF7A45; text-decoration: none;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="8" cy="7" rx="2.1" ry="3" transform="rotate(-15 8 7)"></ellipse><ellipse cx="16" cy="15" rx="2.1" ry="3" transform="rotate(15 16 15)"></ellipse></svg>
+              כ־11 דק׳
+            </a>
+          </div>
         </div>
         <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 3px;">
           <div class="tnum" style="font-size: 20px; font-weight: 700; line-height: 1; color: #F2EFE7;">13:55</div>
@@ -188,7 +209,14 @@
       <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
         <div style="display: flex; flex-direction: column; gap: 2px;">
           <div style="font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: 18px;">תהילת אביב</div>
-          <div style="font-size: 11.5px; opacity: 0.72;">שרגא פרידמן 1 · כ־14 דק׳</div>
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px;">
+            <span style="opacity: 0.72;">שרגא פרידמן 1</span>
+            <span style="opacity: 0.42;" aria-hidden="true">·</span>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=32.11820,34.79103&travelmode=walking" target="_blank" rel="noopener" aria-label="ניווט הליכה אל תהילת אביב" style="display: inline-flex; align-items: center; gap: 4px; min-height: 44px; font-weight: 700; color: #FF7A45; text-decoration: none;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="8" cy="7" rx="2.1" ry="3" transform="rotate(-15 8 7)"></ellipse><ellipse cx="16" cy="15" rx="2.1" ry="3" transform="rotate(15 16 15)"></ellipse></svg>
+              כ־14 דק׳
+            </a>
+          </div>
         </div>
         <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 3px;">
           <div class="tnum" style="font-size: 20px; font-weight: 700; line-height: 1; color: #F2EFE7;">13:00</div>
@@ -207,7 +235,16 @@
       <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
         <div style="display: flex; flex-direction: column; gap: 2px;">
           <div style="font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: 18px;">הרמב״ם</div>
-          <div style="font-size: 11.5px; opacity: 0.72;">ברודצקי 19 · כ־9 דק׳</div>
+          <!-- Honest-unknown row: the time is unpublished, the way is not — this
+               card gets the identical directions control, unmodified in kind. -->
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px;">
+            <span style="opacity: 0.72;">ברודצקי 19</span>
+            <span style="opacity: 0.42;" aria-hidden="true">·</span>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=32.10804,34.79818&travelmode=walking" target="_blank" rel="noopener" aria-label="ניווט הליכה אל הרמב״ם" style="display: inline-flex; align-items: center; gap: 4px; min-height: 44px; font-weight: 700; color: #FF7A45; text-decoration: none;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="8" cy="7" rx="2.1" ry="3" transform="rotate(-15 8 7)"></ellipse><ellipse cx="16" cy="15" rx="2.1" ry="3" transform="rotate(15 16 15)"></ellipse></svg>
+              כ־9 דק׳
+            </a>
+          </div>
         </div>
         <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 3px; max-width: 132px;">
           <div style="font-size: 12.5px; font-weight: 700; opacity: 0.75; text-align: end; line-height: 1.25;">בזמן — שעה טרם פורסמה</div>
