@@ -133,33 +133,53 @@ style:    carlebach | hashkama | netz | null
 
 ---
 
-## Design language — Tel Aviv, not Jerusalem
+## Design language — UNDER REVISION
 
-The failure mode is a generic "Jewish community site": Jerusalem stone, gold, navy,
-parchment, a Star of David as ornament. Tel Aviv is the opposite city.
+> ⚠️ **The Bauhaus premise below failed its first contact with the user.** It was
+> asserted here in the project's first draft and never chosen; five directions were
+> then built on it, and the verdict on all five was *"doesn't remind me of Tel
+> Aviv."* Shown against real photographs of the city, the diagnosis was clear: the
+> palette is desaturated and the pages read as pale flat paper, while the actual
+> city is high-contrast and luminous — vivid turquoise sea, deep indigo dusk, warm
+> amber light, golden sand. Treat everything below as a hypothesis that lost, not
+> as settled tokens. A replacement direction is being explored from photographic
+> evidence rather than from architectural theory.
 
-**Bauhaus / the White City** is the design language: sun-bleached white, strong
-horizontals, curved balcony forms, flat and unornamented, asymmetric but balanced.
+The one part that survives review: **the failure mode is a generic "Jewish
+community site"** — Jerusalem stone, gold, navy, parchment, a Star of David as
+ornament. Tel Aviv is the opposite city, and that still holds.
+
+### Observed palette, sampled from photographs of the city
 
 ```css
---tlv-white:  #F7F6F2;  /* sun-bleached plaster — the ground */
---tlv-ink:    #1A1D21;  /* near-black, never pure #000 */
---tlv-sea:    #0E6B7D;  /* Mediterranean at midday — primary */
---tlv-kurkar: #D9C7A7;  /* Jaffa sandstone — secondary surfaces */
---tlv-bougie: #D2306B;  /* bougainvillea — "happening now", sparingly */
---tlv-shkia:  #E8743B;  /* sunset coral — sunset-relative times only */
+--tlv-sea:     #2FA9BE;  /* Mediterranean shallows — saturated, not greyed */
+--tlv-deep:    #1E8CAE;  /* the water further out */
+--tlv-night:   #173A5E;  /* dusk sky over the promenade */
+--tlv-ink:     #0C1116;  /* the city at night, near-black */
+--tlv-amber:   #F0B45C;  /* lit windows and street lamps after dark */
+--tlv-sand:    #E0CFB4;  /* the beach */
+--tlv-terra:   #C0603A;  /* roof tiles */
+```
+
+### Superseded — the original Bauhaus hypothesis
+
+```css
+--tlv-white:  #F7F6F2;  --tlv-ink:    #1A1D21;  --tlv-sea:    #0E6B7D;
+--tlv-kurkar: #D9C7A7;  --tlv-bougie: #D2306B;  --tlv-shkia:  #E8743B;
 ```
 
 **Type:** `Frank Ruhl Libre` for synagogue names (classic Hebrew serif, gravitas),
 `Assistant` for UI (modern Israeli sans). Old and new together — that pairing *is*
-the city. Both carry real Latin glyphs so Hebrew and English harmonise.
+the city. This part is not under revision; it held up under review and both faces
+are already self-hosted in `public/fonts/`.
 
 **Signature detail:** shkia here is over the Mediterranean. As real sunset
-approaches, Mincha listings warm from `--tlv-sea` toward `--tlv-shkia`. Beautiful
-*and* functional — the colour says your window is closing.
+approaches, Mincha listings warm toward the sunset colour. Beautiful *and*
+functional — the colour says your window is closing. Also not under revision; it
+survives whatever palette replaces the above.
 
 **Do not** default to warm editorial cream (`#F4F1EA`), Georgia/Playfair serif
-display, or terracotta accents. That palette reads Lisbon or Tuscany, not Tel Aviv.
+display, or terracotta accents as a *ground*. That palette reads Lisbon or Tuscany.
 
 ---
 
