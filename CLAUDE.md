@@ -178,6 +178,39 @@ approaches, Mincha listings warm toward the sunset colour. Beautiful *and*
 functional — the colour says your window is closing. Also not under revision; it
 survives whatever palette replaces the above.
 
+### Preview toggles are NOT features — do not build them
+
+The design artboards carry toggle chips above them. Two of them are scaffolding
+for choosing between options and **must never appear in the product**:
+
+| Chip | What it is | Ships? |
+|---|---|---|
+| `sunset` | Previews the approaching-shkia state without waiting until 19:01 | **No** |
+| `bleed` | Compares two header treatments while choosing between them | **No** |
+| `אוטו׳ / sun / moon` | The light-dark override, drawn *inside* the page | **Yes** |
+
+A static mockup cannot be 19:01, and cannot be two designs at once — hence the
+first two. In the real site the sunset warming simply *happens*, computed from
+that day's shkia by the zmanim library. Nobody switches it on. Shipping a
+"sunset" button would be as wrong as shipping a button that makes it evening.
+
+Light and dark follow the clock the same way — dark from real shkia, light from
+real netz. The only genuine control is the override, for when the clock is right
+and the room is not.
+
+### Photography
+
+Two fixed images site-wide: `tlv-day.jpg` in light mode, `tlv-night.jpg` in dark
+mode, the same everywhere regardless of neighbourhood. They are the site's
+identity, not evidence about a place — closer to a masthead than an illustration.
+There is deliberately no per-neighbourhood photography and no fallback state.
+
+**Never upscale a photograph past 1x.** Both current sources are small (679px and
+416px), which is why the day header shows the photo sharp at partial width rather
+than stretched across the band. The one exception is the dark-mode header, where
+the image is deliberately blurred as ambient texture rather than shown as a
+picture — softness there is the point, not a defect.
+
 **Do not** default to warm editorial cream (`#F4F1EA`), Georgia/Playfair serif
 display, or terracotta accents as a *ground*. That palette reads Lisbon or Tuscany.
 
