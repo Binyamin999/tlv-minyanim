@@ -77,3 +77,53 @@ like in one aerial shot.
 - Sea turquoise (`#2FA9BE`) is correct as the target/ideal, sampled from clear-sky
   imagery elsewhere; hazy aerial shots read greyer, which is a lighting-conditions
   fact, not a reason to mute the token.
+
+## Second pass — day/night pair, candidates already on disk
+
+Three photographs were provided pre-downloaded for this session at
+`design/reference/candidates/cand1.jpg` / `cand2.jpg` / `cand3.jpg`, evaluated
+for `PhotoDayDesktop.dc.html` / `PhotoNightDesktop.dc.html`. Not independently
+re-sourced — evaluated as given.
+
+**cand1.jpg** — golden-hour beach, Jaffa clocktower on the horizon, CC BY 2.0.
+Beautiful, but it is sunset, not midday. Ruled out for the *day* file: using a
+sunset photo to represent "day" would make the site look permanently ~19:15 and
+directly undercuts the sunset-warming behaviour (see below). Not ruled out for
+future use *as* the sunset/transition state, if the product ever wants a third
+visual state between day and night.
+
+**cand2.jpg** — ground-level promenade at midday, CC BY 2.0. The only genuinely
+daylight option on hand, and disqualified anyway: a man is seated in close
+foreground and a woman is mid-stride, both clearly identifiable, which is a
+privacy problem the moment this ships, independent of the fact that the framing
+is also cluttered street-level clutter rather than the horizontal, sea-facing
+read this product wants.
+
+**Conclusion for day mode: no photograph.** `PhotoDayDesktop.dc.html` uses
+DaySea/DaySeaDesktop's painted sky-to-sea gradient (horizon line, sun glare)
+as-is. This is not a placeholder pending a better photo — every daylight
+candidate actually available had a disqualifying flaw, and a flat saturated
+gradient reads as honest midday without inventing an hour or exposing a
+bystander.
+
+**cand3.jpg** — moonlit skyline seen from Jaffa, sea and coastline curve in
+frame, CC BY-SA 3.0. Judged **better than `tlv-blue-hour.jpg`** (the image
+currently live in the night header) on content: it actually has the sea and a
+coastline curve, which blue-hour lacks entirely (blue-hour is an inland tower
+and a pedestrian-bridge crossing, with two identifiable pedestrians and a
+hot-red neon rail that fights this palette). Not yet swapped in, because a
+gnarled tree fills roughly the right third of cand3's frame and climbs across
+the top, and this header is a very wide, short letterbox — at that aspect ratio
+`object-fit: cover` is width-bound, so the *entire* source width is forced into
+view regardless of `object-position`; the tree cannot be cropped out by position
+alone. Excluding it requires deliberately over-zooming the image past the
+`cover` minimum and panning with explicit `width` + `inset-inline-end` +
+`inset-block-start` (worked out in a comment inside `PhotoNightDesktop.dc.html`,
+first-pass estimate: `width: 2100px` against an assumed ~3:2 source, cutting the
+frame to its own left ~61%, panned to `inset-block-start: -840px` to land on the
+building line and water rather than the sky/moon). Unverified — this session's
+browser preview cannot load local images inside the canvas pipeline's `data:`
+URL context, so the crop could not be confirmed against the actual pixels.
+**Action for next session:** enable the basename `tlv-night-skyline.jpg` against
+`cand3.jpg`, then nudge the two inset values while looking at the rendered
+result — do not trust the numbers above past "first estimate."
