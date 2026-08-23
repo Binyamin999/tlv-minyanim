@@ -1,34 +1,43 @@
 {
+  "pages": [
+    { "id": "v2", "name": "Directions — from photographs" },
+    { "id": "v1", "name": "Superseded — Bauhaus premise" }
+  ],
   "artboards": [
-    { "file": "Main.dc.html", "title": "A · Rothschild Formal", "x": 0, "y": 0, "w": 375, "h": 1230 },
-    { "file": "HybridD.dc.html", "title": "D · conservative blend", "x": 460, "y": 0, "w": 375, "h": 1280 },
-    { "file": "HybridE.dc.html", "title": "E · warmer blend", "x": 920, "y": 0, "w": 375, "h": 1380 },
-    { "file": "Shoreline.dc.html", "title": "C · Mediterranean Shoreline", "x": 1380, "y": 0, "w": 375, "h": 1330 },
-    { "file": "Florentin.dc.html", "title": "B · Florentin Grit — ruled out by palette", "x": 0, "y": 1560, "w": 375, "h": 1300 },
-    { "file": "Desktop.dc.html", "title": "A · Rothschild — desktop reference", "x": 460, "y": 1560, "w": 1280, "h": 980 }
+    { "file": "Photographic.dc.html", "title": "Photographic — real image", "page": "v2", "x": 0, "y": 0, "w": 375, "h": 1400 },
+    { "file": "NightCity.dc.html", "title": "Night City — after dark", "page": "v2", "x": 460, "y": 0, "w": 375, "h": 1280 },
+    { "file": "DaySea.dc.html", "title": "Day Sea — saturated daylight", "page": "v2", "x": 920, "y": 0, "w": 375, "h": 1320 },
+
+    { "file": "Main.dc.html", "title": "A · Rothschild Formal", "page": "v1", "x": 0, "y": 0, "w": 375, "h": 1230 },
+    { "file": "HybridD.dc.html", "title": "D · conservative blend", "page": "v1", "x": 460, "y": 0, "w": 375, "h": 1280 },
+    { "file": "HybridE.dc.html", "title": "E · warmer blend", "page": "v1", "x": 920, "y": 0, "w": 375, "h": 1380 },
+    { "file": "Shoreline.dc.html", "title": "C · Mediterranean Shoreline", "page": "v1", "x": 1380, "y": 0, "w": 375, "h": 1330 },
+    { "file": "Florentin.dc.html", "title": "B · Florentin Grit", "page": "v1", "x": 1840, "y": 0, "w": 375, "h": 1300 },
+    { "file": "Desktop.dc.html", "title": "A · Rothschild — desktop", "page": "v1", "x": 0, "y": 1500, "w": 1280, "h": 980 }
   ],
   "annotations": [
     {
-      "id": "the-spectrum",
+      "id": "v2-brief",
       "x": 0,
       "y": -230,
       "w": 560,
-      "text": "The top row is the decision, left to right along one axis:\n\nA — flat, hairline, institutional\nD — A's bones, with the sunset mechanism promoted sitewide and foam as flat blocks\nE — Shoreline's air and a curved sea field, with A's flat discipline kept in the results rows\nC — soft, coastal, pill-shaped throughout\n\nSame content and the same real Ramat Aviv records in all four. Flip the Sunset toggle on each — that is where they differ most."
+      "text": "Rebuilt from photographs of the city rather than from architectural theory.\n\nThe first five directions all inherited a \"Bauhaus / White City\" premise that was asserted early and never chosen — which is why they were all pale, flat and quiet. The real city is high-contrast and luminous: saturated turquoise water, deep cobalt dusk, warm amber light.\n\nSame content in all three. Flip the Sunset toggle on each."
     },
     {
-      "id": "d-and-e-seams",
-      "x": 920,
-      "y": -230,
-      "w": 460,
-      "text": "The designer named its own weak point in each.\n\nD: the zmanim ribbon now carries a permanent sea tint, so the top of the page is no longer stark white — a feature or a compromise depending on how much you liked A's plainness.\n\nE: the results rows use an 8px radius, chosen by eye between the hero's 24px and A's 2px. Worth judging whether that reads as considered or as neither-nor."
-    },
-    {
-      "id": "florentin-out",
+      "id": "photo-note",
       "x": 0,
-      "y": 1330,
+      "y": 1440,
       "w": 375,
-      "text": "B is kept for the record but is out of the running: its ground is kurkar sand, which the white / sea / sunset palette excludes."
+      "text": "The photograph is real — Tel Aviv at blue hour by Martin Furtschegger, CC BY 3.0 via Wikimedia Commons, self-hosted and resized to 39KB. Attribution is printed in the artboard because the licence requires it."
+    },
+    {
+      "id": "v1-note",
+      "x": 0,
+      "y": -170,
+      "w": 460,
+      "page": "v1",
+      "text": "Kept for the record. All five were rejected as not looking like Tel Aviv. The palette here is a desaturated version of the real thing — compare the sea colour against any photograph of the coast."
     }
   ],
-  "launch": { "view": "canvas" }
+  "launch": { "view": "canvas", "page": "v2" }
 }
