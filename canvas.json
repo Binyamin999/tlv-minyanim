@@ -15,6 +15,24 @@
   ],
   "artboards": [
     {
+      "file": "PhotoNightHeader.dc.html",
+      "title": "Night — photo in header (A/B toggle)",
+      "page": "modes",
+      "x": 920,
+      "y": 1700,
+      "w": 1280,
+      "h": 1080
+    },
+    {
+      "file": "PhotoDayHeader.dc.html",
+      "title": "Day — photo in header (A/B toggle)",
+      "page": "modes",
+      "x": 2280,
+      "y": 1700,
+      "w": 1280,
+      "h": 1060
+    },
+    {
       "file": "PhotoNightMobile.dc.html",
       "title": "Night — mobile",
       "page": "modes",
@@ -169,6 +187,13 @@
     }
   ],
   "annotations": [
+    {
+      "id": "header-ab",
+      "x": 920,
+      "y": 1560,
+      "w": 620,
+      "text": "Photo moved into the header band, two ways. Each artboard has a 'bleed' toggle.\n\nOFF = B: the photograph sits sharp on the leading edge at its true size, a painted gradient carrying the rest. Night is an exact 1:1 pixel crop.\n\nON = A: the photograph fills the whole header, upscaled 1.9x (day) or 3.1x (night), blurred to hide it.\n\nTurn A on and look at what is left of the photograph."
+    },
     {
       "id": "modes-brief",
       "x": 0,

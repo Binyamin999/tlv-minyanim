@@ -27,20 +27,20 @@ def parse(path: Path):
     # the artboard's own root width, so desktop boards are not squeezed into 375
     m = re.search(r'<div dir="rtl" style="width:\s*(\d+)px', body)
     width = int(m.group(1)) if m else 375
-    # key: cond ? 'a' : 'b'  ->  {key: (when_true, when_false)}
+    # key: <prop> ? 'a' : 'b'  ->  {key: (prop, when_true, when_false)}
     vals = dict(
-        (m[0], (m[1], m[2]))
+        (m[0], (m[1], m[2], m[3]))
         for m in re.findall(
-            r"(\w+)\s*:\s*sunset\s*\?\s*'([^']*)'\s*:\s*'([^']*)'", src
+            r"(\w+)\s*:\s*(\w+)\s*\?\s*'([^']*)'\s*:\s*'([^']*)'", src
         )
     )
     return head, body, vals, width
 
 
-def resolve(body: str, vals: dict, state: bool) -> str:
+def resolve(body: str, vals: dict, state: dict) -> str:
     out = body
-    for key, (yes, no) in vals.items():
-        out = out.replace("{{" + key + "}}", yes if state else no)
+    for key, (prop, yes, no) in vals.items():
+        out = out.replace("{{" + key + "}}", yes if state.get(prop) else no)
     unresolved = set(re.findall(r"\{\{(\w+)\}\}", out))
     if unresolved:
         print(f"  !! unresolved holes: {sorted(unresolved)}", file=sys.stderr)
@@ -55,7 +55,13 @@ def main(files):
             sys.exit(f"no such artboard: {name}")
         head, body, vals, width = parse(path)
         stem = path.name.replace(".dc.html", "")
-        for state, label in ((False, "normal"), (True, "sunset")):
+        props = sorted({p for (p, _, _) in vals.values()})
+        combos = [({}, "normal")]
+        for p in props:
+            combos.append(({p: True}, p))
+        if len(props) > 1:
+            combos.append(({p: True for p in props}, "+".join(props)))
+        for state, label in combos:
             panes.append((f"{stem} — {label}", resolve(body, vals, state), width))
 
     html = [
