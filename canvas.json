@@ -4,9 +4,13 @@
     { "id": "v1", "name": "Superseded — Bauhaus premise" }
   ],
   "artboards": [
-    { "file": "Photographic.dc.html", "title": "Photographic — real image", "page": "v2", "x": 0, "y": 0, "w": 375, "h": 1400 },
-    { "file": "NightCity.dc.html", "title": "Night City — after dark", "page": "v2", "x": 460, "y": 0, "w": 375, "h": 1280 },
-    { "file": "DaySea.dc.html", "title": "Day Sea — saturated daylight", "page": "v2", "x": 920, "y": 0, "w": 375, "h": 1320 },
+    { "file": "Photographic.dc.html", "title": "Photographic — mobile", "page": "v2", "x": 0, "y": 0, "w": 375, "h": 1400 },
+    { "file": "NightCity.dc.html", "title": "Night City — mobile", "page": "v2", "x": 460, "y": 0, "w": 375, "h": 1280 },
+    { "file": "DaySea.dc.html", "title": "Day Sea — mobile", "page": "v2", "x": 920, "y": 0, "w": 375, "h": 1320 },
+
+    { "file": "PhotographicDesktop.dc.html", "title": "Photographic — desktop", "page": "v2", "x": 0, "y": 1560, "w": 1280, "h": 1040 },
+    { "file": "NightCityDesktop.dc.html", "title": "Night City — desktop", "page": "v2", "x": 1380, "y": 1560, "w": 1280, "h": 1040 },
+    { "file": "DaySeaDesktop.dc.html", "title": "Day Sea — desktop", "page": "v2", "x": 2760, "y": 1560, "w": 1280, "h": 1040 },
 
     { "file": "Main.dc.html", "title": "A · Rothschild Formal", "page": "v1", "x": 0, "y": 0, "w": 375, "h": 1230 },
     { "file": "HybridD.dc.html", "title": "D · conservative blend", "page": "v1", "x": 460, "y": 0, "w": 375, "h": 1280 },
@@ -21,14 +25,21 @@
       "x": 0,
       "y": -230,
       "w": 560,
-      "text": "Rebuilt from photographs of the city rather than from architectural theory.\n\nThe first five directions all inherited a \"Bauhaus / White City\" premise that was asserted early and never chosen — which is why they were all pale, flat and quiet. The real city is high-contrast and luminous: saturated turquoise water, deep cobalt dusk, warm amber light.\n\nSame content in all three. Flip the Sunset toggle on each."
+      "text": "Three directions, each now at phone size (top row) and full desktop width (below).\n\nBuilt from photographs of the city rather than from architectural theory. Same content everywhere — same shuls, same times, same honest-unknown row — so this is a comparison of visual language.\n\nFlip the Sunset toggle on any artboard."
+    },
+    {
+      "id": "desktop-gains",
+      "x": 0,
+      "y": 1420,
+      "w": 620,
+      "text": "What the extra width earned, per direction:\n\nPhotographic — the image now does two jobs at two scales: a scrimmed panoramic wash behind the masthead, and a crisp unscaled panel where the map placeholder used to be.\n\nNight City — the gradient has room to actually gradate, plus a flat skyline silhouette and a night map with glowing pins.\n\nDay Sea — a real horizon line, and the hero card overlaps the band edge with one curved corner: a balcony breaking a flat facade."
     },
     {
       "id": "photo-note",
-      "x": 0,
-      "y": 1440,
-      "w": 375,
-      "text": "The photograph is real — Tel Aviv at blue hour by Martin Furtschegger, CC BY 3.0 via Wikimedia Commons, self-hosted and resized to 39KB. Attribution is printed in the artboard because the licence requires it."
+      "x": 660,
+      "y": 1420,
+      "w": 400,
+      "text": "The photograph is real — Tel Aviv at blue hour by Martin Furtschegger, CC BY 3.0 via Wikimedia Commons. Self-hosted, resized to 39KB, credited in the artboard as the licence requires.\n\nWorth weighing: one photograph cannot represent 484 synagogues. Shipping this means either per-shul photography or a rotating set of city shots."
     },
     {
       "id": "v1-note",
@@ -36,7 +47,7 @@
       "y": -170,
       "w": 460,
       "page": "v1",
-      "text": "Kept for the record. All five were rejected as not looking like Tel Aviv. The palette here is a desaturated version of the real thing — compare the sea colour against any photograph of the coast."
+      "text": "Kept for the record. All five were rejected as not looking like Tel Aviv — the palette is a desaturated version of the real thing."
     }
   ],
   "launch": { "view": "canvas", "page": "v2" }

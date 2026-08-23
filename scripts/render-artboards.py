@@ -24,6 +24,9 @@ def parse(path: Path):
     src = path.read_text(encoding="utf-8")
     head = re.search(r"<helmet>(.*?)</helmet>", src, re.S).group(1)
     body = re.search(r"</helmet>(.*?)</x-dc>", src, re.S).group(1)
+    # the artboard's own root width, so desktop boards are not squeezed into 375
+    m = re.search(r'<div dir="rtl" style="width:\s*(\d+)px', body)
+    width = int(m.group(1)) if m else 375
     # key: cond ? 'a' : 'b'  ->  {key: (when_true, when_false)}
     vals = dict(
         (m[0], (m[1], m[2]))
@@ -31,7 +34,7 @@ def parse(path: Path):
             r"(\w+)\s*:\s*sunset\s*\?\s*'([^']*)'\s*:\s*'([^']*)'", src
         )
     )
-    return head, body, vals
+    return head, body, vals, width
 
 
 def resolve(body: str, vals: dict, state: bool) -> str:
@@ -50,10 +53,10 @@ def main(files):
         path = ROOT / name
         if not path.exists():
             sys.exit(f"no such artboard: {name}")
-        head, body, vals = parse(path)
+        head, body, vals, width = parse(path)
         stem = path.name.replace(".dc.html", "")
         for state, label in ((False, "normal"), (True, "sunset")):
-            panes.append((f"{stem} — {label}", resolve(body, vals, state)))
+            panes.append((f"{stem} — {label}", resolve(body, vals, state), width))
 
     html = [
         '<!doctype html><html><head><meta charset="utf-8">',
@@ -64,10 +67,10 @@ def main(files):
         ".cap{color:#fff;font:600 12px system-ui;margin-bottom:8px}</style>",
         "</head><body>",
     ]
-    for label, body in panes:
+    for label, body, width in panes:
         html.append(
             f'<div><div class="cap">{label}</div>'
-            f'<div style="width:375px">{body}</div></div>'
+            f'<div style="width:{width}px">{body}</div></div>'
         )
     html.append("</body></html>")
 
