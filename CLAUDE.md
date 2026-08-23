@@ -198,6 +198,29 @@ Light and dark follow the clock the same way — dark from real shkia, light fro
 real netz. The only genuine control is the override, for when the clock is right
 and the room is not.
 
+### Getting there
+
+Every synagogue card carries a **walking**-directions control. The coordinates come
+from the GIS layer, so the links are exact and need no geocoding:
+
+```
+https://www.google.com/maps/dir/?api=1&destination=<lat>,<lng>&travelmode=walking
+```
+
+**Walking, not driving — this is not a detail.** People walk to shul. Six minutes
+to Oppenheimer 5, on foot, often on erev Shabbat. Driving directions are wrong for
+nearly every journey this site serves.
+
+**Waze belongs on the individual synagogue page, not on the cards** — it is a
+driving app, useful for the rarer cross-town trip:
+
+```
+https://waze.com/ul?ll=<lat>,<lng>&navigate=yes
+```
+
+Note what this feature cannot do: on Shabbat many users will not touch a phone at
+all. That is an argument for the printable Friday sheet, not against the button.
+
 ### Photography
 
 Two fixed images site-wide: `tlv-day.jpg` in light mode, `tlv-night.jpg` in dark
