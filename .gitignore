@@ -8,3 +8,6 @@ tlv-minyanim-homepage.html
 
 # Generated artboard preview (rebuild with scripts/render-artboards.py)
 design/_preview.html
+
+# Standalone comparison pages (regenerable)
+design/mobile-homepages.html
