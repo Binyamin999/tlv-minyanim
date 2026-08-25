@@ -1,0 +1,17 @@
+{
+  "name": "tlv-minyanim-parser",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Standalone Hebrew minyan-time parser for TLV Minyanim. No framework, no database, no UI.",
+  "engines": { "node": ">=22.18" },
+  "scripts": {
+    "test": "node --test \"test/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit",
+    "coverage": "node scripts/coverage-report.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2"
+  }
+}
