@@ -1,17 +1,29 @@
 {
-  "name": "tlv-minyanim-parser",
+  "name": "tlv-minyanim",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Standalone Hebrew minyan-time parser for TLV Minyanim. No framework, no database, no UI.",
-  "engines": { "node": ">=22.18" },
+  "description": "Bilingual (he/en) minyan times for Tel Aviv-Yafo. Next.js App Router + Postgres/PostGIS, with a standalone Hebrew minyan-time parser in src/minyan-times.",
+  "engines": {
+    "node": ">=22.18"
+  },
   "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
     "test": "node --test \"test/**/*.test.ts\"",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit -p tsconfig.parser.json && tsc --noEmit -p tsconfig.json",
     "coverage": "node scripts/coverage-report.ts"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.5",
     "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "next": "^16.3.3",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
   }
 }

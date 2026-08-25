@@ -1,0 +1,178 @@
+/* Scaffold styling only. The real design lives in the artboards (phase 4);
+   what is here is the minimum needed to prove RTL, the type stack and 375px.
+
+   RULE, no exceptions: logical properties only. `margin-left` renders fine in
+   an LTR browser and wrong for every Hebrew reader. */
+
+:root {
+  /* Sampled from photographs of the city — see CLAUDE.md. Two cyans, split by
+     job: --tlv-sea decorates, --tlv-sea-ink carries text. */
+  --tlv-sea: #0e93ae;
+  --tlv-sea-ink: #0a6c82;
+  --tlv-night: #173a5e;
+  --tlv-ink: #0c1116;
+  --tlv-amber: #f0b45c;
+  --tlv-sand: #e0cfb4;
+  --tlv-terra-ink: #ad5634;
+
+  --surface: #ffffff;
+  --page: #f4f7f8;
+  --ink: var(--tlv-ink);
+  --ink-quiet: color-mix(in srgb, var(--tlv-ink) 75%, transparent);
+  --hairline: color-mix(in srgb, var(--tlv-ink) 12%, transparent);
+
+  --font-ui: 'Assistant', system-ui, sans-serif;
+  --font-display: 'Frank Ruhl Libre', Georgia, serif;
+}
+
+/* TODO(phase 4): mode follows the real clock — dark from shkia, light from
+   netz — with a user override drawn inside the page. Until the zmanim library
+   is wired in, the OS preference is the honest stand-in. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface: #131a21;
+    --page: #0c1116;
+    --ink: #eef4f6;
+    --ink-quiet: color-mix(in srgb, #eef4f6 75%, transparent);
+    --hairline: color-mix(in srgb, #eef4f6 16%, transparent);
+    --tlv-sea-ink: #6fd3e8;
+    --tlv-terra-ink: #e59468;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: light dark;
+}
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Times must align in a column, and Hebrew text runs RTL around Latin digits.
+   Both are handled here rather than at each call site. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+/* A clock time inside RTL prose: isolate it so the surrounding direction
+   cannot reorder "13:30" or drag punctuation across it. */
+.time {
+  font-variant-numeric: tabular-nums;
+  unicode-bidi: isolate;
+  direction: ltr;
+}
+
+.page {
+  max-inline-size: 40rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+  padding-block: 2rem 4rem;
+}
+
+.masthead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1rem;
+  margin-block-end: 2rem;
+}
+
+.masthead h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 6vw, 2.25rem);
+  margin: 0;
+}
+
+.masthead p {
+  margin: 0;
+  color: var(--ink-quiet);
+}
+
+.lang-switch {
+  margin-inline-start: auto;
+  color: var(--tlv-sea-ink);
+  font-weight: 600;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.card h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.card .address {
+  margin: 0.25rem 0 1rem;
+  color: var(--ink-quiet);
+  font-size: 0.9375rem;
+}
+
+.minyanim {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-block-start: 1px solid var(--hairline);
+}
+
+.minyan {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.75rem;
+  padding-block: 0.625rem;
+  border-block-end: 1px solid var(--hairline);
+}
+
+.minyan .service {
+  font-weight: 600;
+}
+
+.minyan .value {
+  /* `auto` on the inline-start margin pushes the value to the far edge in both
+     directions — the whole reason for logical properties. */
+  margin-inline-start: auto;
+  /* At 375px the honest-unknown sentence is the longest line on the page. Let
+     it wrap inside its flex item rather than widen the page. */
+  min-inline-size: 0;
+  overflow-wrap: break-word;
+}
+
+/* The honest-unknown row is quiet on purpose — see CLAUDE.md. Do not make it
+   louder; its quietness is the design saying we do not know. */
+.minyan .value.unknown {
+  color: var(--ink-quiet);
+  font-style: normal;
+}
+
+.verified {
+  margin-block-start: 1rem;
+  font-size: 0.8125rem;
+  color: var(--ink-quiet);
+}
+
+.verified .stamp {
+  unicode-bidi: isolate;
+}
