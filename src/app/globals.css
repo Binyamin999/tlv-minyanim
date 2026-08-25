@@ -176,3 +176,175 @@ body {
 .verified .stamp {
   unicode-bidi: isolate;
 }
+
+/* --------------------------------------------------------------------------
+   Phase 2 — the shul index and the shul page.
+
+   Still scaffold, not the design (that is phase 4, already in the artboards).
+   Logical properties only, and everything below is checked at 375px.
+   -------------------------------------------------------------------------- */
+
+.home-link {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.section-heading {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.0625rem;
+  margin-block: 1.5rem 0.5rem;
+}
+
+/* --- index ---------------------------------------------------------- */
+
+.shul-index {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-block-start: 1px solid var(--hairline);
+}
+
+.shul-index-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.125rem 0.75rem;
+  padding-block: 0.75rem;
+  border-block-end: 1px solid var(--hairline);
+}
+
+.shul-link {
+  color: inherit;
+  text-decoration-color: var(--hairline);
+  text-underline-offset: 3px;
+}
+
+.shul-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.0625rem;
+  /* A Hebrew name inside an English page is its own bidi run. */
+  unicode-bidi: isolate;
+}
+
+.shul-index-item .address {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--ink-quiet);
+  unicode-bidi: isolate;
+}
+
+.walk-link {
+  margin-inline-start: auto;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--tlv-sea-ink);
+  white-space: nowrap;
+}
+
+/* Present for assistive technology, absent visually. */
+.visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* --- shul page ------------------------------------------------------ */
+
+.shul-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.375rem, 5.5vw, 1.75rem);
+  margin: 0;
+  unicode-bidi: isolate;
+}
+
+.shul .address {
+  margin-block: 0.25rem 0.75rem;
+  unicode-bidi: isolate;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin: 0;
+}
+
+.tag {
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  padding-block: 0.125rem;
+  padding-inline: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--ink-quiet);
+}
+
+.tag-status {
+  border-color: color-mix(in srgb, var(--tlv-terra-ink) 45%, transparent);
+  color: var(--tlv-terra-ink);
+}
+
+.day-block {
+  margin-block-start: 0.5rem;
+}
+
+.quiet {
+  margin-block: 0.25rem;
+  font-size: 0.875rem;
+  color: var(--ink-quiet);
+}
+
+/* Rows the parser flagged. Set apart so they can never read as confirmed,
+   and quiet rather than alarming — the point is that we do not know. */
+.unconfirmed .minyanim {
+  opacity: 0.85;
+}
+
+.minyan .reasons {
+  flex-basis: 100%;
+  font-size: 0.75rem;
+  color: var(--ink-quiet);
+}
+
+.minyan .season {
+  font-weight: 400;
+  color: var(--ink-quiet);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-block: 1rem 0;
+}
+
+.action {
+  font-weight: 600;
+  color: var(--tlv-sea-ink);
+}
+
+.action-quiet {
+  font-weight: 400;
+  color: var(--ink-quiet);
+}
+
+/* 375px insurance. Every flex item that can hold a long Hebrew or Latin run
+   must be allowed to shrink below its content width, or the whole page grows
+   a horizontal scrollbar on a phone. */
+.shul-title,
+.minyan .service,
+.shul-index-item .address,
+.shul-name {
+  min-inline-size: 0;
+  overflow-wrap: break-word;
+}

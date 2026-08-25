@@ -13,16 +13,19 @@
     "start": "next start",
     "test": "node --test \"test/**/*.test.ts\"",
     "typecheck": "tsc --noEmit -p tsconfig.parser.json && tsc --noEmit -p tsconfig.json",
-    "coverage": "node scripts/coverage-report.ts"
+    "coverage": "node scripts/coverage-report.ts",
+    "import:seed": "node --env-file-if-exists=.env.local scripts/import-seed.ts"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
     "typescript": "^5.7.2"
   },
   "dependencies": {
     "next": "^16.3.3",
+    "pg": "^8.23.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   }
