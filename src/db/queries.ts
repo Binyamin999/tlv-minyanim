@@ -214,3 +214,49 @@ export async function getSynagogueBySlug(slug: string): Promise<SynagogueWithMin
 
   return { ...toSynagogue(row), minyanim: minyanRows.map(toMinyan) };
 }
+
+/**
+ * Every synagogue with its minyanim, for the timeline.
+ *
+ * Two queries and a join in JavaScript rather than one query with an
+ * aggregate, because the timeline needs whole rows and the row count is small:
+ * 484 synagogues — the whole city, not just Ramat Aviv — is on the order of
+ * 2,000 minyanim, which is nothing to load and nothing to iterate.
+ *
+ * The zmanim cannot be computed in SQL, so filtering by time has to happen in
+ * TypeScript regardless; pushing a half-filter into Postgres would only split
+ * the rule across two languages. `is_publishable` IS pushed down, because that
+ * gate is defined in the database and belongs there.
+ *
+ * TODO(phase 4): when geo search lands, add an ST_DWithin predicate here so a
+ * radius query never loads the city.
+ */
+export async function listSynagoguesWithMinyanim(): Promise<SynagogueWithMinyanim[]> {
+  const rows = await query<SynagogueRow>(
+    `SELECT ${SYNAGOGUE_COLUMNS}
+       FROM synagogues
+      WHERE status IN ('active', 'seasonal')
+      ORDER BY name_he COLLATE "C"`,
+  );
+  if (rows.length === 0) return [];
+
+  const minyanRows = await query<MinyanRow & { synagogue_id: number }>(
+    `SELECT synagogue_id, id, service, day_type, season, kind, fixed_time, anchor,
+            offset_minutes, sign_basis, raw_text, raw_segment, needs_review, is_publishable
+       FROM minyanim
+      WHERE is_publishable
+      ORDER BY synagogue_id, day_type, source_index`,
+  );
+
+  const byShul = new Map<number, Minyan[]>();
+  for (const minyanRow of minyanRows) {
+    const list = byShul.get(minyanRow.synagogue_id);
+    if (list) list.push(toMinyan(minyanRow));
+    else byShul.set(minyanRow.synagogue_id, [toMinyan(minyanRow)]);
+  }
+
+  return rows.map((row) => ({
+    ...toSynagogue(row),
+    minyanim: byShul.get(row.id) ?? [],
+  }));
+}

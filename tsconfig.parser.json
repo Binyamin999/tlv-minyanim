@@ -18,5 +18,10 @@
     "verbatimModuleSyntax": true,
     "skipLibCheck": true
   },
-  "include": ["src/minyan-times/**/*.ts", "test/**/*.ts", "scripts/**/*.ts"]
+  "include": [
+    "src/minyan-times/**/*.ts",
+    "src/zmanim/**/*.ts",
+    "test/**/*.ts",
+    "scripts/**/*.ts"
+  ]
 }

@@ -269,6 +269,45 @@ display, or terracotta accents as a *ground*. That palette reads Lisbon or Tusca
 
 ---
 
+## Zmanim — decisions that are already made
+
+Ground truth lives in `docs/zmanim-ground-truth.md`, sourced from published
+luachot rather than from the library we use. Never re-derive these by asking a
+model; if a number here looks wrong, check it against that document and its
+cited sources.
+
+**Candle lighting in Tel Aviv is `shkia − 22min`, not 20.** `@hebcal/core`
+ships 20 for the Tel Aviv geoname and Hebcal's own web pages print 20 — but the
+Tel Aviv-Yafo Religious Council, the halachic authority for exactly the shuls
+in this database, publishes 22, and MyZmanim labels it `22 דקות קודם השקיעה`.
+Verified across all 34 published Fridays of 5786 in calendar 2026; no date fits
+20, 21 or 23. Set explicitly in `CANDLE_LIGHTING_MINUTES_TLV`. Where published
+authorities split, take the earlier: two minutes early costs nothing, two
+minutes late is chillul Shabbat. **Tel Aviv only** — Jerusalem is 40, Haifa 30.
+
+**`tzeit` means the stringent 8.5° value**, matching the Rabbanut. Be aware the
+anchor is doing two jobs: `יציאת שבת` on a luach is 8.5° (≈ shkia + 39 here),
+while a shul saying its Arvit is "at tzeit" usually means shkia + 13.5 to 25.
+Resolving an Arvit minyan against 8.5° lists it **20+ minutes late** — the exact
+failure this project exists to prevent. No minyan in the Ramat Aviv 16 uses this
+anchor, so it is latent, not live. **Never map a bare `בזמן` on an Arvit line
+onto any tzeit value** — that is guessing an offset. If a shul's Arvit offset
+matters, ask the gabbai.
+
+**`candle_lighting` is undefined on most dates** and must resolve to *nothing*
+on a Tuesday, never to `shkia − 32`. The case that will actually bite: when Yom
+Tov falls on Saturday night, candles are lit **after tzeit** from a pre-existing
+flame, not at `shkia − 22`. Live in 5787: Rosh Hashana (2026-09-12), Sukkot
+(2026-09-26) and Shmini Atzeret (2026-10-03) all fall on Shabbat.
+
+**`ח` / `ק` in the source data means the clock, not the season** — שעון חורף /
+שעון קיץ, i.e. standard time vs DST. It is a DST distinction wearing seasonal
+words, and the switch dates are Israel's, which are not the EU's or the US's.
+
+**All zmanim come from the library.** Never compute one with a model, never
+hand-roll the astronomy, and never store a resolved time — resolution happens at
+read time so the rule stays correct as sunset moves.
+
 ## Data sources
 
 | Source | What it gives |

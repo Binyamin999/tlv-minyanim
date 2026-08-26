@@ -55,6 +55,14 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
         </Link>
       </header>
 
+      {/* The engine proof, phase 3. The designed answer to this question is
+          the phase 4 homepage; this is a plain link to a plain list. */}
+      <p className="actions">
+        <Link className="action" href={`/${locale}/next`}>
+          {t.nextMinyanimLink}
+        </Link>
+      </p>
+
       <h2 className="section-heading">{t.synagogues}</h2>
 
       <ul className="shul-index">

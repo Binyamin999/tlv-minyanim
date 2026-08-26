@@ -1,5 +1,6 @@
 import type { Locale } from './locales';
 import type { DayType, ReviewReason, Season, Service, Zman } from '@/minyan-times';
+import type { DayPhase, UnconfirmedReason } from '@/zmanim';
 import type { Movement, Nusach, SynagogueStatus } from '@/lib/taxonomy';
 
 /**
@@ -9,6 +10,8 @@ import type { Movement, Nusach, SynagogueStatus } from '@/lib/taxonomy';
  *
  * Hebrew is authored first and is the reference; English follows it.
  */
+
+type UnconfirmedReasonCode = UnconfirmedReason['code'];
 
 const he = {
   siteName: 'מניינים תל אביב',
@@ -88,6 +91,43 @@ const he = {
     unparsed_text: 'טקסט שלא פוענח',
     implausible_for_service: 'שעה לא סבירה לתפילה הזאת',
   } satisfies Record<ReviewReason['code'], string>,
+
+  /* --- the timeline (phase 3) -------------------------------------- */
+  nextMinyanim: 'המניין הבא',
+  nextMinyanimLink: 'איפה אפשר להתפלל עכשיו',
+  /** The horizon the page is answering for. */
+  withinMinutes: (minutes: number) => `ב-${minutes} הדקות הקרובות`,
+  inMinutes: (minutes: number) => (minutes <= 0 ? 'עכשיו' : `בעוד ${minutes} דק'`),
+  noneUpcoming: 'אין מניין עם שעה ידועה בטווח הזה',
+  /** The honest-unknown list. Quiet on purpose — see CLAUDE.md. */
+  unconfirmedTimesHeading: 'מתפללים כאן, השעה לא ידועה',
+  unconfirmedTimesNote:
+    'בבתי הכנסת האלה יש את התפילה הזאת, אבל המקור לא מסר את השעה. לא נמציא שעה.',
+  /** The halachic span for the service — עובדה על היום, לא על בית הכנסת. */
+  betweenTimes: (from: string, to: string) => `בין ${from} ל-${to}`,
+  unconfirmedReasons: {
+    unknown_offset: 'המקור כתב "בזמן" בלבד',
+    erev_shabbat_time_unstated: 'ערב שבת — התפילה זזה לכניסת שבת, והמקור לא ציין לאיזו שעה',
+    erev_yom_tov_time_unstated: 'ערב חג — התפילה זזה, והמקור לא ציין לאיזו שעה',
+    yom_tov_schedule_unknown: 'חג — לוח הזמנים של החג אינו ידוע לנו',
+    anchor_not_on_this_date: 'הזמן שהכלל נשען עליו לא קיים ביום הזה',
+    zman_not_computable: 'לא ניתן לחשב את הזמן ליום הזה',
+  } satisfies Record<UnconfirmedReasonCode, string>,
+  phases: {
+    weekday: 'יום חול',
+    erev_shabbat: 'ערב שבת',
+    shabbat: 'שבת',
+    motzaei_shabbat: 'מוצאי שבת',
+  } satisfies Record<DayPhase, string>,
+
+  /* --- resolved times and zmanim ------------------------------------ */
+  /** The clock time a rule works out to. The rule stays on screen beside it. */
+  resolvesTo: (clock: string) => `= ${clock}`,
+  today: 'היום',
+  zmanimToday: 'זמני היום בתל אביב',
+  /** Every resolved time is computed, not quoted. Say so once, plainly. */
+  zmanimSource: 'הזמנים מחושבים לתל אביב-יפו לפי הגר"א, בשעון ישראל',
+
   /** Walking, not driving. People walk to shul — see CLAUDE.md. */
   walkingDirections: 'מסלול הליכה',
   wazeDirections: 'ניווט ב־Waze',
@@ -169,6 +209,38 @@ const en: typeof he = {
     unparsed_text: 'Text the parser could not read',
     implausible_for_service: 'Implausible time for this service',
   },
+
+  nextMinyanim: 'Next minyan',
+  nextMinyanimLink: 'Where you can daven right now',
+  withinMinutes: (minutes: number) => `in the next ${minutes} minutes`,
+  inMinutes: (minutes: number) => (minutes <= 0 ? 'now' : `in ${minutes} min`),
+  noneUpcoming: 'No minyan with a known time in this window',
+  unconfirmedTimesHeading: 'Davening here, time not known',
+  unconfirmedTimesNote:
+    'These synagogues hold this service, but the source never gave a time. We will not invent one.',
+  betweenTimes: (from: string, to: string) => `between ${from} and ${to}`,
+  unconfirmedReasons: {
+    unknown_offset: 'The source said only "at the proper time"',
+    erev_shabbat_time_unstated:
+      'Erev Shabbat — the service moves to candle lighting, and the source never said to when',
+    erev_yom_tov_time_unstated:
+      'Erev Yom Tov — the service moves, and the source never said to when',
+    yom_tov_schedule_unknown: 'Yom Tov — we do not have the festival schedule',
+    anchor_not_on_this_date: 'The zman this rule depends on does not occur on this date',
+    zman_not_computable: 'The zman could not be computed for this date',
+  },
+  phases: {
+    weekday: 'Weekday',
+    erev_shabbat: 'Erev Shabbat',
+    shabbat: 'Shabbat',
+    motzaei_shabbat: 'Motzaei Shabbat',
+  },
+
+  resolvesTo: (clock: string) => `= ${clock}`,
+  today: 'today',
+  zmanimToday: "Today's zmanim in Tel Aviv",
+  zmanimSource: 'Computed for Tel Aviv-Yafo, GRA, Israel time',
+
   walkingDirections: 'Walking directions',
   wazeDirections: 'Navigate with Waze',
   directionsTo: (name: string) => `to ${name}`,

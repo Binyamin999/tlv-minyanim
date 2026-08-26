@@ -10,8 +10,10 @@ import { VerifiedStamp } from '@/components/VerifiedStamp';
 import { walkingDirectionsUrl, wazeUrl } from '@/lib/directions';
 import { displayMinyanTime } from '@/lib/minyan-display';
 import { synagogueJsonLd } from '@/lib/jsonld';
+import { nextOccurrences, weekdayName, type NextOccurrence } from '@/lib/resolved-times';
 import { foreignAttrs, localisedAddress, localisedName } from '@/lib/synagogue-display';
 import type { DayType, Service } from '@/minyan-times';
+import { clockFaceOf, jerusalemDateOf, TEL_AVIV, zmanimFor, type DayZmanim } from '@/zmanim';
 
 /**
  * A synagogue page. This is the landing page — SEO is the entire discovery
@@ -80,6 +82,14 @@ export default async function ShulPage({
   // without saying so.
   const unconfirmed = synagogue.minyanim.filter((minyan) => !minyan.isPublishable);
 
+  // Resolved times for this shul's own rules, from the same engine that
+  // drives /next — so `shkia - 20min` shows the clock face it actually works
+  // out to today. The rule stays on screen beside it; the rule is the honest
+  // thing and the clock face is the convenience.
+  const now = new Date();
+  const resolved = nextOccurrences(synagogue, now);
+  const today = zmanimFor(TEL_AVIV, jerusalemDateOf(now));
+
   const url = `${SITE_URL}/${locale}/shul/${synagogue.slug}`;
   const jsonLd = synagogueJsonLd({ synagogue, minyanim: synagogue.minyanim, locale, url, t });
 
@@ -136,7 +146,13 @@ export default async function ShulPage({
               ) : (
                 <ul className="minyanim">
                   {rows.map((minyan) => (
-                    <MinyanRow key={minyan.id} minyan={minyan} t={t} />
+                    <MinyanRow
+                      key={minyan.id}
+                      minyan={minyan}
+                      t={t}
+                      locale={locale}
+                      resolved={resolved.get(minyan.id)}
+                    />
                   ))}
                 </ul>
               )}
@@ -159,11 +175,15 @@ export default async function ShulPage({
             <p className="quiet">{t.unconfirmedNote}</p>
             <ul className="minyanim">
               {unconfirmed.map((minyan) => (
-                <MinyanRow key={minyan.id} minyan={minyan} t={t} showReasons />
+                <MinyanRow key={minyan.id} minyan={minyan} t={t} locale={locale} showReasons />
               ))}
             </ul>
           </section>
         ) : null}
+
+        {/* The arithmetic behind every resolved time above, so a reader can
+            check it rather than trust it. */}
+        <ZmanimToday day={today} t={t} />
 
         <p className="actions">
           {/* Walking first, and on every listing: people walk to shul. */}
@@ -206,16 +226,51 @@ export default async function ShulPage({
   );
 }
 
+function ZmanimToday({ day, t }: { day: DayZmanim; t: Dictionary }) {
+  // Only the anchors an actual minyan in our data hangs off, plus candle
+  // lighting on the days it exists. A full luach is somebody else's product.
+  const rows: Array<[string, Date]> = [
+    [t.zmanim.netz, day.netz],
+    [t.zmanim.chatzot, day.chatzot],
+    [t.zmanim.shkia, day.shkia],
+    [t.zmanim.tzeit, day.tzeit],
+  ];
+  if (day.candle_lighting) rows.push([t.zmanim.candle_lighting, day.candle_lighting]);
+
+  return (
+    <section className="day-block zmanim-today">
+      <h2 className="section-heading">{t.zmanimToday}</h2>
+      <ul className="minyanim">
+        {rows.map(([label, at]) => (
+          <li className="minyan" key={label}>
+            <span className="service">{label}</span>
+            <span className="value time tabular">{clockFaceOf(at)}</span>
+          </li>
+        ))}
+      </ul>
+      <p className="quiet zmanim-source">{t.zmanimSource}</p>
+    </section>
+  );
+}
+
 function MinyanRow({
   minyan,
   t,
+  locale,
+  resolved,
   showReasons = false,
 }: {
   minyan: Minyan;
   t: Dictionary;
+  locale: Locale;
+  resolved?: NextOccurrence | undefined;
   showReasons?: boolean;
 }) {
   const time = displayMinyanTime(minyan.time, t);
+  // Shown only where the rule is not already a clock face. Repeating "= 06:30"
+  // beside a stored 06:30 would be noise; `shkia - 20min` is the case this is
+  // for. An unknown never gets one — there is nothing to resolve.
+  const showResolved = minyan.time.kind === 'relative' && resolved !== undefined;
 
   return (
     <li className="minyan">
@@ -239,6 +294,18 @@ function MinyanRow({
       >
         {time.text}
       </span>
+
+      {showResolved && resolved ? (
+        <span className="resolved">
+          <span className="time tabular">{t.resolvesTo(resolved.clock)}</span>
+          {/* Say which day when it is not today: a Shabbat-only minyan
+              resolving to next Saturday must not read as "in ten minutes". */}
+          <span className="quiet">
+            {' '}
+            {resolved.isToday ? t.today : weekdayName(resolved.instant, locale)}
+          </span>
+        </span>
+      ) : null}
 
       {showReasons ? (
         <span className="reasons">

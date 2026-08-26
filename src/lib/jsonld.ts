@@ -5,11 +5,19 @@
  * not merely present. Two rules follow from that, and both are about refusing
  * to state more than we know:
  *
- * 1. Only `fixed` times become an `opens`. A `relative` time has no clock face
- *    until a zmanim library resolves it for a given date (phase 3), and an
- *    `unknown` one has none at all. Emitting a plausible-looking `opens` for
- *    either would be publishing a fabricated time in machine-readable form —
- *    the worst place to be wrong, because nobody sees it to correct it.
+ * 1. Only `fixed` times become an `opens`. Revisited in phase 3, when the
+ *    zmanim library landed and a `relative` time COULD be resolved — and the
+ *    answer did not change. `OpeningHoursSpecification` states a recurring
+ *    weekly clock time; `shkia - 20min` is a different clock time every week,
+ *    so today's resolved value would be published as a permanent claim and be
+ *    wrong by next Shabbat. An `unknown` has no clock face at all. Emitting a
+ *    plausible-looking `opens` for either would be publishing a fabricated
+ *    time in machine-readable form — the worst place to be wrong, because
+ *    nobody sees it to correct it.
+ *
+ *    TODO: schema.org has `validFrom`/`validThrough`; a nightly job could emit
+ *    a dated spec per week. That is a refresh-engine change, not a rendering
+ *    one, and it needs the nightly diff job first.
  *
  * 2. Only publishable rows are emitted. A row with a pending review reason is
  *    not confirmed, and structured data is a claim.

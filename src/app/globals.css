@@ -25,19 +25,20 @@
   --font-display: 'Frank Ruhl Libre', Georgia, serif;
 }
 
-/* TODO(phase 4): mode follows the real clock — dark from shkia, light from
-   netz — with a user override drawn inside the page. Until the zmanim library
-   is wired in, the OS preference is the honest stand-in. */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --surface: #131a21;
-    --page: #0c1116;
-    --ink: #eef4f6;
-    --ink-quiet: color-mix(in srgb, #eef4f6 75%, transparent);
-    --hairline: color-mix(in srgb, #eef4f6 16%, transparent);
-    --tlv-sea-ink: #6fd3e8;
-    --tlv-terra-ink: #e59468;
-  }
+/* Dark from real shkia, light from real netz. `data-mode` is set on <html> by
+   the server from that day's zmanim — see src/lib/theme.ts. Not the OS
+   preference: the sky over Tel Aviv is the thing this site is about.
+
+   TODO(phase 4): the אוטו׳ / sun / moon override, drawn inside the page. There
+   is deliberately no `sunset` toggle and there never will be. */
+[data-mode='dark'] {
+  --surface: #131a21;
+  --page: #0c1116;
+  --ink: #eef4f6;
+  --ink-quiet: color-mix(in srgb, #eef4f6 75%, transparent);
+  --hairline: color-mix(in srgb, #eef4f6 16%, transparent);
+  --tlv-sea-ink: #6fd3e8;
+  --tlv-terra-ink: #e59468;
 }
 
 *,
@@ -46,9 +47,8 @@
   box-sizing: border-box;
 }
 
-html {
-  color-scheme: light dark;
-}
+/* `color-scheme` is set inline on <html> alongside `data-mode`, so form
+   controls and scrollbars follow the sky rather than the OS. */
 
 body {
   margin: 0;
@@ -347,4 +347,84 @@ body {
 .shul-name {
   min-inline-size: 0;
   overflow-wrap: break-word;
+}
+
+/* --- phase 3: the timeline ------------------------------------------
+   Scaffold only. The designed answer to "where can I daven now" is phase 4
+   and already settled in the artboards; this is the minimum that keeps the
+   proof readable at 375px in both directions. */
+
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.timeline-row {
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+}
+
+.timeline-row > p {
+  margin: 0 0 0.25rem;
+}
+
+.timeline-row > p:last-child {
+  margin-block-end: 0;
+}
+
+.timeline-when {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.timeline-clock {
+  font-size: 1.5rem;
+  font-weight: 700;
+  /* Times must align down the column whatever the digits are. */
+  font-variant-numeric: tabular-nums;
+}
+
+.timeline-what .service {
+  font-weight: 600;
+}
+
+/* The resolved clock face beside a rule. `= 18:52` next to `20 דק' לפני
+   שקיעה`: isolate it so RTL cannot drag the equals sign across the digits. */
+.resolved {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  margin-inline-start: 0.5rem;
+  unicode-bidi: isolate;
+}
+
+.resolved .time {
+  font-weight: 600;
+  color: var(--tlv-sea-ink);
+}
+
+.zmanim-today .minyan .value {
+  color: var(--ink);
+}
+
+.zmanim-source {
+  font-size: 0.8125rem;
+  margin-block-start: 0.5rem;
+}
+
+.rule {
+  font-size: 0.875rem;
+}
+
+@media (max-width: 26rem) {
+  .timeline-clock {
+    font-size: 1.25rem;
+  }
 }

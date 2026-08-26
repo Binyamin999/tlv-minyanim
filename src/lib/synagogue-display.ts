@@ -1,4 +1,3 @@
-import type { Synagogue } from '@/db/queries';
 import type { Locale } from '@/i18n/locales';
 
 /**
@@ -11,20 +10,35 @@ import type { Locale } from '@/i18n/locales';
  * being reordered by the surrounding LTR paragraph. Mixed Hebrew, English and
  * digits on one line is exactly where RTL breaks.
  */
+/**
+ * Only the four columns these functions read. Narrower than `Synagogue` on
+ * purpose: the timeline hands around a lighter row shape, and a function that
+ * formats a name has no business demanding a nusach.
+ */
+export interface NamedPlace {
+  nameHe: string;
+  nameEn: string | null;
+  addressHe: string | null;
+  addressEn: string | null;
+}
+
 export interface LocalisedText {
   text: string;
   /** True when the text is not in the page's language. */
   foreign: boolean;
 }
 
-export function localisedName(synagogue: Synagogue, locale: Locale): LocalisedText {
+export function localisedName(synagogue: NamedPlace, locale: Locale): LocalisedText {
   if (locale === 'he') return { text: synagogue.nameHe, foreign: false };
   return synagogue.nameEn
     ? { text: synagogue.nameEn, foreign: false }
     : { text: synagogue.nameHe, foreign: true };
 }
 
-export function localisedAddress(synagogue: Synagogue, locale: Locale): LocalisedText | null {
+export function localisedAddress(
+  synagogue: NamedPlace,
+  locale: Locale,
+): LocalisedText | null {
   if (locale === 'he') {
     return synagogue.addressHe ? { text: synagogue.addressHe, foreign: false } : null;
   }
