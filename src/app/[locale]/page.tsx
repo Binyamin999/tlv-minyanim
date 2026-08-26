@@ -1,30 +1,65 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 
-import { listSynagogues } from '@/db/queries';
+import { Filters } from '@/components/home/Filters';
+import { HeroCard, HeroEmpty } from '@/components/home/HeroCard';
+import { Masthead } from '@/components/home/Masthead';
+import { ShulCard, UnknownShulCard } from '@/components/home/ShulCard';
+import { PinIcon } from '@/components/icons';
+import { listSynagoguesWithMinyanim } from '@/db/queries';
 import { localeAlternates } from '@/i18n/alternates';
 import { getDictionary } from '@/i18n/dictionaries';
-import { isLocale, type Locale } from '@/i18n/locales';
-import { walkingDirectionsUrl } from '@/lib/directions';
-import { foreignAttrs, localisedAddress, localisedName } from '@/lib/synagogue-display';
+import { LOCALES, isLocale } from '@/i18n/locales';
+import {
+  SERVICE_FILTERS,
+  firstParam,
+  homeHref,
+  isNusach,
+  isServiceFilter,
+  type ServiceFilter,
+} from '@/lib/home-filters';
+import { sunsetWarmth } from '@/lib/sunset-warmth';
+import { NUSACHIM, type Nusach } from '@/lib/taxonomy';
+import { MODE_COOKIE, modeAt, readModePreference } from '@/lib/theme';
+import {
+  TEL_AVIV,
+  clockFaceOf,
+  nextMinyanim,
+  parshaAt,
+  type UnconfirmedMinyan,
+  type UpcomingMinyan,
+} from '@/zmanim';
 
 /**
- * The index of synagogues, server-rendered from Postgres.
+ * The homepage. "Where can I daven in the next 40 minutes?" — asked and
+ * answered above the fold, server-rendered, in two languages.
  *
- * Plain on purpose. The designed homepage — the one that answers "where can I
- * daven in the next 40 minutes?" — is phase 4 and already settled in the
- * artboards; building a second design here would only be thrown away.
- * TODO(phase 4): replace with the real homepage.
+ * Everything on this page is HTML before any JavaScript runs. Every synagogue
+ * page is a landing page and so is this one; SEO is the entire discovery
+ * strategy, and a homepage that needs a bundle to show a time has failed its
+ * main job. The single client component on the page is the light/dark
+ * override, which is a preference, not content.
  */
 
 /**
- * Read at request time. The row set changes whenever the importer or the
- * nightly diff job runs, and a page cached at build time would go stale
- * silently — the exact failure this product exists to avoid.
- * TODO(phase 4): revalidate on a timer once the refresh cadence is fixed.
+ * The clock moves and so does the answer. Nothing here may be cached — a
+ * homepage frozen at build time would confidently show yesterday's next
+ * minyan, which is the exact failure this product exists to prevent.
  */
 export const dynamic = 'force-dynamic';
+
+/**
+ * Eight days.
+ *
+ * Not the 40 minutes of the product question: the card list is one card per
+ * synagogue showing when *that* shul next davens, so a shul whose only Mincha
+ * is tomorrow at 13:00 still has a card. Eight rather than seven so that a
+ * Shabbat-only minyan is reachable from any day of the week including from
+ * Saturday night. The hero, which really is "the next one", is simply the
+ * first entry of that same ordering.
+ */
+const HORIZON_MINUTES = 8 * 24 * 60;
 
 export async function generateMetadata({
   params,
@@ -34,68 +69,201 @@ export async function generateMetadata({
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const t = getDictionary(locale);
-  return { title: t.tagline, alternates: localeAlternates(locale, '') };
+  return {
+    title: t.tagline,
+    description: t.nextMinyanimLink,
+    // Canonical is the unfiltered page: the chip views are the same content
+    // sliced, and a crawler should be told which one is the page.
+    alternates: localeAlternates(locale, ''),
+  };
 }
 
-export default async function LocaleHome({ params }: { params: Promise<{ locale: string }> }) {
+export default async function LocaleHome({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
-
+  const query = await searchParams;
   const t = getDictionary(locale);
-  const otherLocale: Locale = locale === 'he' ? 'en' : 'he';
-  const synagogues = await listSynagogues();
+
+  const now = new Date();
+  const skyMode = modeAt(now);
+  const modePreference = readModePreference((await cookies()).get(MODE_COOKIE)?.value);
+
+  const synagogues = await listSynagoguesWithMinyanim();
+  const timeline = nextMinyanim({
+    now,
+    within: HORIZON_MINUTES,
+    location: TEL_AVIV,
+    synagogues,
+  });
+
+  // Nusach is not part of placing a time, so the timeline does not carry it.
+  const nusachById = new Map(synagogues.map((shul) => [shul.id, shul.nusach]));
+  const availableNusachim = NUSACHIM.filter((option) =>
+    synagogues.some((shul) => shul.nusach === option),
+  );
+
+  const requestedNusach = firstParam(query.nusach);
+  const nusach: Nusach | null = isNusach(requestedNusach) ? requestedNusach : null;
+
+  const requestedService = firstParam(query.service);
+  // The default chip is the service of the soonest minyan anywhere. Not the
+  // artboard's literal `mincha`, and not the halachic window `now` falls in
+  // either: with no Arvit row in the source at all, "it is night, so Arvit"
+  // would answer the product's one question with an empty page.
+  const service: ServiceFilter = isServiceFilter(requestedService)
+    ? requestedService
+    : defaultService(timeline.upcoming);
+
+  const matchesNusach = (id: number) => nusach === null || nusachById.get(id) === nusach;
+
+  const upcoming = timeline.upcoming.filter(
+    (row) => matchesServiceFilter(row, service) && matchesNusach(row.synagogue.id),
+  );
+  const unconfirmed = timeline.unconfirmed.filter(
+    (row) => matchesServiceFilter(row, service) && matchesNusach(row.synagogue.id),
+  );
+
+  // One card per synagogue: its next occurrence. `upcoming` is already sorted
+  // ascending by instant, so the first sighting of a shul is its next time.
+  const resolved = firstPerSynagogue(upcoming);
+  const hero = resolved[0] ?? null;
+  const cards = resolved.slice(1);
+  // A shul only appears as unknown if we have no time for it at all under the
+  // current filter — otherwise the honest-unknown row would sit next to a time
+  // we do know and read as doubt about that time.
+  const known = new Set(resolved.map((row) => row.synagogue.id));
+  const unknownCards = firstPerSynagogue(unconfirmed).filter(
+    (row) => !known.has(row.synagogue.id),
+  );
+
+  const parsha = parshaAt(TEL_AVIV, now);
+  const hebrewDate =
+    locale === 'he' ? timeline.hebrewNow.renderGematriya : timeline.hebrewNow.renderEn;
 
   return (
-    <main className="page">
-      <header className="masthead">
-        <h1>{t.siteName}</h1>
-        <p>{t.tagline}</p>
-        <Link className="lang-switch" href={`/${otherLocale}`} hrefLang={otherLocale}>
-          {t.otherLanguageName}
-        </Link>
-      </header>
+    <>
+      <Masthead
+        locale={locale}
+        t={t}
+        modePreference={modePreference}
+        skyMode={skyMode}
+        hebrewDate={hebrewDate}
+        parsha={parsha ? (locale === 'he' ? parsha.he : parsha.en) : null}
+        shkia={clockFaceOf(timeline.today.shkia)}
+        localeHrefs={Object.fromEntries(
+          LOCALES.map((other) => [other, homeHref(other, service, nusach)]),
+        ) as Record<(typeof LOCALES)[number], string>}
+      >
+        {/* The page's h1, and it is the question rather than the brand: this
+            page exists to answer "where can I daven next", and the wordmark
+            above it is navigation. */}
+        <h1 className="band-hero-label">{t.nextNearYou}</h1>
+        {hero ? (
+          // Mincha only: the window that closes at shkia is Mincha's. A
+          // Shacharit does not get warmer because the sun is going down.
+          <HeroCard row={hero} warmth={warmthFor(hero, now)} locale={locale} t={t} />
+        ) : (
+          <HeroEmpty t={t} />
+        )}
+      </Masthead>
 
-      {/* The engine proof, phase 3. The designed answer to this question is
-          the phase 4 homepage; this is a plain link to a plain list. */}
-      <p className="actions">
-        <Link className="action" href={`/${locale}/next`}>
-          {t.nextMinyanimLink}
-        </Link>
-      </p>
+      <main className="home">
+        {/* Geo search is not built, so this states where the data is rather
+            than offering to move. The artboard's "שנה מיקום" action is the
+            entry point to radius search and arrives with it. */}
+        <p className="place">
+          <span className="place-pin" aria-hidden="true">
+            <PinIcon />
+          </span>
+          <span>{t.neighbourhood}</span>
+        </p>
 
-      <h2 className="section-heading">{t.synagogues}</h2>
+        <Filters
+          locale={locale}
+          t={t}
+          service={service}
+          nusach={nusach}
+          availableNusachim={availableNusachim}
+        />
 
-      <ul className="shul-index">
-        {synagogues.map((synagogue) => {
-          const name = localisedName(synagogue, locale);
-          const address = localisedAddress(synagogue, locale);
-          return (
-            <li className="shul-index-item" key={synagogue.slug}>
-              <Link className="shul-link" href={`/${locale}/shul/${synagogue.slug}`}>
-                <span className="shul-name" {...foreignAttrs(name)}>
-                  {name.text}
-                </span>
-              </Link>
-              {address ? (
-                <span className="address" {...foreignAttrs(address)}>
-                  {address.text}
-                </span>
-              ) : null}
-              {/* Walking, never driving. Waze is a driving app and belongs on
-                  the individual shul page only. */}
-              <a
-                className="walk-link"
-                href={walkingDirectionsUrl(synagogue.lat, synagogue.lng)}
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                {t.walkingDirections}
-                <span className="visually-hidden"> {t.directionsTo(name.text)}</span>
-              </a>
-            </li>
-          );
-        })}
-      </ul>
-    </main>
+        <h2 className="count">
+          {t.synagogueCount(cards.length + unknownCards.length + (hero ? 1 : 0))}
+        </h2>
+
+        <div className="cards">
+          {cards.map((row) => (
+            <ShulCard
+              key={`${row.synagogue.id}-${row.instant.getTime()}`}
+              row={row}
+              nusach={nusachById.get(row.synagogue.id) ?? null}
+              warmth={warmthFor(row, now)}
+              locale={locale}
+              t={t}
+            />
+          ))}
+          {/* Last, and quiet. Never sorted in among times we know: a thing with
+              no time cannot have a position among things that do. */}
+          {unknownCards.map((row) => (
+            <UnknownShulCard
+              key={`${row.synagogue.id}-${row.service}-${row.phase}`}
+              row={row}
+              nusach={nusachById.get(row.synagogue.id) ?? null}
+              locale={locale}
+              t={t}
+            />
+          ))}
+        </div>
+
+        <footer className="home-foot">
+          <p>{t.footerComputed}</p>
+          <p>{t.footerNeverGuess}</p>
+          <p className="home-foot-source">{t.zmanimSource}</p>
+        </footer>
+      </main>
+    </>
   );
+}
+
+/** Mincha warms toward shkia; nothing else does. See src/lib/sunset-warmth.ts. */
+function warmthFor(row: UpcomingMinyan, now: Date): number {
+  return row.service === 'mincha' ? sunsetWarmth(now, row.shkia) : 0;
+}
+
+/**
+ * Structural on purpose: the resolved and the unconfirmed lists are different
+ * types that agree about these two fields, and the filter has no business
+ * knowing which of the two it was handed.
+ */
+function matchesServiceFilter(
+  row: Pick<UpcomingMinyan | UnconfirmedMinyan, 'service' | 'dayType'>,
+  filter: ServiceFilter,
+): boolean {
+  return filter === 'shabbat' ? row.dayType === 'shabbat' : row.service === filter;
+}
+
+function firstPerSynagogue<T extends { synagogue: { id: number } }>(rows: readonly T[]): T[] {
+  const seen = new Set<number>();
+  const out: T[] = [];
+  for (const row of rows) {
+    if (seen.has(row.synagogue.id)) continue;
+    seen.add(row.synagogue.id);
+    out.push(row);
+  }
+  return out;
+}
+
+/**
+ * Which chip is on when nobody has chosen one: the service of the very next
+ * minyan anywhere in the data.
+ */
+function defaultService(upcoming: readonly UpcomingMinyan[]): ServiceFilter {
+  const soonest = upcoming[0];
+  if (soonest && isServiceFilter(soonest.service)) return soonest.service;
+  return SERVICE_FILTERS[0];
 }

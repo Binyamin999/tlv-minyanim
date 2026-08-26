@@ -11,18 +11,26 @@
  * the point.
  */
 
-export type Nusach =
-  | 'ashkenaz'
-  | 'sefard'
-  | 'edot_hamizrach'
-  | 'teimani_baladi'
-  | 'teimani_shami'
-  | 'moroccan'
-  | 'tunisian'
-  | 'iraqi'
-  | 'persian'
-  | 'salonikan'
-  | 'general';
+/**
+ * Canonical order, and the order the filter chips appear in. Ashkenaz and
+ * Edot HaMizrach lead because between them they are most of the city; the
+ * enum's own SQL order is alphabetical-by-accident and is not a ranking.
+ */
+export const NUSACHIM = [
+  'ashkenaz',
+  'sefard',
+  'edot_hamizrach',
+  'teimani_baladi',
+  'teimani_shami',
+  'moroccan',
+  'tunisian',
+  'iraqi',
+  'persian',
+  'salonikan',
+  'general',
+] as const;
+
+export type Nusach = (typeof NUSACHIM)[number];
 
 /** Never inferred from nusach — hand-enriched only. See CLAUDE.md. */
 export type Movement = 'chabad' | 'breslev';

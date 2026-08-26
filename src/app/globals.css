@@ -1,44 +1,213 @@
-/* Scaffold styling only. The real design lives in the artboards (phase 4);
-   what is here is the minimum needed to prove RTL, the type stack and 375px.
+/* Two layers live in this file.
+
+   The first is the homepage, built to the artboards — tokens at the top, the
+   band and the cards at the bottom under "PHASE 4".
+
+   The second is the scaffold the shul page and /next still use. It is not the
+   design; it is the minimum that proves RTL, the type stack and 375px, and it
+   now reads its colours from the same tokens, so the cyan-to-orange inversion
+   happens site-wide rather than only on the homepage.
 
    RULE, no exceptions: logical properties only. `margin-left` renders fine in
    an LTR browser and wrong for every Hebrew reader. */
 
 :root {
   /* Sampled from photographs of the city — see CLAUDE.md. Two cyans, split by
-     job: --tlv-sea decorates, --tlv-sea-ink carries text. */
+     job: --tlv-sea DECORATES (gradients, glow, bare strokes, 3:1 floor) and
+     --tlv-sea-ink carries text. Never darken --tlv-sea to make a label pass;
+     that flattens the sea and solves the wrong problem. */
   --tlv-sea: #0e93ae;
   --tlv-sea-ink: #0a6c82;
+  --tlv-terra: #c0603a;
+  --tlv-terra-ink: #ad5634;
   --tlv-night: #173a5e;
   --tlv-ink: #0c1116;
   --tlv-amber: #f0b45c;
   --tlv-sand: #e0cfb4;
-  --tlv-terra-ink: #ad5634;
+
+  /* The page's measure, and it is not an arbitrary number: tlv-day.jpg is
+     679px wide, so a full-bleed header photograph in a 679px column renders at
+     exactly 1.000x. CLAUDE.md's "never upscale a photograph past 1x" therefore
+     sets the width of the site. */
+  --shell: 679px;
 
   --surface: #ffffff;
-  --page: #f4f7f8;
-  --ink: var(--tlv-ink);
-  --ink-quiet: color-mix(in srgb, var(--tlv-ink) 75%, transparent);
-  --hairline: color-mix(in srgb, var(--tlv-ink) 12%, transparent);
+  --page: #ffffff;
+  --ink: #12181c;
+  --ink-quiet: color-mix(in srgb, #12181c 75%, transparent);
+  --hairline: color-mix(in srgb, #12181c 12%, transparent);
+  --hairline-soft: color-mix(in srgb, #12181c 10%, transparent);
+
+  /* ------------------------------------------------------------------
+     Accents. In LIGHT they are cyan; in DARK every one of them becomes the
+     hero orange. That is the accents only — links, pills, rules, icons — and
+     never the header photograph, which stays as shot.
+     ------------------------------------------------------------------ */
+  --accent: var(--tlv-sea); /* decoration only */
+  --accent-ink: var(--tlv-sea-ink); /* cyan doing the job of text */
+  --accent-tint: rgba(14, 147, 174, 0.12);
+  --accent-solid: #0a6c82;
+  --accent-on-solid: #ffffff;
+  --cta-ink: var(--tlv-terra-ink);
+
+  /* Where the sunset warming is heading. Nobody switches this on; it is a
+     function of now and today's shkia — see src/lib/sunset-warmth.ts. */
+  --accent-warm: #ad5634;
+  /* The colour the warming travels THROUGH.
+     Straight cyan-to-terracotta passes through neutral grey at the halfway
+     mark — measured rgb(103,104,103) — and a grey label reads as disabled, not
+     as warming. Nesting one mix inside another draws a quadratic curve with
+     this as its control point, so the accent leaves cyan, turns warm early and
+     arrives at roof tile.
+     It is the deep sunset ink rather than the amber, and that is a measured
+     choice, not a taste one: the amber is light (relative luminance 0.53
+     against endpoints at 0.12 and 0.16) and lifting the middle of the path
+     that far put six labels under 4.5:1 between 25% and 88% warmth. This
+     control point is DARKER than both endpoints, so the path dips as it warms
+     and contrast in the middle is better than at either end.
+     Endpoints are untouched either way: 0% is exactly #0A6C82 and 100% is
+     exactly #AD5634, which is what the artboards pin. */
+  --warm-via: var(--time-warm);
+  --time-ink: #12181c;
+  --time-warm: #8a3f1e;
+  --tint-warm: rgba(192, 96, 58, 0.14);
+  --pill-ink-warm: #8a3f1e;
+
+  /* The header band. */
+  --band-block-size: 360px;
+  /* The ground BEHIND the photograph, and it is dark on purpose in both modes.
+     The masthead's text is white over a dark scrim; if this were the pale
+     #C7DDE2 the artboard uses as a placeholder, then for the fraction of a
+     second before the photograph decodes — or forever, if it 404s — the
+     wordmark would be white on pale blue at 1.4:1. A fallback nobody can read
+     is not a fallback. Once the photograph paints, this is never seen. */
+  --band-ground: #0e2a33;
+  /* THE SCRIM IS IN THREE PARTS, AND THAT IS THE POINT.
+     A single band-wide wash cannot do both jobs at once. Dark enough to carry
+     11.5px white over a bright midday beach means drowning the photograph —
+     PhotoDayHeader's 0.82 top stop does clear AA, and the picture goes black.
+     Light enough to see the picture is PhotoDayMobile's 0.36, and measured
+     against the real pixels the wordmark lands at 3.64:1 and the hero label at
+     2.17:1. So the wash stays the mobile artboard's, the photograph keeps its
+     middle, and the two text rows carry their own local scrims. */
+  --band-scrim: linear-gradient(
+    180deg,
+    rgba(8, 20, 26, 0.4) 0%,
+    rgba(8, 20, 26, 0.22) 34%,
+    rgba(8, 20, 26, 0.5) 70%,
+    rgba(6, 28, 34, 0.88) 100%
+  );
+  /* Both local scrims hold their alpha across the whole text run and do all
+     their fading in the padding beyond it. The stop percentages are therefore
+     tied to the padding below — change one without the other and the ribbon
+     drops back under 4.5:1. */
+  --band-head-scrim: linear-gradient(
+    180deg,
+    rgba(6, 34, 42, 0.8) 0%,
+    rgba(6, 34, 42, 0.76) 78%,
+    rgba(6, 34, 42, 0) 100%
+  );
+  --band-hero-scrim: linear-gradient(
+    180deg,
+    rgba(6, 28, 34, 0) 0%,
+    rgba(6, 28, 34, 0.76) 17%,
+    rgba(6, 28, 34, 0.86) 100%
+  );
+  /* Graded, never softened: the day photograph is shown as a photograph. */
+  --band-photo-filter: saturate(1.02) contrast(1.04) brightness(0.94);
+  --segment-on-bg: #ffffff;
+  /* 0.95, not the artboard's 0.90.
+     The artboard's tinted `בעוד N דק׳` pill was reasoned about on white; here
+     it sits on a frosted panel over a photograph, and measured against the
+     real pixels 0.90 leaves #0A6C82 at 4.38:1. CLAUDE.md's rule is to pick
+     against the HARDEST background — and forbids darkening the sea to make a
+     label pass, which is the other way this could have been "fixed". So the
+     panel gets five more percent of white instead, which is invisible next to
+     a 10px backdrop blur and puts the pill at 4.9:1. */
+  --hero-surface: rgba(255, 255, 255, 0.95);
+  --hero-border: rgba(18, 24, 28, 0.12);
+  --hero-shadow: 0 10px 26px rgba(14, 147, 174, 0.22);
+  --card-surface: #ffffff;
+  --card-shadow: 0 2px 8px rgba(14, 147, 174, 0.06);
+  --segment-ink-on: #0a6c82;
+  --foot-ground: #f3e8ce;
+  --foot-rule: rgba(192, 96, 58, 0.18);
 
   --font-ui: 'Assistant', system-ui, sans-serif;
   --font-display: 'Frank Ruhl Libre', Georgia, serif;
 }
 
 /* Dark from real shkia, light from real netz. `data-mode` is set on <html> by
-   the server from that day's zmanim — see src/lib/theme.ts. Not the OS
-   preference: the sky over Tel Aviv is the thing this site is about.
+   the server — from the cookie if the reader overrode it, otherwise from that
+   day's zmanim. See src/lib/theme.ts.
 
-   TODO(phase 4): the אוטו׳ / sun / moon override, drawn inside the page. There
-   is deliberately no `sunset` toggle and there never will be. */
+   There is deliberately no `sunset` toggle and there never will be: a button
+   that makes it evening would be as wrong as a button that makes it Tuesday.
+   The one genuine control is אוטו׳ / sun / moon, drawn inside the page. */
 [data-mode='dark'] {
-  --surface: #131a21;
-  --page: #0c1116;
-  --ink: #eef4f6;
-  --ink-quiet: color-mix(in srgb, #eef4f6 75%, transparent);
-  --hairline: color-mix(in srgb, #eef4f6 16%, transparent);
-  --tlv-sea-ink: #6fd3e8;
-  --tlv-terra-ink: #e59468;
+  --surface: rgba(255, 255, 255, 0.045);
+  --page: #0b131c;
+  --ink: #f2efe7;
+  --ink-quiet: color-mix(in srgb, #f2efe7 75%, transparent);
+  --hairline: rgba(255, 255, 255, 0.15);
+  --hairline-soft: rgba(255, 255, 255, 0.12);
+
+  /* Cyan becomes the hero orange. Both jobs at once here: the orange is light
+     enough on this ground to carry text and saturated enough to decorate, so
+     the two-cyan split has one value in dark rather than two. */
+  --accent: #ff7a45;
+  --accent-ink: #ff7a45;
+  --accent-tint: rgba(255, 122, 69, 0.16);
+  --accent-solid: #ff7a45;
+  --accent-on-solid: #06232a;
+  --cta-ink: var(--tlv-amber);
+
+  /* The night's sunset target is amber, not terracotta: the accent is already
+     orange, so warming moves it up the fire rather than across to it. */
+  --accent-warm: #ff7a45;
+  /* No detour at night. Both ends of the dark accent are already #FF7A45 — the
+     artboards keep the rule that colour in both states and warm only the clock
+     — so a control point would invent a hue swing nobody asked for. */
+  --warm-via: var(--accent-ink);
+  --time-ink: #f2efe7;
+  --time-warm: #ffc873;
+  --tint-warm: rgba(255, 122, 69, 0.24);
+  --pill-ink-warm: #ffb27a;
+
+  /* The night photograph is a tall 416px portrait, so the band is taller. */
+  --band-block-size: 560px;
+  --band-ground: #0a1017;
+  /* Same three parts. The night photograph is already dark, so every stop is
+     lighter than its daytime twin. Blurred 6px — ambient texture, deliberate. */
+  --band-scrim: linear-gradient(
+    180deg,
+    rgba(10, 16, 34, 0.4) 0%,
+    rgba(10, 16, 34, 0.2) 40%,
+    rgba(10, 16, 34, 0.5) 70%,
+    rgba(8, 12, 24, 0.9) 100%
+  );
+  --band-head-scrim: linear-gradient(
+    180deg,
+    rgba(8, 12, 24, 0.62) 0%,
+    rgba(8, 12, 24, 0.56) 78%,
+    rgba(8, 12, 24, 0) 100%
+  );
+  --band-hero-scrim: linear-gradient(
+    180deg,
+    rgba(8, 12, 24, 0) 0%,
+    rgba(8, 12, 24, 0.6) 17%,
+    rgba(8, 12, 24, 0.82) 100%
+  );
+  --band-photo-filter: blur(6px) saturate(1) contrast(1.06) brightness(0.94);
+  --segment-on-bg: rgba(255, 255, 255, 0.92);
+  --hero-surface: rgba(8, 14, 22, 0.62);
+  --hero-border: rgba(255, 255, 255, 0.22);
+  --hero-shadow: none;
+  --card-surface: rgba(255, 255, 255, 0.045);
+  --card-shadow: none;
+  --segment-ink-on: #0b131c;
+  --foot-ground: transparent;
+  --foot-rule: rgba(255, 255, 255, 0.14);
 }
 
 *,
@@ -104,7 +273,7 @@ body {
 
 .lang-switch {
   margin-inline-start: auto;
-  color: var(--tlv-sea-ink);
+  color: var(--accent-ink);
   font-weight: 600;
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
@@ -180,7 +349,8 @@ body {
 /* --------------------------------------------------------------------------
    Phase 2 — the shul index and the shul page.
 
-   Still scaffold, not the design (that is phase 4, already in the artboards).
+   Still scaffold, not the design — the designed pages are the homepage below
+   and, when it is built, the shul page.
    Logical properties only, and everything below is checked at 375px.
    -------------------------------------------------------------------------- */
 
@@ -242,7 +412,7 @@ body {
   margin-inline-start: auto;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--tlv-sea-ink);
+  color: var(--accent-ink);
   white-space: nowrap;
 }
 
@@ -290,8 +460,8 @@ body {
 }
 
 .tag-status {
-  border-color: color-mix(in srgb, var(--tlv-terra-ink) 45%, transparent);
-  color: var(--tlv-terra-ink);
+  border-color: color-mix(in srgb, var(--cta-ink) 45%, transparent);
+  color: var(--cta-ink);
 }
 
 .day-block {
@@ -330,7 +500,7 @@ body {
 
 .action {
   font-weight: 600;
-  color: var(--tlv-sea-ink);
+  color: var(--accent-ink);
 }
 
 .action-quiet {
@@ -350,9 +520,9 @@ body {
 }
 
 /* --- phase 3: the timeline ------------------------------------------
-   Scaffold only. The designed answer to "where can I daven now" is phase 4
-   and already settled in the artboards; this is the minimum that keeps the
-   proof readable at 375px in both directions. */
+   Scaffold only. The designed answer to "where can I daven now" is the
+   homepage; this is the minimum that keeps the engine proof readable at 375px
+   in both directions. */
 
 .timeline {
   list-style: none;
@@ -407,7 +577,7 @@ body {
 
 .resolved .time {
   font-weight: 600;
-  color: var(--tlv-sea-ink);
+  color: var(--accent-ink);
 }
 
 .zmanim-today .minyan .value {
@@ -426,5 +596,683 @@ body {
 @media (max-width: 26rem) {
   .timeline-clock {
     font-size: 1.25rem;
+  }
+}
+
+/* ==========================================================================
+   PHASE 4 — the homepage, to the artboards.
+
+   PhotoDayMobile.dc.html / PhotoNightMobile.dc.html for the body,
+   PhotoDayHeader.dc.html / PhotoNightHeader.dc.html for the band.
+
+   Sizes are the artboards' pixel values expressed in rem (px / 16), so they
+   land exactly as drawn at a 16px root and still grow for a reader who has
+   turned their text size up. Logical properties throughout — no exceptions.
+   ========================================================================== */
+
+.band,
+.home {
+  inline-size: 100%;
+  max-inline-size: var(--shell);
+  margin-inline: auto;
+}
+
+/* --------------------------------------------------------------------------
+   The photographic band
+   -------------------------------------------------------------------------- */
+
+.band {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-block-size: var(--band-block-size);
+  background: var(--band-ground);
+}
+
+/* The photograph FILLS the header in both modes. Two elements rather than two
+   <img> tags: a background image on a `display: none` element is never
+   fetched, so a phone on a slow connection downloads one photograph, not two.
+   The layout preloads whichever one the server decided on. */
+.band-photo {
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.band-photo-day {
+  background-image: url('/tlv-day.jpg');
+  /* 679x452 in a <=679px column: 1.000x at the widest, a downscale below it.
+     Never blurred and never upscaled — the day photograph is shown as a
+     photograph. The filter only grades it; it does not soften it. */
+  background-position: center 55%;
+  filter: var(--band-photo-filter);
+}
+
+.band-photo-night {
+  background-image: url('/tlv-night.jpg');
+  background-position: center 34%;
+  /* 6px, deliberate. Ambient texture, not a defect: an identity image that
+     does not claim to be a specific place can be treated heavily, and the blur
+     is larger than any upscale softness it could be hiding. `scale` covers the
+     transparent edge a blur leaves behind. */
+  filter: var(--band-photo-filter);
+  transform: scale(1.06);
+}
+
+[data-mode='dark'] .band-photo-day,
+[data-mode='light'] .band-photo-night {
+  display: none;
+}
+
+.band-scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--band-scrim);
+}
+
+.band-head,
+.band-hero {
+  position: relative;
+}
+
+/* Local scrim for the masthead and the zmanim ribbon: dark exactly where the
+   white text is, transparent by the time the photograph starts. */
+.band-head {
+  background: var(--band-head-scrim);
+  /* The fade lives here, below the ribbon, not across it. */
+  padding-block-end: 1.75rem;
+}
+
+.band-hero {
+  background: var(--band-hero-scrim);
+}
+
+.band-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.875rem 1rem;
+}
+
+.wordmark {
+  font-family: var(--font-display);
+  font-weight: 700;
+  /* Shrinks rather than colliding with the controls at 375px. The English
+     wordmark is the wide one — `Minyanim · Tel Aviv` is half again the width
+     of `מניינים · תל אביב` — so the floor is set by Latin, not by Hebrew. */
+  font-size: clamp(0.9375rem, 4.3vw, 1.1875rem);
+  flex: 0 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+  text-decoration: none;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+  min-inline-size: 0;
+}
+
+.band-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 0 0 auto;
+}
+
+/* --- the segmented controls over the photograph ---------------------- */
+
+.segmented {
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 2px;
+  overflow: hidden;
+  backdrop-filter: blur(3px);
+}
+
+.segment {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3125rem;
+  /* 32 x 44 on a phone. Comfortably past the 24px target-size floor, and the
+     44px is on the axis a thumb actually misses. */
+  min-inline-size: 2rem;
+  min-block-size: 2.75rem;
+  padding-inline: 0.375rem;
+  border: 0;
+  background: transparent;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.segment[aria-checked='true'],
+.segment[aria-current] {
+  background: var(--segment-on-bg);
+  color: var(--segment-ink-on);
+}
+
+/* The unselected marks are quieter than the chosen one, but they are controls
+   and stay well clear of the 3:1 floor for a non-text glyph. */
+.segment:not([aria-checked='true']):not([aria-current]) svg {
+  opacity: 0.78;
+}
+
+/* "this is following the sky, it was not chosen by hand" */
+.mode-dot {
+  position: absolute;
+  inset-block-end: 0.25rem;
+  inset-inline-end: 0.25rem;
+  inline-size: 0.4375rem;
+  block-size: 0.4375rem;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 2px rgba(10, 18, 22, 0.9);
+}
+
+.mode-toggle .segment[aria-checked='true'] .mode-dot {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.92);
+}
+
+/* The word אוטו׳ only when there is room for it beside the wordmark. */
+.segment-label {
+  display: none;
+}
+
+/* --- the zmanim ribbon ----------------------------------------------- */
+
+.band-ribbon {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.625rem;
+  padding: 0.5625rem 1rem;
+  font-size: 0.71875rem;
+  color: #ffffff;
+}
+
+.band-ribbon p {
+  margin: 0;
+  min-inline-size: 0;
+}
+
+.ribbon-date {
+  opacity: 0.88;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ribbon-shkia {
+  display: flex;
+  align-items: center;
+  gap: 0.3125rem;
+  font-weight: 700;
+  white-space: nowrap;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.ribbon-zman-name {
+  opacity: 0.82;
+  font-weight: 400;
+  /* `shkia` reads as a typo in a masthead ribbon; a no-op on Hebrew. */
+  text-transform: capitalize;
+}
+
+/* --- the hero card, floating at the foot of the band ------------------ */
+
+.band-hero {
+  margin-block-start: auto;
+  /* The top padding is where the local scrim rises from nothing, so the label
+     lands on the part of it that is already dark. */
+  padding: 3.5rem 1rem 1rem;
+}
+
+.band-hero-label {
+  /* An <h1> that looks like a label. Small on purpose — the answer below it is
+     42px, and the heading's job here is structure, not volume. */
+  margin: 0 0 0.5625rem;
+  font-family: var(--font-ui);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.88);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* --------------------------------------------------------------------------
+   The sunset warming.
+
+   One number per card, written by the server as `--warm-pct`. Every colour
+   that warms is a mix against it, so the whole card moves together instead of
+   one label going terracotta while the rest stays cyan.
+   -------------------------------------------------------------------------- */
+
+.hero,
+.card {
+  --warm-pct: 0%;
+  /* Nested mixes: B = terra·w + via·w(1−w) + cyan·(1−w)², a quadratic Bézier
+     with --warm-via as the control point. See --warm-via above. */
+  --accent-now: color-mix(
+    in oklab,
+    var(--accent-warm) var(--warm-pct),
+    color-mix(in oklab, var(--warm-via) var(--warm-pct), var(--accent-ink))
+  );
+  --pill-ink-now: color-mix(
+    in oklab,
+    var(--pill-ink-warm) var(--warm-pct),
+    color-mix(in oklab, var(--warm-via) var(--warm-pct), var(--accent-ink))
+  );
+  /* Both ends of these are already dark or already faint, so neither needs a
+     control point: a near-black warming to a dark terracotta never passes
+     through anything, and a 13%-alpha tint is invisible whatever it does. */
+  --time-now: color-mix(in oklab, var(--time-warm) var(--warm-pct), var(--time-ink));
+  --tint-now: color-mix(in oklab, var(--tint-warm) var(--warm-pct), var(--accent-tint));
+}
+
+.hero {
+  background: var(--hero-surface);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--hero-border);
+  border-radius: 2px;
+  border-block-start: 3px solid var(--accent-now);
+  box-shadow: var(--hero-shadow);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.hero p,
+.hero h2 {
+  margin: 0;
+}
+
+.hero-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.hero-service {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent-now);
+}
+
+.hero-clock {
+  font-size: 2.625rem;
+  text-align: start;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--time-now);
+}
+
+.hero-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.hero-pill {
+  font-size: 0.78125rem;
+  font-weight: 700;
+  padding: 0.25rem 0.625rem;
+  border-radius: 999px;
+  background: var(--tint-now);
+  color: var(--pill-ink-now);
+  unicode-bidi: isolate;
+}
+
+.hero-rule {
+  font-size: 0.6875rem;
+  color: var(--ink-quiet);
+}
+
+.hero-where {
+  border-block-start: 1px solid var(--hero-border);
+  padding-block-start: 0.625rem;
+  margin-block-start: 0.125rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.hero-name {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.1875rem;
+  line-height: 1.2;
+  unicode-bidi: isolate;
+  min-inline-size: 0;
+  overflow-wrap: break-word;
+}
+
+.hero-name a,
+.card-name a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.hero-name a:hover,
+.card-name a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.hero-address {
+  font-size: 0.75rem;
+  color: var(--ink-quiet);
+  unicode-bidi: isolate;
+}
+
+.hero-empty {
+  border-block-start-color: var(--accent-ink);
+}
+
+.hero-empty-text {
+  font-size: 0.875rem;
+  color: var(--ink-quiet);
+}
+
+/* --------------------------------------------------------------------------
+   Below the photograph
+   -------------------------------------------------------------------------- */
+
+.home {
+  padding-block-end: 0;
+}
+
+.place {
+  display: flex;
+  align-items: center;
+  gap: 0.4375rem;
+  min-block-size: 2.75rem;
+  margin: 0;
+  padding: 0.75rem 1rem 0.875rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+/* A bare stroke, which is decoration: --accent is correct here and would be
+   wrong on a label. */
+.place-pin {
+  display: inline-flex;
+  color: var(--accent);
+}
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0 1rem 1rem;
+}
+
+.filter-row {
+  display: flex;
+  gap: 0.375rem;
+}
+
+.filter-services .chip {
+  flex-grow: 1;
+}
+
+.filter-nusach {
+  flex-wrap: wrap;
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 2.75rem;
+  padding-inline: 0.6875rem;
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  color: inherit;
+  font-size: 0.78125rem;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+}
+
+.chip-nusach {
+  font-size: 0.71875rem;
+}
+
+.chip-service[aria-current] {
+  background: var(--accent-solid);
+  border-color: var(--accent-solid);
+  color: var(--accent-on-solid);
+  font-weight: 700;
+}
+
+.chip-nusach[aria-current] {
+  border-color: var(--accent-ink);
+  color: var(--accent-ink);
+  font-weight: 700;
+}
+
+.count {
+  margin: 0;
+  padding: 0 1rem 0.5rem;
+  font-family: var(--font-ui);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--ink-quiet);
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0 1rem 1.125rem;
+}
+
+/* --- one synagogue, one time ----------------------------------------- */
+
+.card {
+  background: var(--card-surface);
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  box-shadow: var(--card-shadow);
+  padding: 0.8125rem 0.875rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5625rem;
+}
+
+.card p,
+.card h3 {
+  margin: 0;
+}
+
+.card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.card-where {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-inline-size: 0;
+}
+
+.card-name {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.125rem;
+  line-height: 1.25;
+  unicode-bidi: isolate;
+  overflow-wrap: break-word;
+}
+
+.card-address {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  font-size: 0.71875rem;
+  color: var(--ink-quiet);
+}
+
+.card-address > span:first-child {
+  unicode-bidi: isolate;
+}
+
+.card-dot {
+  opacity: 0.55;
+}
+
+/* Walking, never driving. Waze is a driving app and lives on the shul page. */
+.walk-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  min-block-size: 2.75rem;
+  margin-inline-start: 0;
+  font-size: 0.71875rem;
+  font-weight: 700;
+  color: var(--accent-now, var(--accent-ink));
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.walk-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.card-value {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.1875rem;
+  max-inline-size: 8.25rem;
+  text-align: end;
+}
+
+.card-clock {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--time-now);
+}
+
+.card-service-pill {
+  font-size: 0.65625rem;
+  font-weight: 700;
+  padding: 0.125rem 0.4375rem;
+  border-radius: 999px;
+  background: var(--tint-now);
+  color: var(--pill-ink-now);
+}
+
+/* THE HONEST-UNKNOWN ROW. Quiet on purpose — CLAUDE.md. Its quietness is the
+   design saying we do not know, and it passes AA anyway at 75% ink. If a
+   contrast sweep points here, what is failing is the *action* beside it. Do
+   not make this louder. */
+.card-unknown {
+  font-size: 0.78125rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--ink-quiet);
+}
+
+.card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.625rem;
+  border-block-start: 1px solid var(--hairline-soft);
+  padding-block-start: 0.5rem;
+}
+
+.card-nusach {
+  font-size: 0.65625rem;
+  font-weight: 700;
+  padding: 0.125rem 0.5rem;
+  border-radius: 2px;
+  border: 1px solid var(--accent-ink);
+  color: var(--accent-ink);
+  white-space: nowrap;
+}
+
+/* Not a link. There is nowhere honest to send anyone yet. */
+.card-cta {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--cta-ink);
+  text-align: end;
+}
+
+.verified-compact {
+  margin: 0;
+  font-size: 0.625rem;
+  color: var(--ink-quiet);
+  text-align: end;
+  white-space: nowrap;
+}
+
+.hero .verified-compact {
+  margin-block-start: 0.25rem;
+  text-align: start;
+}
+
+/* --- footer: sand underfoot ------------------------------------------ */
+
+.home-foot {
+  background: var(--foot-ground);
+  border-block-start: 1px solid var(--foot-rule);
+  padding: 0.875rem 1rem 1.125rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3125rem;
+}
+
+.home-foot p {
+  margin: 0;
+  font-size: 0.65625rem;
+  line-height: 1.5;
+  color: var(--ink-quiet);
+}
+
+.home-foot-source {
+  padding-block-start: 0.25rem;
+}
+
+/* --------------------------------------------------------------------------
+   Room to breathe. Nothing here changes the design — it only spends width the
+   phone did not have.
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 30rem) {
+  .segment {
+    min-inline-size: 2.25rem;
+    padding-inline: 0.5rem;
+  }
+
+  .segment-label {
+    display: inline;
+  }
+
+  .mode-toggle .segment[data-option='auto'] .mode-dot {
+    inset-inline-end: 0.375rem;
   }
 }

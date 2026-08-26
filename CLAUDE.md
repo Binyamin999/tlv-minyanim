@@ -225,8 +225,20 @@ sea and solves the wrong problem.
 **Pick the darker value against the hardest background, not the easiest.** Cyan
 text usually sits on a faintly cyan-tinted pill, not on white. `#0B7B93` passes
 on white at 4.92 and fails on the tint at 4.28. `#0A6C82` clears both — 6.03 and
-5.25. Measured, both modes: 104 elements, zero failures, worst 5.05 light /
-6.34 dark.
+5.25.
+
+**Current measured figures for the built homepage: 104 elements, zero failures,
+worst 4.80 light / 5.12 dark**, and 4.59 / 5.12 swept across all eight warming
+levels. Text over the photograph, which the DOM audit cannot see, measures 4.78
+light / 5.89 dark by sampling the image.
+
+An earlier note here claimed 5.05 / 6.34. Those came from a version of
+`scripts/contrast-audit.js` with two real bugs, both since fixed: it read colours
+with a regex, so `color-mix()`'s `oklab(...)` output parsed as near-black — and
+81 elements on the homepage resolve to oklab — and its compositing assumed the
+layer behind was opaque, so a tinted pill inside a translucent card inside the
+page was measured against near-white. **Never hand-read a computed colour; paint
+a pixel and read it back.**
 
 **The honest-unknown row is quiet on purpose and passes anyway** (default ink at
 75% = 7.9:1). If a contrast sweep ever seems to point at it, check what is

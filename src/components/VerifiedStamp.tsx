@@ -1,4 +1,4 @@
-import { formatVerifiedDate } from '@/lib/minyan-display';
+import { formatVerifiedDate, formatVerifiedDateShort } from '@/lib/minyan-display';
 import type { Dictionary } from '@/i18n/dictionaries';
 import type { Locale } from '@/i18n/locales';
 
@@ -7,22 +7,37 @@ import type { Locale } from '@/i18n/locales';
  * answer is "never" — no competitor admits staleness, and honest decay is the
  * whole trust model. `null` here is not a missing value to hide; it is the
  * strongest thing we have to say about this listing.
+ *
+ * `compact` is the card footer's version: `נבדק 12.8.26` on one 10px line, as
+ * the artboards draw it. Same fact, same null case, less room.
  */
 export function VerifiedStamp({
   lastVerifiedAt,
   verifiedBy,
   locale,
   t,
+  compact = false,
 }: {
   lastVerifiedAt: Date | null;
   verifiedBy: string | null;
   locale: Locale;
   t: Dictionary;
+  compact?: boolean;
 }) {
   if (lastVerifiedAt === null || verifiedBy === null) {
     return (
-      <p className="verified">
+      <p className={compact ? 'verified verified-compact' : 'verified'}>
         <span className="stamp">{t.neverVerified}</span>
+      </p>
+    );
+  }
+
+  if (compact) {
+    return (
+      <p className="verified verified-compact">
+        <span className="stamp tabular" title={t.verifiedBy(verifiedBy)}>
+          {t.verifiedShort(formatVerifiedDateShort(lastVerifiedAt, locale))}
+        </span>
       </p>
     );
   }

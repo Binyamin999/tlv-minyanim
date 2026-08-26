@@ -57,3 +57,21 @@ export function formatVerifiedDate(date: Date, locale: Locale): string {
     year: 'numeric',
   }).format(date);
 }
+
+/**
+ * The same date, short enough for a card footer — `12.8.26`.
+ *
+ * The card design gives the staleness stamp ten pixels and one line, which is
+ * a size, not a demotion: CLAUDE.md requires `last_verified_at` wherever a
+ * time is shown, and a stamp that does not fit gets dropped by whoever builds
+ * the next card. Numeric so it fits, tabular where it is used so a column of
+ * them lines up.
+ */
+export function formatVerifiedDateShort(date: Date, locale: Locale): string {
+  return new Intl.DateTimeFormat(locale === 'he' ? 'he-IL' : 'en-IL', {
+    timeZone: TIME_ZONE,
+    day: 'numeric',
+    month: 'numeric',
+    year: '2-digit',
+  }).format(date);
+}

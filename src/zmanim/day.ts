@@ -68,6 +68,12 @@ export interface HebrewDay {
   isLeapYear: boolean;
   renderHe: string;
   renderEn: string;
+  /**
+   * `ד׳ אלול תשפ״ו` — the form a luach prints and the form the header ribbon
+   * wants. `render('he')` gives `6 אֱלוּל, 5786`, which is the same date said
+   * the way a computer says it.
+   */
+  renderGematriya: string;
 }
 
 function toHebrewDay(hd: HDate): HebrewDay {
@@ -79,6 +85,8 @@ function toHebrewDay(hd: HDate): HebrewDay {
     isLeapYear: hd.isLeapYear(),
     renderHe: hd.render('he'),
     renderEn: hd.render('en'),
+    // `true` suppresses nikud: the ribbon is 11.5px and pointing turns to mud.
+    renderGematriya: hd.renderGematriya(true),
   };
 }
 

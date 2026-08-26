@@ -101,10 +101,10 @@ export interface UpcomingMinyan extends Placed {
    * Minutes from `now` until that shkia; negative once shkia has passed.
    *
    * This is the DATA behind CLAUDE.md's signature detail — Mincha listings
-   * warming toward the sunset colour as the window closes. The visual
-   * treatment is phase 4 and is deliberately not built here. There is no
-   * toggle: a real site computes this, it does not offer a button that makes
-   * it evening.
+   * warming toward the sunset colour as the window closes. The curve that
+   * turns it into a colour lives in `src/lib/sunset-warmth.ts` and stays out
+   * of here, so the engine has no opinion about paint. There is no toggle: a
+   * real site computes this, it does not offer a button that makes it evening.
    */
   minutesUntilShkia: number;
 }

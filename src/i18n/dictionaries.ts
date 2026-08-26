@@ -2,6 +2,7 @@ import type { Locale } from './locales';
 import type { DayType, ReviewReason, Season, Service, Zman } from '@/minyan-times';
 import type { DayPhase, UnconfirmedReason } from '@/zmanim';
 import type { Movement, Nusach, SynagogueStatus } from '@/lib/taxonomy';
+import type { ModePreference } from '@/lib/theme';
 
 /**
  * A plain object per locale. No i18n library: at this size a library buys
@@ -128,6 +129,43 @@ const he = {
   /** Every resolved time is computed, not quoted. Say so once, plainly. */
   zmanimSource: 'הזמנים מחושבים לתל אביב-יפו לפי הגר"א, בשעון ישראל',
 
+  /* --- the homepage (phase 4) --------------------------------------- */
+  /** The masthead wordmark. Frank Ruhl, and the only place the city is named. */
+  wordmark: 'מניינים · תל אביב',
+  /** Above the hero card. */
+  nextNearYou: 'המניין הבא לידך',
+  /** The neighbourhood the data covers today. */
+  neighbourhood: 'רמת אביב',
+  /** The count line above the cards. */
+  synagogueCount: (count: number) =>
+    `${count === 1 ? 'בית כנסת אחד' : `${count} בתי כנסת`} · לפי המניין הבא`,
+  /** The service filter chips. `shabbat` is a day, not a service — see the page. */
+  filterShabbat: 'שבת',
+  filterAllNusachim: 'כל הנוסחים',
+  /** Screen-reader names for the two chip rows. */
+  filterServicesLabel: 'סינון לפי תפילה',
+  filterNusachLabel: 'סינון לפי נוסח',
+  /** The card's honest-unknown line. Quiet on purpose — see CLAUDE.md. */
+  unknownTimeCard: 'בזמן — שעה טרם פורסמה',
+  /** Beside it. Not a link: there is nowhere honest to send anyone yet. */
+  knowTheTime: 'יודעים את השעה? עדכנו',
+  /** The compact staleness stamp on a card footer. */
+  verifiedShort: (date: string) => `נבדק ${date}`,
+  /** The two footer lines. */
+  footerComputed: 'כל הזמנים מחושבים לפי מיקום בית הכנסת, ומתעדכנים מדי יום עם השקיעה.',
+  footerNeverGuess: 'זמן לא ידוע מוצג כלא ידוע — לעולם לא ננחש.',
+  /** The light/dark override. The ONLY toggle that ships. */
+  modeControlLabel: 'מצב תצוגה',
+  modeAuto: 'אוטו׳',
+  modeNames: {
+    auto: 'אוטומטי — לפי השקיעה בתל אביב',
+    light: 'בהיר',
+    dark: 'כהה',
+  } satisfies Record<ModePreference, string>,
+  /** The language switch, as two short chips rather than a sentence. */
+  localeChips: { he: 'עב', en: 'EN' } satisfies Record<Locale, string>,
+  languageSwitchLabel: 'שפה',
+
   /** Walking, not driving. People walk to shul — see CLAUDE.md. */
   walkingDirections: 'מסלול הליכה',
   wazeDirections: 'ניווט ב־Waze',
@@ -240,6 +278,31 @@ const en: typeof he = {
   today: 'today',
   zmanimToday: "Today's zmanim in Tel Aviv",
   zmanimSource: 'Computed for Tel Aviv-Yafo, GRA, Israel time',
+
+  wordmark: 'Minyanim · Tel Aviv',
+  nextNearYou: 'The next minyan near you',
+  neighbourhood: 'Ramat Aviv',
+  synagogueCount: (count: number) =>
+    `${count === 1 ? '1 synagogue' : `${count} synagogues`} · by next minyan`,
+  filterShabbat: 'Shabbat',
+  filterAllNusachim: 'All nusachim',
+  filterServicesLabel: 'Filter by service',
+  filterNusachLabel: 'Filter by nusach',
+  unknownTimeCard: 'At the proper time — not yet published',
+  knowTheTime: 'Know the time? Tell us',
+  verifiedShort: (date: string) => `Checked ${date}`,
+  footerComputed:
+    'Every time is computed for the synagogue\u2019s own location and moves with the sunset each day.',
+  footerNeverGuess: 'A time we do not know is shown as unknown — we never guess.',
+  modeControlLabel: 'Display mode',
+  modeAuto: 'Auto',
+  modeNames: {
+    auto: 'Automatic — follows sunset in Tel Aviv',
+    light: 'Light',
+    dark: 'Dark',
+  },
+  localeChips: { he: 'עב', en: 'EN' },
+  languageSwitchLabel: 'Language',
 
   walkingDirections: 'Walking directions',
   wazeDirections: 'Navigate with Waze',

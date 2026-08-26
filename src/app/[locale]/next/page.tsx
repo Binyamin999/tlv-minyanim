@@ -22,11 +22,11 @@ import {
  * "Where can I daven in the next N minutes?" — the question this product
  * exists to answer, rendered as plainly as possible.
  *
- * DELIBERATELY UNDESIGNED. The real homepage is phase 4 and its design is
- * already settled in the artboards; anything styled here would be thrown away.
- * This page exists to prove the engine end to end: that a rule becomes a clock
- * time, that the ordering is by real instant, and that a shul whose Mincha is
- * only `בזמן` still appears instead of vanishing.
+ * DELIBERATELY UNDESIGNED, and it stays that way now that the designed
+ * homepage exists at `/{locale}`. This page is the engine's proof, not a
+ * product surface: it shows that a rule becomes a clock time, that the
+ * ordering is by real instant, and that a shul whose Mincha is only `בזמן`
+ * still appears instead of vanishing. `?within=` points it at any horizon.
  *
  * Fully server-rendered, like every page here. A crawler and a phone on a bad
  * connection see the same thing, and neither waits for JavaScript.
@@ -38,9 +38,9 @@ export const dynamic = 'force-dynamic';
 /**
  * The product question is 40 minutes. The default here is wider, because at
  * most hours of the day a 40-minute window over 16 Ramat Aviv shuls is empty
- * and an empty page proves nothing. Phase 4's homepage picks the real number
- * against the real design; `?within=` exists so this one can be pointed at any
- * horizon while the engine is being checked.
+ * and an empty page proves nothing. The homepage answers the same question a
+ * different way — one card per shul over eight days, so nothing is ever empty
+ * merely because the next hour happens to be.
  */
 const DEFAULT_WITHIN = 180;
 const MAX_WITHIN = 60 * 24 * 2;
