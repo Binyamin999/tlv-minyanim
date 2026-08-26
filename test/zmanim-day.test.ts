@@ -27,8 +27,11 @@ import {
 } from '../src/zmanim/index.ts';
 import type { Zman } from '../src/minyan-times/index.ts';
 import {
+  DST_JUMPS,
   GROUND_TRUTH,
   GROUND_TRUTH_IS_VALIDATED,
+  GROUND_TRUTH_TOLERANCE_MINUTES,
+  type GroundTruthDay,
 } from './fixtures.zmanim-ground-truth.ts';
 
 const MINUTE = 60_000;
@@ -313,21 +316,61 @@ describe('Yom Tov is recognised, and Chol HaMoed is not mistaken for it', () => 
  * the placeholders, because asserting hebcal against hebcal proves nothing.
  */
 describe('published luach values', { skip: !GROUND_TRUTH_IS_VALIDATED }, () => {
+  // Values transcribed from published luachot — NOAA, sunrisesunset.io,
+  // MyZmanim and the Tel Aviv-Yafo Religious Council — by an agent that never
+  // saw this code. See the header of fixtures.zmanim-ground-truth.ts.
+  //
+  // Within a minute, not exact: we floor seconds, the sources disagree with
+  // each other by up to twenty seconds, and the document flags 2026-01-14
+  // chatzot at 11:49:58 as sitting on the boundary. Demanding equality would
+  // encode a rounding artefact as halacha. candle_lighting is the exception
+  // and is asserted exactly — it is a printed number, not a derived one.
   for (const [iso, expected] of Object.entries(GROUND_TRUTH)) {
-    it(`${iso} matches the validated luach`, () => {
+    it(`${iso} agrees with the published luach`, () => {
       const day = zmanimFor(TEL_AVIV, date(iso));
       for (const zman of IN_ORDER) {
         const at = anchorInstant(day, zman);
-        assert.ok(at);
-        assert.equal(clockFaceOf(at), expected[zman as keyof typeof expected], zman);
+        assert.ok(at, `${zman} missing`);
+        const want = expected[zman as keyof GroundTruthDay];
+        assert.ok(want, `no published value for ${zman}`);
+        const drift = Math.abs(minutesOfDay(at) - minutesOfClockFace(want));
+        assert.ok(
+          drift <= GROUND_TRUTH_TOLERANCE_MINUTES,
+          `${zman}: engine ${clockFaceOf(at)}, luach ${want} — ${drift} min apart`,
+        );
       }
+    });
+
+    it(`${iso} reproduces the published candle lighting exactly`, () => {
+      const day = zmanimFor(TEL_AVIV, date(iso));
       assert.equal(
         day.candle_lighting ? clockFaceOf(day.candle_lighting) : null,
         expected.candle_lighting,
       );
     });
   }
+
+  // The clocks moving is the one thing that breaks naive implementations, and
+  // it breaks them by exactly an hour — large enough that no tolerance hides
+  // it. Asserted as a delta between two real dates rather than by recomputing
+  // the rule we are trying to test.
+  for (const [season, jump] of Object.entries(DST_JUMPS)) {
+    it(`${season}: shkia moves ${jump.shkiaDeltaMinutes} minutes across the DST boundary`, () => {
+      const before = zmanimFor(TEL_AVIV, date(jump.from));
+      const after = zmanimFor(TEL_AVIV, date(jump.to));
+      const delta = minutesOfDay(after.shkia) - minutesOfDay(before.shkia);
+      assert.ok(
+        Math.abs(delta - jump.shkiaDeltaMinutes) <= GROUND_TRUTH_TOLERANCE_MINUTES,
+        `${jump.from} -> ${jump.to}: expected ${jump.shkiaDeltaMinutes}, got ${delta}`,
+      );
+    });
+  }
 });
+
+function minutesOfClockFace(hhmm: string): number {
+  const [h, m] = hhmm.split(':').map(Number);
+  return h! * 60 + m!;
+}
 
 function minutesOfDay(instant: Date): number {
   const [h, m] = clockFaceOf(instant).split(':').map(Number);

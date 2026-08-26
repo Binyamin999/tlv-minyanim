@@ -1,38 +1,45 @@
 /**
- * ===========================================================================
- * TODO: REPLACE WITH VALIDATED VALUES
- * ===========================================================================
+ * Published zmanim for Tel Aviv, transcribed from `docs/zmanim-ground-truth.md`.
  *
- * Every clock face in this file is currently a PLACEHOLDER produced by
- * @hebcal/core itself. Asserting them proves only that the library agrees with
- * the library — which is worth exactly nothing.
- *
- * They are here anyway, and in this one file only, so that:
- *   - the tests that DO prove something (ordering, offsets, DST, the sunset
- *     rollover, the seasonal swing) can run today, and
- *   - when `docs/zmanim-ground-truth.md` lands from the `zmanim-validator`
- *     agent, replacing this table is a single edit against a published Tel
- *     Aviv luach, with no test to rewrite.
- *
- * The `zmanim-validator` agent owns those values. Nothing in this repository
- * may research or derive them. When the table is replaced, set
- * `GROUND_TRUTH_IS_VALIDATED = true` and `zmanim-ground-truth.test.ts` stops
- * skipping the absolute-value comparisons.
+ * These values do NOT come from `@hebcal/core`. They were sourced independently
+ * — NOAA, sunrisesunset.io, MyZmanim, and the Tel Aviv-Yafo Religious Council's
+ * own published 5786 poster — by an agent that never saw this code. That is the
+ * entire point. A test asserting that the library returns what the library
+ * returns proves only that it is self-consistent, which is worth nothing.
  *
  * ---------------------------------------------------------------------------
- * WHAT THE VALIDATOR NEEDS TO CONFIRM, not just the numbers
+ * WHICH SHITA — these values are not shita-neutral
  * ---------------------------------------------------------------------------
- *  1. Shita. `src/zmanim/day.ts` uses GRA throughout (sof zman shma = netz + 3
- *     shaot zmaniyot, mincha gedola = +6.5, ketana = +9.5, plag = +10.75),
- *     alot at 16.1°, tzeit at 8.5°. If the published luach differs, the
- *     numbers below will differ and only `day.ts` should change.
- *  2. Rounding. We FLOOR seconds; shkia 19:12:41 prints 19:12. If the luach
- *     rounds to nearest, `floorToMinute` in `day.ts` is the one edit.
- *  3. Elevation. We compute at sea level and ignore Tel Aviv's 15 m.
- *  4. Candle lighting. We take 20 minutes before shkia from @hebcal/core's
- *     Israel city table. Tel Aviv is neither Jerusalem (40) nor Haifa (30).
+ * The source document lists several opinions per anchor. Transcribed here are
+ * the ones `src/zmanim/day.ts` actually implements. Change the engine's shita
+ * and these numbers become wrong, which is intended: they are a fixed point, so
+ * an unannounced change to `day.ts` fails loudly here.
  *
- * All values are Asia/Jerusalem wall clocks, "HH:MM", 24-hour.
+ *   alot           16.1°
+ *   shema          GRA        (netz + 3 shaot zmaniyot)
+ *   mincha_gedola  ½ zmanit   (chatzot + ½ shaa zmanit) — NOT lechumra.
+ *                             The two differ by 4m53s at the winter solstice
+ *                             and coincide in midsummer. See §9.3.
+ *   mincha_ketana  GRA        (+9.5)
+ *   plag           GRA        (+10.75)
+ *   tzeit          8.5°       — the stringent, end-of-Shabbat value. A shul
+ *                             saying Arvit is "at tzeit" usually means much
+ *                             earlier; see CLAUDE.md and §9.1.
+ *   candle_lighting shkia − 22 for Tel Aviv, NOT hebcal's built-in 20.
+ *
+ * ---------------------------------------------------------------------------
+ * WHY ±1 MINUTE AND NOT EXACT
+ * ---------------------------------------------------------------------------
+ * We floor seconds; a value landing at :59.8 floors one way and its published
+ * counterpart the other. The sources themselves disagree by a few seconds —
+ * NOAA and sunrisesunset.io differ by up to 20s on netz, and the document flags
+ * 2026-01-14 chatzot (11:49:58) as "genuinely on the boundary, assert ±1 min".
+ * Demanding exact equality would encode a rounding artefact as halacha.
+ *
+ * `candle_lighting` is the exception and IS asserted exactly, in
+ * `zmanim-day.test.ts` — it is a published number on a poster, not a derived
+ * one, and the whole reason for choosing 22 minutes is that we reproduce that
+ * printed minute.
  */
 
 export interface GroundTruthDay {
@@ -49,25 +56,48 @@ export interface GroundTruthDay {
   candle_lighting: string | null;
 }
 
-/** Flip to `true` only when the table below comes from a published luach. */
-export const GROUND_TRUTH_IS_VALIDATED = false;
+/** True: the table below is transcribed from published luachot, not generated. */
+export const GROUND_TRUTH_IS_VALIDATED = true;
 
 /**
- * The dates are chosen, not sampled:
- *   2026-01-16  Friday, deep winter — the shortest afternoon we serve
- *   2026-03-26  Thursday, last day of Israel Standard Time
- *   2026-03-27  Friday, clocks go FORWARD at 02:00
- *   2026-06-19  Friday, near the solstice — the longest afternoon
- *   2026-08-26  Wednesday, an ordinary day with no candle lighting
- *   2026-10-24  Saturday, last day of Israel Daylight Time
- *   2026-10-25  Sunday, clocks go BACK at 02:00
- *   2027-03-12  Friday in Adar II 5787, a leap year
+ * Tolerance in minutes for the derived anchors. See the header.
+ */
+export const GROUND_TRUTH_TOLERANCE_MINUTES = 1;
+
+/**
+ * The dates are chosen, not sampled. Each one is here to break something:
+ *
+ *   2026-01-14  Wed, midwinter baseline. chatzot sits on a second boundary.
+ *   2026-01-16  Fri, deep winter. Council published כניסת שבת 16:37 —
+ *               this is the date the 22-minute rule is anchored on.
+ *   2026-03-26  Thu, LAST day of Israel Standard Time. Also the date where
+ *               ½ shaa zmanit first exceeds 30 fixed minutes, so the two
+ *               mincha gedola definitions cross over.
+ *   2026-03-27  Fri, DST BEGINS, and erev Shabbat, and every anchor jumps an
+ *               hour. The most valuable single date in the set.
+ *   2026-07-15  Wed, midsummer. Corroborated to the second by MyZmanim.
+ *   2026-07-17  Fri, midsummer erev Shabbat. Council published 19:25.
+ *   2026-10-23  Fri, the erev Shabbat inside the DST-end weekend.
+ *   2026-10-24  Sat, LAST day of Israel Daylight Time.
+ *   2026-10-25  Sun, DST ENDS — the repeated 01:00 hour.
+ *   2026-12-21  Mon, winter solstice. Shortest shaa zmanit of the year
+ *               (00:50:14) and the widest gap between the two mincha gedola
+ *               definitions.
+ *
+ * Israel's DST dates are its own — the Friday before the last Sunday in March,
+ * and the last Sunday in October. They are not the EU's or the US's, and the
+ * law has been amended more than once.
  */
 export const GROUND_TRUTH: Readonly<Record<string, GroundTruthDay>> = {
+  '2026-01-14': {
+    alot: '05:25', netz: '06:42', shema: '09:16', chatzot: '11:49',
+    mincha_gedola: '12:15', mincha_ketana: '14:49', plag: '15:53',
+    shkia: '16:57', tzeit: '17:36', candle_lighting: null,
+  },
   '2026-01-16': {
     alot: '05:25', netz: '06:41', shema: '09:16', chatzot: '11:50',
     mincha_gedola: '12:16', mincha_ketana: '14:50', plag: '15:55',
-    shkia: '16:59', tzeit: '17:38', candle_lighting: '16:39',
+    shkia: '16:59', tzeit: '17:38', candle_lighting: '16:37',
   },
   '2026-03-26': {
     alot: '04:24', netz: '05:37', shema: '08:41', chatzot: '11:46',
@@ -75,19 +105,24 @@ export const GROUND_TRUTH: Readonly<Record<string, GroundTruthDay>> = {
     shkia: '17:56', tzeit: '18:32', candle_lighting: null,
   },
   '2026-03-27': {
-    alot: '05:23', netz: '06:35', shema: '09:41', chatzot: '12:46',
+    alot: '05:22', netz: '06:35', shema: '09:41', chatzot: '12:46',
     mincha_gedola: '13:17', mincha_ketana: '16:22', plag: '17:39',
-    shkia: '18:57', tzeit: '19:33', candle_lighting: '18:37',
+    shkia: '18:57', tzeit: '19:33', candle_lighting: '18:35',
   },
-  '2026-06-19': {
-    alot: '04:06', netz: '05:34', shema: '09:08', chatzot: '12:42',
-    mincha_gedola: '13:17', mincha_ketana: '16:51', plag: '18:20',
-    shkia: '19:49', tzeit: '20:32', candle_lighting: '19:29',
+  '2026-07-15': {
+    alot: '04:19', netz: '05:45', shema: '09:16', chatzot: '12:46',
+    mincha_gedola: '13:21', mincha_ketana: '16:52', plag: '18:20',
+    shkia: '19:48', tzeit: '20:29', candle_lighting: null,
   },
-  '2026-08-26': {
-    alot: '04:56', netz: '06:12', shema: '09:27', chatzot: '12:42',
-    mincha_gedola: '13:15', mincha_ketana: '16:30', plag: '17:51',
-    shkia: '19:12', tzeit: '19:50', candle_lighting: null,
+  '2026-07-17': {
+    alot: '04:21', netz: '05:46', shema: '09:16', chatzot: '12:46',
+    mincha_gedola: '13:21', mincha_ketana: '16:52', plag: '18:19',
+    shkia: '19:47', tzeit: '20:28', candle_lighting: '19:25',
+  },
+  '2026-10-23': {
+    alot: '05:37', netz: '06:50', shema: '09:37', chatzot: '12:24',
+    mincha_gedola: '12:52', mincha_ketana: '15:40', plag: '16:49',
+    shkia: '17:59', tzeit: '18:36', candle_lighting: '17:37',
   },
   '2026-10-24': {
     alot: '05:37', netz: '06:50', shema: '09:37', chatzot: '12:24',
@@ -99,18 +134,27 @@ export const GROUND_TRUTH: Readonly<Record<string, GroundTruthDay>> = {
     mincha_gedola: '11:52', mincha_ketana: '14:38', plag: '15:48',
     shkia: '16:57', tzeit: '17:34', candle_lighting: null,
   },
-  '2027-03-12': {
-    alot: '04:43', netz: '05:55', shema: '08:53', chatzot: '11:50',
-    mincha_gedola: '12:20', mincha_ketana: '15:18', plag: '16:32',
-    shkia: '17:46', tzeit: '18:22', candle_lighting: '17:26',
+  '2026-12-21': {
+    alot: '05:19', netz: '06:37', shema: '09:08', chatzot: '11:38',
+    mincha_gedola: '12:03', mincha_ketana: '14:34', plag: '15:37',
+    shkia: '16:40', tzeit: '17:20', candle_lighting: null,
   },
 };
 
 /**
- * The two DST changeovers, from the tz database rather than from memory.
- * Israel moves on the Friday before the last Sunday of March and back on the
- * last Sunday of October — but the law has been amended more than once, so
- * these are asserted against `Intl`, not hard-coded as truth.
+ * The one-hour jumps, transcribed as deltas rather than recomputed. Any code
+ * that caches yesterday's zmanim, works in "minutes since midnight" without a
+ * timezone, or computes offsets in UTC and formats in local, breaks exactly
+ * here and nowhere else.
+ */
+export const DST_JUMPS = {
+  spring: { from: '2026-03-26', to: '2026-03-27', shkiaDeltaMinutes: 61 },
+  autumn: { from: '2026-10-24', to: '2026-10-25', shkiaDeltaMinutes: -61 },
+} as const;
+
+/**
+ * From the tz database rather than from memory — asserted against `Intl`
+ * elsewhere rather than trusted as truth here.
  */
 export const DST_STARTS = '2026-03-27';
 export const DST_ENDS = '2026-10-25';
