@@ -190,6 +190,42 @@ describe('candle lighting exists only when it exists', () => {
     const day = zmanimFor(TEL_AVIV, date('2026-09-25'));
     assert.ok(day.candle_lighting || day.yomTov === null);
   });
+
+  it('is absent when yom tov starts on motzei Shabbat — candles are lit after tzeit', () => {
+    // Rosh Hashana 5787 begins Friday 2026-09-11 and its SECOND night is
+    // Saturday 2026-09-12, when candles are lit after nightfall from a
+    // pre-existing flame. hebcal marks that event LIGHT_CANDLES_TZEIS — but it
+    // also sets LIGHT_CANDLES on it, so a filter testing only the latter admits
+    // it. That is not כניסת שבת and no minyan rule can mean it.
+    const day = zmanimFor(TEL_AVIV, date('2026-09-12'));
+    assert.equal(day.candle_lighting, null);
+
+    // The erev lighting itself must be unaffected.
+    const erev = zmanimFor(TEL_AVIV, date('2026-09-11'));
+    assert.ok(erev.candle_lighting, 'erev Rosh Hashana must still light');
+  });
+
+  it('never yields a candle-lighting minyan after shkia — swept across a year', () => {
+    // The property that makes the bug above impossible rather than merely
+    // fixed. A minyan anchored to candle lighting is davened BEFORE candles
+    // are lit, so it must land before sunset on every date it resolves at all.
+    // Before the fix, 2026-09-12 produced 19:18 against a shkia of 18:51: a
+    // Mincha twenty-seven minutes after sunset.
+    let resolvedDays = 0;
+    const cursor = date('2026-01-01');
+    for (let i = 0; i < 365; i++) {
+      const d = addDays(cursor, i);
+      const day = zmanimFor(TEL_AVIV, d);
+      if (!day.candle_lighting) continue;
+      resolvedDays++;
+      assert.ok(
+        day.candle_lighting < day.shkia,
+        `${isoDate(d)}: candle lighting ${day.candle_lighting.toISOString()} is not before shkia ${day.shkia.toISOString()}`,
+      );
+    }
+    // Guard against the assertion passing because nothing resolved at all.
+    assert.ok(resolvedDays > 50, `only ${resolvedDays} lighting days found in 2026`);
+  });
 });
 
 describe('the Hebrew date rolls at sunset, not at midnight', () => {

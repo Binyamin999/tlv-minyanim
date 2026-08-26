@@ -295,10 +295,18 @@ onto any tzeit value** — that is guessing an offset. If a shul's Arvit offset
 matters, ask the gabbai.
 
 **`candle_lighting` is undefined on most dates** and must resolve to *nothing*
-on a Tuesday, never to `shkia − 32`. The case that will actually bite: when Yom
-Tov falls on Saturday night, candles are lit **after tzeit** from a pre-existing
-flame, not at `shkia − 22`. Live in 5787: Rosh Hashana (2026-09-12), Sukkot
-(2026-09-26) and Shmini Atzeret (2026-10-03) all fall on Shabbat.
+on a Tuesday, never to `shkia − 32`. It is also undefined on the **second night
+of a two-day Yom Tov**, when candles are lit after tzeit from a pre-existing
+flame — that is not כניסת שבת and no minyan rule can mean it. hebcal marks that
+event `LIGHT_CANDLES_TZEIS` *and* `LIGHT_CANDLES`, so a filter testing only the
+latter admits it; reject by the tzeis flag first.
+
+**In Israel this affects Rosh Hashana and nothing else.** Sukkot I, Shmini
+Atzeret and Pesach are one-day chagim here, so when they fall on Shabbat the day
+simply ends with havdalah and there is no second lighting. Checked: of
+2026-09-12 (Rosh Hashana II), 2026-09-26 (Sukkot I) and 2026-10-03 (Shmini
+Atzeret), only the first carries a tzeis lighting. Do not copy a diaspora
+two-day assumption into Israeli data.
 
 **`ח` / `ק` in the source data means the clock, not the season** — שעון חורף /
 שעון קיץ, i.e. standard time vs DST. It is a DST distinction wearing seasonal

@@ -173,9 +173,24 @@ function candleLightingOn(location: Location, date: JerusalemDate): Date | null 
   });
   for (const event of events) {
     if (!(event instanceof CandleLightingEvent)) continue;
-    // LIGHT_CANDLES is כניסת שבת / erev yom tov. LIGHT_CANDLES_TZEIS (second
-    // night of yom tov, lit after nightfall) is deliberately not `כניסת שבת`
-    // and must not answer to that anchor.
+    // LIGHT_CANDLES_TZEIS is the SECOND night of a two-day yom tov: candles lit
+    // after nightfall from a pre-existing flame. It is not כניסת שבת and must
+    // not answer to that anchor.
+    //
+    // Reject it FIRST, and by its own flag. hebcal sets both bits on that event
+    // — Rosh Hashana 5787 falls on Shabbat and 2026-09-12 carries
+    // `CHAG+LIGHT_CANDLES+LIGHT_CANDLES_TZEIS` — so testing only for
+    // LIGHT_CANDLES lets it through. That produced a real, checkable error:
+    // `לכלל ישראל`'s `candle_lighting - 10min` Shabbat Mincha resolved to
+    // 19:18 that day, against a shkia of 18:51. A Mincha twenty-seven minutes
+    // after sunset is not a late Mincha, it is not a Mincha.
+    //
+    // With it rejected the anchor is simply absent that day and the minyan
+    // reads as unresolved, which is the truth: the lighting that Shabbat
+    // Mincha refers to happened the previous evening.
+    if (event.getFlags() & flags.LIGHT_CANDLES_TZEIS) continue;
+    // LIGHT_CANDLES is כניסת שבת / erev yom tov — the lighting that BEGINS the
+    // day, which is the only one a minyan rule can mean.
     if ((event.getFlags() & flags.LIGHT_CANDLES) === 0) continue;
     const time = event.eventTime;
     if (time && !Number.isNaN(time.getTime())) return floorToMinute(time);
