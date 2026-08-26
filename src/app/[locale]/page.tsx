@@ -12,7 +12,6 @@ import { localeAlternates } from '@/i18n/alternates';
 import { getDictionary } from '@/i18n/dictionaries';
 import { LOCALES, isLocale } from '@/i18n/locales';
 import {
-  SERVICE_FILTERS,
   firstParam,
   homeHref,
   isNusach,
@@ -261,9 +260,19 @@ function firstPerSynagogue<T extends { synagogue: { id: number } }>(rows: readon
 /**
  * Which chip is on when nobody has chosen one: the service of the very next
  * minyan anywhere in the data.
+ *
+ * The fallback is only reached when nothing at all is upcoming — an empty
+ * database, or a horizon that found nothing. It is named rather than taken as
+ * `SERVICE_FILTERS[0]`, because that made the layout order and the default
+ * silently the same decision: reordering the chips to put שחרית first, which is
+ * purely visual, moved this too. Shacharit is the right fallback on its own
+ * merits — it is the only service known for every shul in the data — but it
+ * should be chosen, not inherited from an array index.
  */
+const FALLBACK_SERVICE: ServiceFilter = 'shacharit';
+
 function defaultService(upcoming: readonly UpcomingMinyan[]): ServiceFilter {
   const soonest = upcoming[0];
   if (soonest && isServiceFilter(soonest.service)) return soonest.service;
-  return SERVICE_FILTERS[0];
+  return FALLBACK_SERVICE;
 }

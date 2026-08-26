@@ -11,17 +11,24 @@ import { NUSACHIM } from '@/lib/taxonomy';
 import type { Service } from '@/minyan-times';
 
 /**
- * Four chips, in the artboard's own order.
+ * Four chips, in the order the day actually happens.
  *
- * That order is Mincha first, which is not the order of the day and is
- * recorded here as drawn rather than tidied: the artboard shows מנחה / שחרית /
- * ערבית / שבת and this is an implementation of the artboard.
+ * The artboard draws Mincha first and this followed it, since the boards are
+ * the specification. The user corrected it: שחרית / מנחה / ערבית / שבת. A
+ * reader scanning a row of prayer names expects them in the order they are
+ * davened, and Mincha-first only ever made sense because Mincha is the chip
+ * most often *selected* — which is a default, not an ordering.
+ *
+ * Note the two are independent: `defaultServiceFilter` still opens on whichever
+ * service has the soonest minyan, so the common case is unchanged. This is only
+ * the order they are laid out in.
  *
  * `shabbat` is the odd one and honestly so — it is a day, not a service. It
  * filters on the `shabbat` column rather than on a service, which is exactly
- * what a person tapping it means: show me the Shabbat times.
+ * what a person tapping it means: show me the Shabbat times. It stays last
+ * because it is the one chip that is not a point in today.
  */
-export const SERVICE_FILTERS = ['mincha', 'shacharit', 'arvit', 'shabbat'] as const;
+export const SERVICE_FILTERS = ['shacharit', 'mincha', 'arvit', 'shabbat'] as const;
 
 export type ServiceFilter = (typeof SERVICE_FILTERS)[number];
 
