@@ -65,6 +65,24 @@ breaks the only feature that matters. We do not repeat it.
 offset. That is `kind: 'unknown'`. **Never guess an offset.** A hallucinated Mincha
 time is far worse than a blank — blank is honest, wrong destroys trust permanently.
 
+### The one thing that looks like a guess and is not
+
+`מנחה 1:30` means **13:30**. Mincha at 01:30 does not exist, so the time is
+stated and only the clock convention is open — and for a given service exactly
+one convention is possible. Resolving that is *reading* the source, not guessing
+past it. Each service has a window it can occupy (Mincha 12:00–20:00, Shacharit
+03:00–12:00, Arvit 16:30–23:59); a time outside its window gets one chance at
++12h, and if that lands inside, it was a 12-hour clock face.
+
+Every shift is recorded in `clockNormalisation` so it stays auditable —
+`WHERE clock_normalisation IS NOT NULL` returns all of them to check against a
+photograph of the sign. Where **neither** reading is possible the record is
+flagged `implausible_for_service` and held back, never repaired by guesswork.
+
+The distinction from `בזמן`: there no time was written at all, so supplying one
+is fabrication. Here the number is on the sign and we are reading it correctly.
+A time already inside its window is **never** shifted.
+
 ### Computation is deterministic code, not a model
 
 An agent's job is to determine the *rule*. A zmanim library applies the rule.
@@ -121,6 +139,33 @@ style:    carlebach | hashkama | netz | null
   publishing; never commit them to a public repo.
 
 ---
+
+## Structural decisions — undoing these reintroduces a bug
+
+**Shiurim live in their own table, not behind a flag on `minyanim`.** A 7:00 daf
+yomi is not a 7:00 Shacharit. A boolean column means one forgotten `WHERE`
+clause turns a class into a minyan; a separate table makes it impossible. Five
+of the sixteen shuls have one.
+
+**Parse failures are stored, not dropped.** `parse_issues` exists so that text
+the parser could not read is visible instead of silently vanishing — which is
+the exact failure the parser was built to shout about. Zero rows today; that
+will change at 484.
+
+**The three-way time is a CHECK constraint, not just a TypeScript type.** A
+`fixed` row cannot carry an anchor, an `unknown` row cannot carry a time. Verified
+by trying to insert all three malformed shapes. An import script must not be able
+to write in SQL what the types forbid in the app — if the importer trips it, the
+importer is wrong.
+
+**Hebrew sorts with `COLLATE "C"`.** The cluster default is `en_US.UTF-8`, which
+orders Hebrew into nonsense — it put `המרכזי` before `אוהל`. Hebrew codepoints are
+already alphabetical, and `"C"` exists everywhere, unlike `he-IL-x-icu`. This bug
+is invisible to anyone not reading Hebrew.
+
+**`is_publishable` is a generated column.** Computed, not a flag someone
+remembers to set. A record with a non-empty `needs_review` cannot present as
+confirmed.
 
 ## Internationalisation
 
@@ -354,6 +399,27 @@ A change is done when:
 - [ ] `last_verified_at` is surfaced wherever a time is shown
 - [ ] New shul pages emit `schema.org` `PlaceOfWorship` + `OpeningHoursSpecification`
 - [ ] Tests pass, including the zmanim edge cases (DST, Adar I/II, sunset rollover)
+
+## How we test time
+
+**Never assert that a library returns what the library returns.** That proves
+self-consistency and nothing else. Expected zmanim come from published luachot —
+`docs/zmanim-ground-truth.md`, sourced independently of this code — and live in
+`test/fixtures.zmanim-ground-truth.ts`. Regenerating them from `@hebcal/core`
+would silently void every one of those tests.
+
+**Check that a test can fail.** A green run on the first attempt is when to be
+suspicious. Break the thing deliberately and confirm the failure: reverting
+candle lighting to hebcal's 20 must fail six tests; switching tzeit from 8.5° to
+7.083° must fail ten.
+
+**Prefer a property over pinned dates** where one exists. "Candle lighting is
+always before shkia, swept across 365 days" catches a class of bug; three
+asserted dates catch three instances of it.
+
+**Compare within a minute, except where a number is published.** Sources
+disagree by seconds and we floor. Candle lighting is asserted exactly, because
+reproducing the minute printed on the Council's poster is the point.
 
 ## Never
 
