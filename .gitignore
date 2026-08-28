@@ -18,3 +18,6 @@ design/_blur-compare.html
 
 # Header comparison scratch page
 design/_headers.html
+
+# macOS
+.DS_Store
