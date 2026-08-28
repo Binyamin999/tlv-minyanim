@@ -46,6 +46,14 @@ const he = {
   lastVerified: (date: string) => `עודכן לאחרונה ${date}`,
   neverVerified: 'טרם אומת',
   verifiedBy: (source: string) => `מקור: ${source}`,
+  /** How a listing was checked. Keyed by VerificationSource — never free text,
+   *  which would render one language's prose inside the other's page. */
+  verificationSources: {
+    notice_board: 'לוח המודעות בבית הכנסת',
+    gabbai: 'מהגבאי',
+    phone: 'בטלפון',
+    shul_website: 'מאתר בית הכנסת',
+  } as Record<string, string>,
 
   /* --- listing and shul pages ------------------------------------- */
   synagogues: 'בתי כנסת',
@@ -257,6 +265,12 @@ const en: typeof he = {
   lastVerified: (date: string) => `Last verified ${date}`,
   neverVerified: 'Not yet verified',
   verifiedBy: (source: string) => `Source: ${source}`,
+  verificationSources: {
+    notice_board: "the synagogue's notice board",
+    gabbai: 'the gabbai',
+    phone: 'by telephone',
+    shul_website: "the synagogue's website",
+  } as Record<string, string>,
 
   synagogues: 'Synagogues',
   allSynagogues: 'All synagogues',

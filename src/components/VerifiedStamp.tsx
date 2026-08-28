@@ -32,10 +32,16 @@ export function VerifiedStamp({
     );
   }
 
+  // `verified_by` is a CODE, localised here. It used to be free text, which
+  // rendered an English sentence inside the Hebrew page. A row carrying prose
+  // from before that change falls through to showing itself rather than an
+  // empty source line — wrong language beats no provenance.
+  const source = t.verificationSources[verifiedBy] ?? verifiedBy;
+
   if (compact) {
     return (
       <p className="verified verified-compact">
-        <span className="stamp tabular" title={t.verifiedBy(verifiedBy)}>
+        <span className="stamp tabular" title={t.verifiedBy(source)}>
           {t.verifiedShort(formatVerifiedDateShort(lastVerifiedAt, locale))}
         </span>
       </p>
@@ -48,7 +54,7 @@ export function VerifiedStamp({
         {t.lastVerified(formatVerifiedDate(lastVerifiedAt, locale))}
       </span>
       {' · '}
-      <span className="stamp">{t.verifiedBy(verifiedBy)}</span>
+      <span className="stamp">{t.verifiedBy(source)}</span>
     </p>
   );
 }

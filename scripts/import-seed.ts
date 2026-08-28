@@ -31,6 +31,7 @@ import type { PoolClient } from 'pg';
 
 import { closePool, withTransaction } from '../src/db/client.ts';
 import { curatedMovement, curatedNameEn } from '../src/lib/curation.ts';
+import { verifiedFor, type VerifiedSynagogue } from '../src/lib/verified-times.ts';
 import { slugCandidates } from '../src/lib/slug.ts';
 import { parseMinyanTimes } from '../src/minyan-times/index.ts';
 import type {
@@ -182,11 +183,57 @@ function assertImportable(minyan: ParsedMinyan, context: string): asserts minyan
 }
 
 /* ------------------------------------------------------------------ */
+/* Verified times — a person reading the sign outranks the GIS layer   */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Turn a hand-verified record into the same shape the parser produces, so
+ * everything downstream — the CHECK constraint, `is_publishable`, the timeline
+ * — treats it identically. The only difference is provenance, and provenance
+ * lives in `last_verified_at` / `verified_by`, not in a different code path.
+ *
+ * `rawSegment` and `rawField` carry the human source rather than a Hebrew
+ * string, because that is literally where the value came from and those columns
+ * exist so any row can be traced back to what it was read from.
+ */
+function verifiedToParsed(verified: VerifiedSynagogue, nameHe: string): ParsedMinyan[] {
+  return verified.minyanim.map((entry, index) => {
+    // The tzeit ambiguity is a property of the anchor, not of who wrote it
+    // down: `צאת הכוכבים` on a sign still does not say WHICH nightfall. A human
+    // reading the sign does not resolve that, so the same guard applies here.
+    const needsReview =
+      entry.time.kind === 'relative' && entry.time.anchor === 'tzeit'
+        ? [
+            {
+              code: 'ambiguous_tzeit' as const,
+              detail:
+                `${nameHe}: verified as tzeit-anchored, but tzeit names two different ` +
+                'times. Ask which nightfall before publishing.',
+            },
+          ]
+        : [];
+
+    return {
+      service: entry.service,
+      time: entry.time,
+      season: null,
+      dayType: entry.dayType,
+      rawSegment: entry.note ?? `verified: ${verified.verifiedBy}`,
+      rawField: `${verified.verifiedBy} (${verified.verifiedAt})`,
+      index,
+      needsReview,
+    } satisfies ParsedMinyan;
+  });
+}
+
+/* ------------------------------------------------------------------ */
 /* Writing                                                            */
 /* ------------------------------------------------------------------ */
 
 interface Summary {
   synagogues: number;
+  /** How many had their times read off the sign rather than from the GIS layer. */
+  verified: number;
   minyanim: number;
   publishable: number;
   needsReview: number;
@@ -204,6 +251,7 @@ async function upsertSynagogue(
   seed: SeedSynagogue,
   status: string,
   summary: Summary,
+  verified: VerifiedSynagogue | null,
 ): Promise<number> {
   const existing = await client.query<{ id: number; slug: string }>(
     'SELECT id, slug FROM synagogues WHERE gis_source_id = $1',
@@ -234,7 +282,12 @@ async function upsertSynagogue(
 
   // "Never claim a listing is verified without a source and a date" — the
   // schema enforces it, and we refuse to send a half-pair at all.
-  if ((seed.last_verified_at === null) !== (seed.verified_by === null)) {
+  // "Never claim a listing is verified without a source and a date." A verified
+  // record supplies both together or it does not exist, so this pair can only
+  // come from one place at a time.
+  const lastVerifiedAt = verified ? verified.verifiedAt : seed.last_verified_at;
+  const verifiedBy = verified ? verified.verifiedBy : seed.verified_by;
+  if ((lastVerifiedAt === null) !== (verifiedBy === null)) {
     throw new Error(`${seed.name_he}: last_verified_at and verified_by must be set together`);
   }
 
@@ -269,8 +322,8 @@ async function upsertSynagogue(
       nusach,
       movement,
       status,
-      seed.last_verified_at,
-      seed.verified_by,
+      lastVerifiedAt,
+      verifiedBy,
       nameEn,
     ],
   );
@@ -427,6 +480,7 @@ async function main(): Promise<void> {
 
   const summary: Summary = {
     synagogues: 0,
+    verified: 0,
     minyanim: 0,
     publishable: 0,
     needsReview: 0,
@@ -465,6 +519,11 @@ async function main(): Promise<void> {
       const issues: Array<{ sourceField: string; issue: ParseIssue }> = [];
       let status = seedStatus(seed);
 
+      // A person stood in front of the sign. Everything the municipality said
+      // about this synagogue's times is superseded — wholesale, not merged, so
+      // no record is ever half from one source and half from the other.
+      const verified = verifiedFor(seed.name_he);
+
       for (const { sourceField, result } of results) {
         if (sourceField === 'daf_yomi_raw' && result.minyanim.length > 0) {
           throw new Error(
@@ -489,14 +548,21 @@ async function main(): Promise<void> {
         }
       }
 
-      const synagogueId = await upsertSynagogue(client, seed, status, summary);
-      await writeMinyanim(client, synagogueId, minyanim);
+      // Wholesale replacement, and the parsed rows are simply not written.
+      // They are not merged and not kept alongside: a record that is half sign
+      // and half municipality cannot be reasoned about, and the sign is the
+      // better evidence for every line it covers.
+      const finalMinyanim = verified ? verifiedToParsed(verified, seed.name_he) : minyanim;
+      if (verified) summary.verified += 1;
+
+      const synagogueId = await upsertSynagogue(client, seed, status, summary, verified);
+      await writeMinyanim(client, synagogueId, finalMinyanim);
       await writeShiurim(client, synagogueId, shiurim);
       await writeIssues(client, synagogueId, issues);
 
       summary.synagogues += 1;
-      summary.minyanim += minyanim.length;
-      for (const minyan of minyanim) {
+      summary.minyanim += finalMinyanim.length;
+      for (const minyan of finalMinyanim) {
         summary.byKind[minyan.time.kind] = (summary.byKind[minyan.time.kind] ?? 0) + 1;
         if (minyan.needsReview.length === 0 && minyan.service !== null) summary.publishable += 1;
         else summary.needsReview += 1;

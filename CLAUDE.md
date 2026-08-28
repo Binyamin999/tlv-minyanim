@@ -410,6 +410,37 @@ Endpoint: `https://gisn.tel-aviv.gov.il/arcgis/rest/services/WM/IView2WM/MapServ
 
 ---
 
+## Verified times outrank the source
+
+`src/lib/verified-times.ts` holds times a person read off a synagogue's own
+notice board. It is the only thing that can honestly set `last_verified_at`, and
+it **replaces the parsed times for that shul wholesale** — never merged, because
+a record half from the sign and half from the municipality cannot be reasoned
+about.
+
+`verified_by` is a **code**, not prose: it is displayed in both languages, and
+free text renders one language's sentence inside the other's page. It says *how*
+rather than *who* — the file is public.
+
+**`held` is part of the record.** A sign carries more than we can store, and
+writing down what was seen and deliberately not kept — with the reason — is what
+stops the next reader thinking the sign was shorter than it was. Same instinct
+as `parse_issues`: the failure is data.
+
+**A clock face may only be stored as `fixed` if it is possible year-round.**
+כלל ישראל's 14:00 Mincha qualifies — after mincha gedola and before shkia on all
+365 days, and there is a test that sweeps them. Its 18:55 Mincha does not: that
+is `shkia − 17` in August and `shkia + 135` in December, so it is held until
+somebody supplies the rule. This is the check that catches a summer time
+masquerading as a rule, and `implausible_for_service` does not do it — that
+guard reads the clock face alone and 18:55 is a legal Mincha hour.
+
+**One shul can run several minyanim.** כלל ישראל has `מניין אשכנזי-ספרדי` and
+`מניין תימני` at different times, which is why the municipality tagged it
+`כללי` — not "unclassified" but "more than one". The schema has one nusach per
+synagogue and none per minyan, so only times the minyanim **share** are stored;
+the rest is held. Fixing this properly means a nusach on `minyanim`.
+
 ## The refresh engine
 
 Data rot is what kills every minyan directory. TLV10 is abandoned; the GIS layer is
