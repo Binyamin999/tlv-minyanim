@@ -1,6 +1,10 @@
 {
   "pages": [
     {
+      "id": "desktop",
+      "name": "Desktop — three directions"
+    },
+    {
       "id": "modes",
       "name": "Day & night — your photographs"
     },
@@ -14,6 +18,78 @@
     }
   ],
   "artboards": [
+    {
+      "file": "LuachDay.dc.html",
+      "title": "1 · The Luach — day",
+      "page": "desktop",
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 900
+    },
+    {
+      "file": "LuachNight.dc.html",
+      "title": "1 · The Luach — night",
+      "page": "desktop",
+      "x": 1540,
+      "y": 0,
+      "w": 1440,
+      "h": 900
+    },
+    {
+      "file": "RibbonsDay.dc.html",
+      "title": "2 · Three Ribbons — day",
+      "page": "desktop",
+      "x": 0,
+      "y": 1000,
+      "w": 1440,
+      "h": 900
+    },
+    {
+      "file": "RibbonsNight.dc.html",
+      "title": "2 · Three Ribbons — night",
+      "page": "desktop",
+      "x": 1540,
+      "y": 1000,
+      "w": 1440,
+      "h": 900
+    },
+    {
+      "file": "HorizonDay.dc.html",
+      "title": "3 · The Horizon — day",
+      "page": "desktop",
+      "x": 0,
+      "y": 2000,
+      "w": 1440,
+      "h": 900
+    },
+    {
+      "file": "HorizonNight.dc.html",
+      "title": "3 · The Horizon — night",
+      "page": "desktop",
+      "x": 1540,
+      "y": 2000,
+      "w": 1440,
+      "h": 900
+    },
+    {
+      "file": "PhotoDayMobile.dc.html",
+      "title": "Approved mobile — day (for comparison)",
+      "page": "desktop",
+      "x": 3080,
+      "y": 0,
+      "w": 375,
+      "h": 1360
+    },
+    {
+      "file": "PhotoNightMobile.dc.html",
+      "title": "Approved mobile — night (for comparison)",
+      "page": "desktop",
+      "x": 3520,
+      "y": 0,
+      "w": 375,
+      "h": 1560
+    },
     {
       "file": "PhotoNightHeader.dc.html",
       "title": "Night — photo in header (A/B toggle)",
@@ -31,24 +107,6 @@
       "y": 1700,
       "w": 1280,
       "h": 1060
-    },
-    {
-      "file": "PhotoNightMobile.dc.html",
-      "title": "Night — mobile",
-      "page": "modes",
-      "x": 0,
-      "y": 0,
-      "w": 375,
-      "h": 1560
-    },
-    {
-      "file": "PhotoDayMobile.dc.html",
-      "title": "Day — mobile",
-      "page": "modes",
-      "x": 460,
-      "y": 0,
-      "w": 375,
-      "h": 1360
     },
     {
       "file": "PhotoNightDesktop.dc.html",
@@ -188,6 +246,38 @@
   ],
   "annotations": [
     {
+      "id": "desktop-brief",
+      "x": 0,
+      "y": -260,
+      "w": 700,
+      "page": "desktop",
+      "text": "The desktop question was never \"the same page, wider\" — tlv-day.jpg is 679px native and tlv-night.jpg is 416px, so a full-bleed 1440px header would upscale one 2.1x and the other 3.5x. Never. So every board here keeps the settled header exactly as approved (masthead, zmanim ribbon, mode toggle) with the photograph at its true size along the leading edge and a painted gradient carrying the rest — and spends the extra 1440px width on a genuinely different BODY, not a bigger photograph.\n\nAll three use real data from the running app today (ט״ו אלול תשפ״ו, שקיעה 19:10): the same 15–16 Ramat Aviv shuls, the same חב״ד tag on תומכי תמימים, the same unpublished-offset row on הרמב״ם, the same one real relative offset on לכלל ישראל (שקיעה פחות 20). Nothing here is lorem.\n\nApproved mobile boards sit to the right for direct comparison — none of these three contradict them, only the header repeats and the body changes."
+    },
+    {
+      "id": "direction-1-luach",
+      "x": 0,
+      "y": 920,
+      "w": 700,
+      "page": "desktop",
+      "text": "1 · THE LUACH (הלוח) — one dense table across the full width, like a printed זמנים לוח pinned in a shul lobby. The \"next minyan\" hero is just the table's own top row, picked out by a rule, not a different kind of object. Best for scanning all 15 shuls fast.\n\nTradeoff: the coldest of the three — no floating hero card, nothing that visually says \"same family as the mobile site\" without the header's help."
+    },
+    {
+      "id": "direction-2-ribbons",
+      "x": 1540,
+      "y": 920,
+      "w": 700,
+      "page": "desktop",
+      "text": "2 · THREE RIBBONS — שחרית / מנחה / ערבית as three parallel columns, a literal Bauhaus ribbon-window composition. Compares services at a glance instead of filtering to one.\n\nThe payoff is not staged: ערבית is real data from the app right now — 0 Ramat Aviv shuls publish an evening time — so that column is drawn genuinely empty, using the same quiet unknown-row language CLAUDE.md specifies, just at the scale of a whole column. It is the exact gap the project names, made visible.\n\nTradeoff: a shul can appear in more than one column (לכלל ישראל is in both שחרית and מנחה here) — the opposite problem from the Luach board, where every shul appears exactly once."
+    },
+    {
+      "id": "direction-3-horizon",
+      "x": 0,
+      "y": 1920,
+      "w": 700,
+      "page": "desktop",
+      "text": "3 · THE HORIZON — a continuous horizontal ribbon plotting the day itself, נץ to צאת read right-to-left, under a mobile-style card grid reflowed to three columns. The most literally Bauhaus of the three (a ribbon window, not a metaphor for one) and the closest to mobile's own warmth.\n\nOnly KNOWN, published times get a tick — an unpublished בזמן has no honest position to plot, so the eight Mincha unknowns are named only as a count beside the band, never guessed onto the line.\n\nTradeoff: safest and most familiar of the three — the card grid is barely a decision, just mobile's card reflowed wider — so nearly the whole argument rides on whether the strip reads at a glance."
+    },
+    {
       "id": "header-ab",
       "x": 920,
       "y": 1560,
@@ -240,6 +330,6 @@
   ],
   "launch": {
     "view": "canvas",
-    "page": "modes"
+    "page": "desktop"
   }
 }

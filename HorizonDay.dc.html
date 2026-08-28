@@ -1,0 +1,377 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&family=Frank+Ruhl+Libre:wght@400;500;700&display=swap">
+  <style>
+    body { margin: 0; }
+    a { color: #0A6C82; text-decoration: none; }
+    a:hover { color: #AD5634; }
+    .tnum { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+  </style>
+</helmet>
+
+<!--
+  DESKTOP DIRECTION 3 of 3 — "THE HORIZON". Day file; see HorizonNight.dc.html
+  for the dark pair.
+
+  THE IDEA: a single continuous horizontal ribbon spanning the full width,
+  directly under the header, plotting the day itself — netz to tzeit, read
+  right to left with Hebrew — rather than a list of shuls. This is the most
+  literally Bauhaus of the three: a ribbon window, ticked like window
+  mullions, not a metaphor for one. Below it, the familiar mobile card
+  reflows to three columns, so the direction keeps mobile's warmth (real
+  cards, a floating hero) while adding one genuinely new desktop-only
+  component instead of replacing everything.
+
+  WHAT THE STRIP CAN AND CANNOT SHOW, ON PURPOSE: every tick is a shul with a
+  KNOWN, PUBLISHED time — that is the only thing that can be honestly placed
+  on an axis with a position. An offset like "בזמן" has no position to plot
+  without inventing one, which CLAUDE.md forbids outright, so the eight
+  Ramat Aviv shuls whose Mincha is unpublished are named only in a count
+  ("+ 8 ללא שעה ידועה") beside the מנחה band, never as a guessed mark on the
+  line. Note what the strip shows without commentary: a dense שחרית cluster,
+  a thinner מנחה band, and nothing at all in ערבית — the exact shape of the
+  gap this project exists to close.
+
+  TRADEOFF, STATED PLAINLY: of the three directions this is the safest and
+  most familiar — the card grid is barely a design decision at all, just
+  mobile's card reflowed wider — so most of the direction's actual argument
+  rides on the strip. If the strip does not read at a glance, this direction
+  has nothing else to say for itself.
+
+  THE PHOTOGRAPH: unchanged from the settled header — tlv-day.jpg at 679px,
+  1.000x, no upscale, no toggle. No licence info supplied this round; confirm
+  before shipping publicly.
+-->
+
+<div dir="rtl" style="width: 1440px; background: #FFFFFF; color: #12181C; font-family: 'Assistant', -apple-system, 'Segoe UI', Arial, sans-serif; display: flex; flex-direction: column;">
+
+  <!-- ============================== HEADER (settled) ============================== -->
+  <div style="position: relative; height: 240px; overflow: hidden; background: #0E2A33 /* fallback ground: DARK, not the pale #C7DDE2. Before the photograph decodes, white-on-pale-blue is 1.4:1 and the wordmark is unreadable. A fallback nobody can read is not a fallback. Matches --band-ground in globals.css. */; flex-shrink: 0;">
+    <img src="tlv-day.jpg" alt="חוף תל אביב, מבט אווירי" style="position: absolute; inset-block: 0; inset-inline-start: 0; width: 679px; height: 100%; object-fit: cover; object-position: center 55%;">
+    <div style="position: absolute; inset-block: 0; inset-inline-start: 679px; inset-inline-end: 0; background: linear-gradient(180deg, #3FA9E0 0%, #23AECB 46%, #0E93AE 78%, #0B7B93 100%);"></div>
+    <div style="position: absolute; inset-block: 0; inset-inline-start: 559px; width: 160px; background: linear-gradient(270deg, rgba(35,174,203,0) 0%, rgba(35,174,203,0.85) 100%);"></div>
+    <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(6,20,26,0.56) 0%, rgba(6,20,26,0.36) 30%, rgba(6,20,26,0.54) 66%, rgba(6,20,26,0.88) 100%);"></div>
+
+    <div style="position: relative; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 18px 56px;">
+      <div style="display: flex; align-items: center; gap: 34px;">
+        <div style="font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 700; font-size: 23px; letter-spacing: -0.01em; color: #FFFFFF; text-shadow: 0 1px 6px rgba(0,0,0,0.45);">מניינים · תל אביב</div>
+        <div style="display: flex; align-items: center; gap: 24px; font-size: 13.5px; font-weight: 600; color: #FFFFFF;">
+          <div style="font-weight: 700;">מניינים</div>
+          <div style="opacity: 0.85;">שבת</div>
+          <div style="opacity: 0.85;">בתי כנסת</div>
+          <div style="opacity: 0.85;">על האתר</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.85); border-radius: 2px; overflow: hidden; backdrop-filter: blur(3px);">
+          <div style="min-height: 32px; display: flex; align-items: center; gap: 5px; padding: 0 11px; font-size: 11px; font-weight: 700; background: #FFFFFF; color: #0A6C82;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
+            אוטו׳
+          </div>
+          <div style="min-width: 32px; min-height: 32px; display: flex; align-items: center; justify-content: center; color: #FFFFFF; opacity: 0.72;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
+          </div>
+          <div style="min-width: 32px; min-height: 32px; display: flex; align-items: center; justify-content: center; color: #FFFFFF; opacity: 0.72;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"></path></svg>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.85); border-radius: 2px; overflow: hidden; backdrop-filter: blur(3px);">
+          <div style="min-width: 46px; min-height: 32px; display: flex; align-items: center; justify-content: center; padding: 0 12px; font-size: 12.5px; font-weight: 700; background: #FFFFFF; color: #0A6C82;">עב</div>
+          <div style="min-width: 46px; min-height: 32px; display: flex; align-items: center; justify-content: center; padding: 0 12px; font-size: 12.5px; font-weight: 700; color: #FFFFFF;">EN</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="position: relative; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 10px 56px 22px; font-size: 12.5px; color: #FFFFFF;">
+      <div style="display: flex; align-items: center; gap: 22px; opacity: 0.92;">
+        <div>ט״ו באלול תשפ״ו</div>
+        <div>פרשת כי־תבוא</div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 22px; font-weight: 700;">
+        <div style="display: flex; gap: 6px;"><span style="opacity: 0.78; font-weight: 400;">נץ</span><span class="tnum">06:22</span></div>
+        <div style="display: flex; gap: 6px;"><span style="opacity: 0.78; font-weight: 400;">מנחה גדולה</span><span class="tnum">12:47</span></div>
+        <div style="display: flex; gap: 6px;"><span style="opacity: 0.78; font-weight: 400;">שקיעה</span><span class="tnum">19:10</span></div>
+        <div style="display: flex; gap: 6px;"><span style="opacity: 0.78; font-weight: 400;">צאת הכוכבים</span><span class="tnum">19:29</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================== THE HORIZON STRIP ==============================
+       A schematic ribbon, not a precision chart — like the earlier walking-radius
+       map, this is a drawn diagram, honest about its own imprecision. Every tick
+       is a real, published, KNOWN time; unknown offsets are never plotted, only
+       counted. -->
+  <div style="padding: 20px 56px 16px; border-block-end: 1px solid rgba(18,24,28,0.12);">
+    <div style="display: flex; justify-content: space-between; padding: 0 2px 8px; font-size: 11px; font-weight: 700; opacity: 0.55;">
+      <span class="tnum">נץ 06:22</span>
+      <span style="font-weight: 400;">עכשיו · <span class="tnum">18:04</span></span>
+      <span class="tnum">צאת 19:29</span>
+    </div>
+    <div style="display: flex; align-items: stretch; height: 92px; gap: 3px; position: relative;">
+
+      <!-- שחרית band -->
+      <div style="flex: 30 1 0; min-width: 0; position: relative; background: rgba(14,147,174,0.07); border-radius: 2px; overflow: hidden;">
+        <div style="position: absolute; inset-inline: 10px; top: 8px; font-size: 10.5px; font-weight: 700; color: #0A6C82;">שחרית · 15</div>
+        <div style="position: absolute; inset-inline-start: 45%; inset-block: 30px 10px; width: 1px; background: rgba(14,147,174,0.35);"></div>
+        <div style="position: absolute; inset-block-end: 10px; inset-inline: 8px; display: flex; align-items: flex-end; gap: 5px;">
+          <div style="width: 3px; height: 14px; background: #0E93AE; border-radius: 1px;"></div>
+          <div style="width: 3px; height: 20px; background: #0E93AE; border-radius: 1px;"></div>
+          <div style="width: 3px; height: 30px; background: #0A6C82; border-radius: 1px;"></div>
+          <div style="width: 3px; height: 16px; background: #0E93AE; border-radius: 1px;"></div>
+          <div style="width: 3px; height: 24px; background: #0E93AE; border-radius: 1px;"></div>
+          <div style="width: 3px; height: 18px; background: #0E93AE; border-radius: 1px;"></div>
+          <div style="width: 3px; height: 12px; background: #0E93AE; border-radius: 1px;"></div>
+          <div style="width: 3px; height: 22px; background: #0E93AE; border-radius: 1px;"></div>
+          <div style="width: 3px; height: 15px; background: #0E93AE; border-radius: 1px;"></div>
+          <div style="width: 3px; height: 26px; background: #0A6C82; border-radius: 1px;"></div>
+        </div>
+      </div>
+
+      <!-- gap: 10:00 – 13:00, nothing known -->
+      <div style="flex: 18 1 0; min-width: 0; position: relative; border-block-end: 2px dashed rgba(18,24,28,0.16);">
+        <div style="position: absolute; inset-inline: 0; bottom: 6px; text-align: center; font-size: 10px; opacity: 0.45;">אין מניין ידוע</div>
+      </div>
+
+      <!-- מנחה band -->
+      <div style="flex: 36 1 0; min-width: 0; position: relative; background: rgba(173,86,52,0.08); border-radius: 2px; overflow: hidden;">
+        <div style="position: absolute; inset-inline: 10px; top: 8px; font-size: 10.5px; font-weight: 700; color: #AD5634;">מנחה · 5 מתוך 13</div>
+        <div style="position: absolute; inset-block-end: 10px; inset-inline-start: 8px; display: flex; align-items: flex-end; gap: 20px;">
+          <div style="width: 3px; height: 22px; background: #C0603A; border-radius: 1px;"></div>
+          <div style="width: 3px; height: 16px; background: #C0603A; border-radius: 1px;"></div>
+          <div style="width: 3px; height: 26px; background: #AD5634; border-radius: 1px;"></div>
+          <div style="width: 3px; height: 14px; background: #C0603A; border-radius: 1px;"></div>
+        </div>
+        <!-- לכלל ישראל — the one shul with a real relative offset -->
+        <div style="position: absolute; inset-block-end: 10px; inset-inline-start: 84%; width: 3px; height: 32px; background: #AD5634; border-radius: 1px;"></div>
+        <div style="position: absolute; inset-inline-end: 10px; bottom: 8px; font-size: 9.5px; opacity: 0.6; text-align: end;">+ 8 ללא שעה ידועה</div>
+      </div>
+
+      <!-- ערבית sliver — genuinely empty, real data -->
+      <div style="flex: 6 1 0; min-width: 0; position: relative; border-inline-start: 2px dashed rgba(18,24,28,0.16);">
+      </div>
+
+      <!-- "now" marker, positioned within מנחה -->
+      <div style="position: absolute; inset-block: -4px 0; inset-inline-start: 71.2%; width: 2px; background: #0A6C82;"></div>
+      <div style="position: absolute; inset-block-start: -4px; inset-inline-start: calc(71.2% - 4px); width: 10px; height: 10px; border-radius: 50%; background: #0A6C82; box-shadow: 0 0 0 3px #FFFFFF;"></div>
+    </div>
+    <div style="display: flex; justify-content: space-between; padding: 8px 2px 0; font-size: 10px; opacity: 0.5;">
+      <span>ערבית · 0 בתי כנסת ברמת אביב פרסמו שעה</span>
+      <span>שקיעה <span class="tnum">19:10</span></span>
+    </div>
+  </div>
+
+  <!-- ============================== FILTER STRIP ============================== -->
+  <div style="display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 16px 56px; border-block-end: 1px solid rgba(18,24,28,0.12);">
+    <div style="display: flex; align-items: center; gap: 24px;">
+      <div style="display: flex; gap: 6px;">
+        <div style="min-height: 34px; display: flex; align-items: center; padding: 0 16px; font-size: 13px; font-weight: 600; border-radius: 2px; border: 1px solid rgba(18,24,28,0.22);">שחרית</div>
+        <div style="min-height: 34px; display: flex; align-items: center; padding: 0 16px; font-size: 13px; font-weight: 700; border-radius: 2px; background: #0A6C82; color: #FFFFFF;">מנחה</div>
+        <div style="min-height: 34px; display: flex; align-items: center; padding: 0 16px; font-size: 13px; font-weight: 600; border-radius: 2px; border: 1px solid rgba(18,24,28,0.22);">ערבית</div>
+        <div style="min-height: 34px; display: flex; align-items: center; padding: 0 16px; font-size: 13px; font-weight: 600; border-radius: 2px; border: 1px solid rgba(18,24,28,0.22);">שבת</div>
+      </div>
+      <div style="width: 1px; height: 22px; background: rgba(18,24,28,0.14);"></div>
+      <div style="display: flex; gap: 6px;">
+        <div style="padding: 5px 12px; font-size: 12px; font-weight: 700; border-radius: 2px; border: 1px solid #0A6C82; color: #0A6C82;">כל הנוסחים</div>
+        <div style="padding: 5px 12px; font-size: 12px; font-weight: 600; border-radius: 2px; border: 1px solid rgba(18,24,28,0.22); opacity: 0.82;">אשכנז</div>
+        <div style="padding: 5px 12px; font-size: 12px; font-weight: 600; border-radius: 2px; border: 1px solid rgba(18,24,28,0.22); opacity: 0.82;">עדות המזרח</div>
+        <div style="padding: 5px 12px; font-size: 12px; font-weight: 600; border-radius: 2px; border: 1px solid rgba(18,24,28,0.22); opacity: 0.82;">חב״ד</div>
+      </div>
+    </div>
+    <div style="font-size: 11.5px; font-weight: 700; letter-spacing: 0.04em; opacity: 0.6; white-space: nowrap;">13 בתי כנסת · לפי המניין הבא</div>
+  </div>
+
+  <!-- ============================== CARD GRID (mobile card, reflowed) ============================== -->
+  <div style="padding: 20px 56px 40px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px;">
+
+    <!-- hero-equivalent: לכלל ישראל, relative offset, picked out by the same rule the mobile hero uses -->
+    <div style="grid-column: span 1; background: #FFFFFF; border: 1px solid rgba(18,24,28,0.10); border-radius: 2px; border-block-start: 3px solid #0A6C82; padding: 15px 16px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 10px 22px rgba(14,147,174,0.16);">
+      <div style="font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: #0A6C82;">המניין הבא לידך</div>
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+        <div style="display: flex; flex-direction: column; gap: 3px;">
+          <div style="font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: 19px;">לכלל ישראל</div>
+          <div style="font-size: 11.5px; opacity: 0.68;">אליהו חכים 5</div>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 3px;">
+          <div class="tnum" style="font-size: 24px; font-weight: 700; line-height: 1;">18:50</div>
+          <div style="font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: rgba(14,147,174,0.12); color: #0A6C82;">מנחה</div>
+        </div>
+      </div>
+      <div style="font-size: 11px; opacity: 0.6;">שקיעה פחות 20 דק׳</div>
+      <a href="https://www.google.com/maps/dir/?api=1&destination=32.12615434145014,34.80098522868166&travelmode=walking" target="_blank" rel="noopener" aria-label="ניווט הליכה אל לכלל ישראל" style="display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; font-weight: 700;">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="8" cy="7" rx="2.1" ry="3" transform="rotate(-15 8 7)"></ellipse><ellipse cx="16" cy="15" rx="2.1" ry="3" transform="rotate(15 16 15)"></ellipse></svg>
+        כ־6 דק׳ הליכה
+      </a>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; border-block-start: 1px solid rgba(18,24,28,0.10); padding-block-start: 8px;">
+        <div style="font-size: 10.5px; padding: 2px 8px; border-radius: 2px; border: 1px solid #0A6C82; color: #0A6C82; font-weight: 700;">כללי</div>
+        <div style="font-size: 10px; opacity: 0.62;">טרם אומת</div>
+      </div>
+    </div>
+
+    <!-- 13:00 תהילת אביב -->
+    <div style="background: #FFFFFF; border: 1px solid rgba(18,24,28,0.12); border-radius: 2px; padding: 15px 16px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 2px 10px rgba(14,147,174,0.06);">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+        <div style="display: flex; flex-direction: column; gap: 3px;">
+          <div style="font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: 19px;">תהילת אביב</div>
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px;"><span style="opacity: 0.7;">שרגא פרידמן 1</span><span style="opacity: 0.4;">·</span><a href="https://www.google.com/maps/dir/?api=1&destination=32.11819834242644,34.79103122857139&travelmode=walking" target="_blank" rel="noopener" aria-label="ניווט הליכה אל תהילת אביב" style="font-weight: 700;">כ־14 דק׳</a></div>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 3px;">
+          <div class="tnum" style="font-size: 20px; font-weight: 700; line-height: 1;">13:00</div>
+          <div style="font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 999px; background: rgba(14,147,174,0.12); color: #0A6C82;">מנחה</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; border-block-start: 1px solid rgba(18,24,28,0.10); padding-block-start: 8px;">
+        <div style="font-size: 10.5px; padding: 2px 8px; border-radius: 2px; border: 1px solid #0A6C82; color: #0A6C82; font-weight: 700;">עדות המזרח</div>
+        <div style="font-size: 10px; opacity: 0.62;">טרם אומת</div>
+      </div>
+    </div>
+
+    <!-- 13:30 אוניברסיטת ת"א -->
+    <div style="background: #FFFFFF; border: 1px solid rgba(18,24,28,0.12); border-radius: 2px; padding: 15px 16px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 2px 10px rgba(14,147,174,0.06);">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+        <div style="display: flex; flex-direction: column; gap: 3px;">
+          <div style="font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: 19px;">אוניברסיטת ת״א · צימבוליסטה</div>
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px;"><span style="opacity: 0.7;">חיים לבנון 42</span><span style="opacity: 0.4;">·</span><a href="https://www.google.com/maps/dir/?api=1&destination=32.10925234130062,34.80212822763945&travelmode=walking" target="_blank" rel="noopener" aria-label="ניווט הליכה אל אוניברסיטת ת״א · צימבוליסטה" style="font-weight: 700;">כ־11 דק׳</a></div>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 3px;">
+          <div class="tnum" style="font-size: 20px; font-weight: 700; line-height: 1;">13:30</div>
+          <div style="font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 999px; background: rgba(14,147,174,0.12); color: #0A6C82;">מנחה</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; border-block-start: 1px solid rgba(18,24,28,0.10); padding-block-start: 8px;">
+        <div style="font-size: 10.5px; padding: 2px 8px; border-radius: 2px; border: 1px solid #0A6C82; color: #0A6C82; font-weight: 700;">אשכנז</div>
+        <div style="font-size: 10px; opacity: 0.62;">טרם אומת</div>
+      </div>
+    </div>
+
+    <!-- 14:00 המרכזי רמת אביב ג' -->
+    <div style="background: #FFFFFF; border: 1px solid rgba(18,24,28,0.12); border-radius: 2px; padding: 15px 16px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 2px 10px rgba(14,147,174,0.06);">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+        <div style="display: flex; flex-direction: column; gap: 3px;">
+          <div style="font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: 19px;">המרכזי רמת אביב ג׳</div>
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px;"><span style="opacity: 0.7;">אבא אחימאיר 31</span><span style="opacity: 0.4;">·</span><a href="https://www.google.com/maps/dir/?api=1&destination=32.12477734145059,34.80407222796498&travelmode=walking" target="_blank" rel="noopener" aria-label="ניווט הליכה אל המרכזי רמת אביב ג׳" style="font-weight: 700;">כ־17 דק׳</a></div>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 3px;">
+          <div class="tnum" style="font-size: 20px; font-weight: 700; line-height: 1;">14:00</div>
+          <div style="font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 999px; background: rgba(14,147,174,0.12); color: #0A6C82;">מנחה</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; border-block-start: 1px solid rgba(18,24,28,0.10); padding-block-start: 8px;">
+        <div style="font-size: 10.5px; padding: 2px 8px; border-radius: 2px; border: 1px solid #0A6C82; color: #0A6C82; font-weight: 700;">אשכנז</div>
+        <div style="font-size: 10px; opacity: 0.62;">טרם אומת</div>
+      </div>
+    </div>
+
+    <!-- 14:05 תומכי תמימים -->
+    <div style="background: #FFFFFF; border: 1px solid rgba(18,24,28,0.12); border-radius: 2px; padding: 15px 16px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 2px 10px rgba(14,147,174,0.06);">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+        <div style="display: flex; flex-direction: column; gap: 3px;">
+          <div style="font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: 19px;">תומכי תמימים · בית חב״ד</div>
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px;"><span style="opacity: 0.7;">טאגור 32</span><span style="opacity: 0.4;">·</span><a href="https://www.google.com/maps/dir/?api=1&destination=32.116515341977234,34.796705728001385&travelmode=walking" target="_blank" rel="noopener" aria-label="ניווט הליכה אל תומכי תמימים · בית חב״ד" style="font-weight: 700;">כ־8 דק׳</a></div>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 3px;">
+          <div class="tnum" style="font-size: 20px; font-weight: 700; line-height: 1;">14:05</div>
+          <div style="font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 999px; background: rgba(14,147,174,0.12); color: #0A6C82;">מנחה</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; border-block-start: 1px solid rgba(18,24,28,0.10); padding-block-start: 8px;">
+        <div style="font-size: 10.5px; padding: 2px 8px; border-radius: 2px; border: 1px solid #0A6C82; color: #0A6C82; font-weight: 700;">חב״ד</div>
+        <div style="font-size: 10px; opacity: 0.62;">טרם אומת</div>
+      </div>
+    </div>
+
+    <!-- honest-unknown: הרמב"ם -->
+    <div style="background: #FFFFFF; border: 1px solid rgba(18,24,28,0.12); border-radius: 2px; padding: 15px 16px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 2px 10px rgba(14,147,174,0.06);">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+        <div style="display: flex; flex-direction: column; gap: 3px;">
+          <div style="font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: 19px;">הרמב״ם</div>
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px;"><span style="opacity: 0.7;">ברודצקי 19</span><span style="opacity: 0.4;">·</span><a href="https://www.google.com/maps/dir/?api=1&destination=32.10803734170436,34.79818172711167&travelmode=walking" target="_blank" rel="noopener" aria-label="ניווט הליכה אל הרמב״ם" style="font-weight: 700;">כ־9 דק׳</a></div>
+        </div>
+        <div style="max-width: 118px; text-align: end;">
+          <div style="font-size: 12px; font-weight: 700; opacity: 0.75; line-height: 1.25;">בזמן — שעה טרם פורסמה</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; border-block-start: 1px solid rgba(18,24,28,0.10); padding-block-start: 8px;">
+        <div style="font-size: 10.5px; padding: 2px 8px; border-radius: 2px; border: 1px solid #0A6C82; color: #0A6C82; font-weight: 700;">עדות המזרח</div>
+        <div style="font-size: 10px; color: #AD5634; font-weight: 700;">יודעים את השעה? עדכנו</div>
+      </div>
+    </div>
+
+    <!-- honest-unknown: היכל חיים -->
+    <div style="background: #FFFFFF; border: 1px solid rgba(18,24,28,0.12); border-radius: 2px; padding: 15px 16px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 2px 10px rgba(14,147,174,0.06);">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+        <div style="display: flex; flex-direction: column; gap: 3px;">
+          <div style="font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: 19px;">היכל חיים</div>
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px;"><span style="opacity: 0.7;">אופנהיימר 5</span><span style="opacity: 0.4;">·</span><a href="https://www.google.com/maps/dir/?api=1&destination=32.11922434182812,34.799828728286315&travelmode=walking" target="_blank" rel="noopener" aria-label="ניווט הליכה אל היכל חיים" style="font-weight: 700;">כ־6 דק׳</a></div>
+        </div>
+        <div style="max-width: 118px; text-align: end;">
+          <div style="font-size: 12px; font-weight: 700; opacity: 0.75; line-height: 1.25;">בזמן — שעה טרם פורסמה</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; border-block-start: 1px solid rgba(18,24,28,0.10); padding-block-start: 8px;">
+        <div style="font-size: 10.5px; padding: 2px 8px; border-radius: 2px; border: 1px solid #0A6C82; color: #0A6C82; font-weight: 700;">עדות המזרח</div>
+        <div style="font-size: 10px; color: #AD5634; font-weight: 700;">יודעים את השעה? עדכנו</div>
+      </div>
+    </div>
+
+    <!-- honest-unknown: אוהל יוסף יצחק -->
+    <div style="background: #FFFFFF; border: 1px solid rgba(18,24,28,0.12); border-radius: 2px; padding: 15px 16px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 2px 10px rgba(14,147,174,0.06);">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+        <div style="display: flex; flex-direction: column; gap: 3px;">
+          <div style="font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: 19px;">אוהל יוסף יצחק</div>
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px;"><span style="opacity: 0.7;">בשוויס זינגר 1</span><span style="opacity: 0.4;">·</span><a href="https://www.google.com/maps/dir/?api=1&destination=32.11335634234053,34.78572572860072&travelmode=walking" target="_blank" rel="noopener" aria-label="ניווט הליכה אל אוהל יוסף יצחק" style="font-weight: 700;">כ־9 דק׳</a></div>
+        </div>
+        <div style="max-width: 118px; text-align: end;">
+          <div style="font-size: 12px; font-weight: 700; opacity: 0.75; line-height: 1.25;">בזמן — שעה טרם פורסמה</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; border-block-start: 1px solid rgba(18,24,28,0.10); padding-block-start: 8px;">
+        <div style="font-size: 10.5px; padding: 2px 8px; border-radius: 2px; border: 1px solid #0A6C82; color: #0A6C82; font-weight: 700;">אשכנז</div>
+        <div style="font-size: 10px; color: #AD5634; font-weight: 700;">יודעים את השעה? עדכנו</div>
+      </div>
+    </div>
+
+    <!-- honest-unknown: אור גבריאל - משמעות -->
+    <div style="background: #FFFFFF; border: 1px solid rgba(18,24,28,0.12); border-radius: 2px; padding: 15px 16px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 2px 10px rgba(14,147,174,0.06);">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+        <div style="display: flex; flex-direction: column; gap: 3px;">
+          <div style="font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: 19px;">אור גבריאל · משמעות</div>
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px;"><span style="opacity: 0.7;">ברודצקי 17</span><span style="opacity: 0.4;">·</span><a href="https://www.google.com/maps/dir/?api=1&destination=32.10780334176978,34.79740772784055&travelmode=walking" target="_blank" rel="noopener" aria-label="ניווט הליכה אל אור גבריאל · משמעות" style="font-weight: 700;">כ־10 דק׳</a></div>
+        </div>
+        <div style="max-width: 118px; text-align: end;">
+          <div style="font-size: 12px; font-weight: 700; opacity: 0.75; line-height: 1.25;">בזמן — שעה טרם פורסמה</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; border-block-start: 1px solid rgba(18,24,28,0.10); padding-block-start: 8px;">
+        <div style="font-size: 10.5px; padding: 2px 8px; border-radius: 2px; border: 1px solid #0A6C82; color: #0A6C82; font-weight: 700;">אשכנז</div>
+        <div style="font-size: 10px; color: #AD5634; font-weight: 700;">יודעים את השעה? עדכנו</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============================== FOOTER ============================== -->
+  <div style="background: #F3E8CE; border-block-start: 1px solid rgba(192,96,58,0.18); padding: 20px 56px 28px; display: flex; align-items: center; justify-content: space-between; gap: 24px;">
+    <div style="font-size: 11.5px; opacity: 0.72; line-height: 1.55; max-width: 620px;">כל הזמנים מחושבים לפי מיקום בית הכנסת ומתעדכנים מדי יום עם השקיעה. זמן שלא פורסם מוצג כלא ידוע — לעולם לא ננחש.</div>
+    <div style="display: flex; gap: 20px; font-size: 11.5px; font-weight: 600; opacity: 0.78;">
+      <div>עדכון שעה</div>
+      <div>גבאים</div>
+      <div>מקורות המידע</div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"sunset":{"editor":"boolean","default":false,"section":"State"}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
