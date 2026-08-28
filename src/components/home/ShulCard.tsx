@@ -7,7 +7,7 @@ import type { Locale } from '@/i18n/locales';
 import { walkingDirectionsUrl, wazeUrl } from '@/lib/directions';
 import { foreignAttrs, localisedAddress, localisedName } from '@/lib/synagogue-display';
 import { warmthPercent } from '@/lib/sunset-warmth';
-import type { Nusach } from '@/lib/taxonomy';
+import { displayNusach, type Nusach } from '@/lib/taxonomy';
 import type { TimelineSynagogue, UnconfirmedMinyan, UpcomingMinyan } from '@/zmanim';
 
 /**
@@ -172,7 +172,11 @@ function CardShell({
       </div>
 
       <div className="card-foot">
-        {nusach ? <p className="card-nusach">{t.nusachim[nusach]}</p> : <span />}
+        {(() => {
+          // `general` is stored but never shown — see displayNusach.
+          const shown = displayNusach(nusach);
+          return shown ? <p className="card-nusach">{t.nusachim[shown]}</p> : <span />;
+        })()}
         {footerEnd}
       </div>
     </article>

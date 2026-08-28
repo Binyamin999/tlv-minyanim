@@ -120,6 +120,15 @@ movement: chabad | breslev | null
 style:    carlebach | hashkama | netz | null
 ```
 
+**`general` is stored but never displayed.** It is what the municipality
+writes when a shul does not describe itself as any particular nusach, so a
+`כללי` tag says "unclassified" while looking exactly like `אשכנז` — a fact about
+our data wearing the costume of a fact about the shul. Suppressed at the display
+boundary in `displayNusach`, not deleted: the record keeps what the source said,
+so a re-import never disagrees with the database and a shul that later tells us
+its real nusach gets it filled in rather than corrected. It is also not offered
+as a filter chip — `כל הנוסחים` still includes those shuls.
+
 **The source data has no Chabad or Breslev values** — it labels everything
 `אשכנז / עדות המזרח / תימני / כללי / סלוניקאי`. In Ramat Aviv alone,
 `תומכי תמימים - בית חב"ד` and `אוהל יוסף יצחק` are both Chabad houses tagged

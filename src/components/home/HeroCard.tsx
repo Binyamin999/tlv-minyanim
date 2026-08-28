@@ -8,7 +8,7 @@ import { walkingDirectionsUrl, wazeUrl } from '@/lib/directions';
 import { displayMinyanTime } from '@/lib/minyan-display';
 import { foreignAttrs, localisedAddress, localisedName } from '@/lib/synagogue-display';
 import { warmthPercent } from '@/lib/sunset-warmth';
-import type { Nusach } from '@/lib/taxonomy';
+import { displayNusach, type Nusach } from '@/lib/taxonomy';
 import type { UpcomingMinyan } from '@/zmanim';
 
 /**
@@ -117,7 +117,10 @@ export function HeroCard({
             <span {...foreignAttrs(address)}>{address.text}</span>
           </p>
         ) : null}
-        {nusach ? <p className="hero-nusach">{t.nusachim[nusach]}</p> : null}
+        {(() => {
+          const shown = displayNusach(nusach);
+          return shown ? <p className="hero-nusach">{t.nusachim[shown]}</p> : null;
+        })()}
         {/* A time without its staleness is a claim we cannot back. */}
         <VerifiedStamp
           compact

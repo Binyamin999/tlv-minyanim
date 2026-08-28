@@ -8,6 +8,7 @@ import { getDictionary, type Dictionary } from '@/i18n/dictionaries';
 import { isLocale, type Locale } from '@/i18n/locales';
 import { VerifiedStamp } from '@/components/VerifiedStamp';
 import { walkingDirectionsUrl, wazeUrl } from '@/lib/directions';
+import { displayNusach } from '@/lib/taxonomy';
 import { displayMinyanTime } from '@/lib/minyan-display';
 import { synagogueJsonLd } from '@/lib/jsonld';
 import { nextOccurrences, weekdayName, type NextOccurrence } from '@/lib/resolved-times';
@@ -75,6 +76,7 @@ export default async function ShulPage({
 
   const name = localisedName(synagogue, locale);
   const address = localisedAddress(synagogue, locale);
+  const shownNusach = displayNusach(synagogue.nusach);
 
   const confirmed = synagogue.minyanim.filter((minyan) => minyan.isPublishable);
   // A non-empty needs_review is a hard gate. These are kept and shown — losing
@@ -121,10 +123,14 @@ export default async function ShulPage({
 
         {/* nusach may legitimately be NULL: the source says only `תימני`, which
             does not resolve to baladi or shami, and we do not guess a
-            congregation's liturgy. An empty tag row is not rendered at all. */}
-        {synagogue.nusach || synagogue.movement || synagogue.status !== 'active' ? (
+            congregation's liturgy. `general` reaches the same blank through
+            displayNusach — it is stored but never shown, being a statement
+            about our data rather than about this congregation. Both must also
+            be absent from the GUARD, or a shul with nothing else to tag renders
+            an empty row. An empty tag row is not rendered at all. */}
+        {shownNusach || synagogue.movement || synagogue.status !== 'active' ? (
           <p className="tags">
-            {synagogue.nusach ? <span className="tag">{t.nusachim[synagogue.nusach]}</span> : null}
+            {shownNusach ? <span className="tag">{t.nusachim[shownNusach]}</span> : null}
             {/* movement is hand-enriched only — never inferred from nusach. */}
             {synagogue.movement ? (
               <span className="tag">{t.movements[synagogue.movement]}</span>
