@@ -51,42 +51,41 @@ and report failures with the output rather than a summary of the output.
 
 ---
 
-## Where the project actually is (updated 2026-08-26)
+## Where the project actually is (updated 2026-08-28)
 
-Phases 1–4 are built and committed. `npm test` is **275 passing**; `npm run
-typecheck` covers both the parser and the app. Postgres `tlv_minyanim` is live
-locally with the 16 Ramat Aviv shuls: **62 minyanim — 39 fixed, 19 unknown, 4
-relative** — plus 5 shiurim and 0 parse issues. Start it with
-`brew services start postgresql@17`; `README.md` has the runbook.
+Phases 1-4 are built, including the desktop layout. `npm test` is **284
+passing**. Postgres `tlv_minyanim` holds the 16 Ramat Aviv shuls: **65
+minyanim**, of which **one synagogue — כלל ישראל — is verified against its own
+notice board** rather than against the municipal export. `brew services start
+postgresql@17`; `README.md` has the runbook.
 
-**Reuse, never rebuild:** `src/minyan-times/` (the parser), `src/zmanim/` (rules
-to instants), `src/db/queries.ts` (plain SQL, no ORM), `src/lib/curation.ts`
-(hand-curated English names and movement), `src/app/[locale]/` (bilingual
-routing, RTL, hreflang — all working).
+**Reuse, never rebuild:** `src/minyan-times/` (parser), `src/zmanim/` (rules to
+instants), `src/db/queries.ts` (plain SQL), `src/lib/curation.ts` (names,
+movement), `src/lib/verified-times.ts` (times read off a sign), `src/app/`.
 
-**The gap that matters is not code.** Shacharit is known for every shul;
-**Mincha is 69% unknown** and exactly one shul in Ramat Aviv publishes a real
-offset. The afternoon stays thin until gabbaim are asked.
+**The gap that matters is still not code.** Mincha is largely unknown, and one
+photograph of one notice board caught three real defects in a day. Evidence from
+the field beats anything derivable here.
 
-**Not built:** a desktop layout (the page caps at 679px and needs a design board
-first), geo/radius search, the nightly diff job, and any deployment — the site
-runs only on localhost.
+The repo is public: github.com/Binyamin999/tlv-minyanim. `data/seed-*.json` is
+gitignored and carries gabbai phone numbers; it must never be committed, logged
+or served.
 
-**How this project tests time, and why it is unusual:** never assert that a
-library returns what the library returns. Expected zmanim come from published
-luachot — `docs/zmanim-ground-truth.md`, sourced independently — and live in
-`test/fixtures.zmanim-ground-truth.ts`. Regenerating them from `@hebcal/core`
-would silently void every one of those tests.
+**New invariants worth testing, each of which caught something real:**
 
-**A green run on the first attempt is when to be suspicious.** Break the thing
-and confirm the failure. Known-good probes: reverting candle lighting from 22 to
-hebcal's 20 must fail six tests; switching tzeit from 8.5° to 7.083° must fail
-ten, with the drift named in each message.
+- A `fixed` time is only honest if it is possible on every day of the year.
+  Sweep 365 days, not three dates. This is what rules out storing a summer
+  Mincha as a year-round rule, and `implausible_for_service` does not catch it.
+- A minyan's DAY can be wrong while its TIME is right. The erev-Shabbat Mincha
+  was offered on Saturday for two commits while resolving to a plausible-looking
+  18:49. Assert the instant's weekday, not just its clock face.
+- Candle lighting is always before shkia — swept across a year, this caught a
+  Mincha resolving 27 minutes after sunset.
 
-**Prefer a property over pinned dates.** "Candle lighting is always before shkia,
-swept across 365 days" catches a class of bug; three asserted dates catch three
-instances. That sweep is what caught a Mincha resolving 27 minutes after sunset.
+**Break it before trusting it.** Known-good probes: reverting candle lighting to
+hebcal's 20 fails six tests; switching tzeit to 7.083° fails ten; reverting
+כלל ישראל's Shabbat Mincha to the GIS reading fails with `18:38 !== 18:50`.
 
-Verify in the browser rather than asking anyone to check: both locales, `dir`
-correct, 375px with `scrollWidth === clientWidth` and zero off-screen elements,
-console clean, and the contrast audit in both modes.
+**A stale `next start` on the port serves the previous build's HTML**, whose CSS
+hash no longer exists — the page renders completely unstyled. Check
+`lsof -ti:<port>` before reporting a regression.

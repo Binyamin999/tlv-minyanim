@@ -48,42 +48,40 @@ unverified time labelled unverified is fine; a wrong one presented as correct is
 
 ---
 
-## Where the project actually is (updated 2026-08-26)
+## Where the project actually is (updated 2026-08-28)
 
-Phases 1–4 are built and committed. `npm test` is **275 passing**; `npm run
-typecheck` covers both the parser and the app. Postgres `tlv_minyanim` is live
-locally with the 16 Ramat Aviv shuls: **62 minyanim — 39 fixed, 19 unknown, 4
-relative** — plus 5 shiurim and 0 parse issues. Start it with
-`brew services start postgresql@17`; `README.md` has the runbook.
+Phases 1-4 are built, including the desktop layout. `npm test` is **284
+passing**. Postgres `tlv_minyanim` holds the 16 Ramat Aviv shuls: **65
+minyanim**, of which **one synagogue — כלל ישראל — is verified against its own
+notice board** rather than against the municipal export. `brew services start
+postgresql@17`; `README.md` has the runbook.
 
-**Reuse, never rebuild:** `src/minyan-times/` (the parser), `src/zmanim/` (rules
-to instants), `src/db/queries.ts` (plain SQL, no ORM), `src/lib/curation.ts`
-(hand-curated English names and movement), `src/app/[locale]/` (bilingual
-routing, RTL, hreflang — all working).
+**Reuse, never rebuild:** `src/minyan-times/` (parser), `src/zmanim/` (rules to
+instants), `src/db/queries.ts` (plain SQL), `src/lib/curation.ts` (names,
+movement), `src/lib/verified-times.ts` (times read off a sign), `src/app/`.
 
-**The gap that matters is not code.** Shacharit is known for every shul;
-**Mincha is 69% unknown** and exactly one shul in Ramat Aviv publishes a real
-offset. The afternoon stays thin until gabbaim are asked.
+**The gap that matters is still not code.** Mincha is largely unknown, and one
+photograph of one notice board caught three real defects in a day. Evidence from
+the field beats anything derivable here.
 
-**Not built:** a desktop layout (the page caps at 679px and needs a design board
-first), geo/radius search, the nightly diff job, and any deployment — the site
-runs only on localhost.
+The repo is public: github.com/Binyamin999/tlv-minyanim. `data/seed-*.json` is
+gitignored and carries gabbai phone numbers; it must never be committed, logged
+or served.
 
-**Ground truth already exists — `docs/zmanim-ground-truth.md`.** Ten dates
-sourced from NOAA, sunrisesunset.io, MyZmanim and the Tel Aviv-Yafo Religious
-Council's published 5786 poster. Do not re-derive these by asking a model. If a
-number looks wrong, check it against that document and its cited sources.
+**Your candle-lighting call was confirmed by a shul's own printed sheet.**
+כלל ישראל's sheet for שבת פרשת כי־תבוא prints `כניסת השבת 18:48` and `צאת השבת
+19:47`, which are exactly `shkia − 22` and the 8.5° tzeit for that date. Not a
+library and not a website — the paper on the wall of a building in the database.
+Both are now asserted against those numbers.
 
-**Decisions now locked in code, with the reasoning recorded:**
+**An anchor cannot tell you which DAY a minyan falls on.** The timeline used to
+treat a Shabbat-column Mincha as erev Shabbat only if it was
+candle-lighting-anchored. That proxy broke the first time real evidence arrived:
+this shul's erev-Shabbat Mincha is `shkia − 20`, so correcting the offset moved
+the minyan from Friday to Saturday and the page offered it a day late. `DayType`
+now has `erev_shabbat` and the source states the day.
 
-- **Candle lighting is `shkia − 22` for Tel Aviv**, not hebcal's built-in 20.
-  The Religious Council publishes 22 and MyZmanim labels it
-  `22 דקות קודם השקיעה`; verified across all 34 published Fridays of 5786 in
-  2026, where no date fits 20, 21 or 23. Tel Aviv only — Jerusalem is 40.
-- **GRA throughout**, alot 16.1°, tzeit 8.5°, mincha gedola at ½ zmanit.
-- **`candle_lighting` is absent on the second night of a two-day Yom Tov**,
-  when candles are lit after tzeit from a pre-existing flame. hebcal sets both
-  `LIGHT_CANDLES` and `LIGHT_CANDLES_TZEIS` there — reject by the tzeis flag
-  first. In Israel this affects Rosh Hashana and nothing else.
-- **Every tzeit-anchored minyan is held back**, because the anchor names two
-  different times. Your call, implemented.
+Related and still open: that sheet's Shabbat-afternoon Mincha (18:20 / 18:15)
+and motzei Shabbat Arvit (19:37) are not round offsets, and one sheet cannot
+distinguish a rule from a printed clock face. Three consecutive weekly sheets
+would settle it empirically.

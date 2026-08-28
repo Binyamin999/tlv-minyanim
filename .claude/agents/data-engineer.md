@@ -58,44 +58,53 @@ by hand.
 
 ---
 
-## Where the project actually is (updated 2026-08-26)
+## Where the project actually is (updated 2026-08-28)
 
-Phases 1–4 are built and committed. `npm test` is **275 passing**; `npm run
-typecheck` covers both the parser and the app. Postgres `tlv_minyanim` is live
-locally with the 16 Ramat Aviv shuls: **62 minyanim — 39 fixed, 19 unknown, 4
-relative** — plus 5 shiurim and 0 parse issues. Start it with
-`brew services start postgresql@17`; `README.md` has the runbook.
+Phases 1-4 are built, including the desktop layout. `npm test` is **284
+passing**. Postgres `tlv_minyanim` holds the 16 Ramat Aviv shuls: **65
+minyanim**, of which **one synagogue — כלל ישראל — is verified against its own
+notice board** rather than against the municipal export. `brew services start
+postgresql@17`; `README.md` has the runbook.
 
-**Reuse, never rebuild:** `src/minyan-times/` (the parser), `src/zmanim/` (rules
-to instants), `src/db/queries.ts` (plain SQL, no ORM), `src/lib/curation.ts`
-(hand-curated English names and movement), `src/app/[locale]/` (bilingual
-routing, RTL, hreflang — all working).
+**Reuse, never rebuild:** `src/minyan-times/` (parser), `src/zmanim/` (rules to
+instants), `src/db/queries.ts` (plain SQL), `src/lib/curation.ts` (names,
+movement), `src/lib/verified-times.ts` (times read off a sign), `src/app/`.
 
-**The gap that matters is not code.** Shacharit is known for every shul;
-**Mincha is 69% unknown** and exactly one shul in Ramat Aviv publishes a real
-offset. The afternoon stays thin until gabbaim are asked.
+**The gap that matters is still not code.** Mincha is largely unknown, and one
+photograph of one notice board caught three real defects in a day. Evidence from
+the field beats anything derivable here.
 
-**Not built:** a desktop layout (the page caps at 679px and needs a design board
-first), geo/radius search, the nightly diff job, and any deployment — the site
-runs only on localhost.
+The repo is public: github.com/Binyamin999/tlv-minyanim. `data/seed-*.json` is
+gitignored and carries gabbai phone numbers; it must never be committed, logged
+or served.
 
-**The parser is finished for this sample and is not yours to rewrite casually.**
-All 26 raw fields parse with zero leftovers, and every shape in `CLAUDE.md`
-appears in the fixtures. Two behaviours look like violations of "never guess"
-and are not: `מנחה 1:30` becomes 13:30 because Mincha at 01:30 does not exist
-(recorded in `clockNormalisation`, auditable), and a bare anchor read as offset
-0 is downgraded to `unknown` the moment anything else in the segment fails to
-parse — the words that failed were probably the offset.
+**`src/lib/verified-times.ts` is where a person who read a sign overrides the
+GIS layer.** It replaces that synagogue's parsed times WHOLESALE — never merged,
+because a record half from the sign and half from the municipality cannot be
+reasoned about. It is the only thing that sets `last_verified_at`. Its `held`
+array records what was on the sign and deliberately NOT stored, with the reason;
+that is part of the record, like `parse_issues`.
 
-**Every tzeit-anchored minyan is held back** (`ambiguous_tzeit`), because a shul's
-צאת הכוכבים and a luach's יציאת שבת are up to 26 minutes apart. Kfar Shalem will
-trip this; the answer is to ask the gabbai, never to pick a shita.
+**A clock face may only be stored as `fixed` if it is possible year-round.**
+כלל ישראל's 14:00 Mincha qualifies and there is a 365-day sweep proving it. Its
+18:55 Mincha does not — `shkia − 17` in August, `shkia + 135` in December — and
+is held. `implausible_for_service` will NOT catch this: that guard reads the
+clock face alone, and 18:55 is a legal Mincha hour.
 
-**`src/lib/curation.ts` is where hand knowledge goes** — English names
-(transliterated, never translated) and movement. It is tracked in git; the seed
-file is not, and must never be committed: it carries gabbai and rabbi names and
-phone numbers, and there are no columns for them by design.
+**Service names on a sign are often labels, not anchors.** "Mincha Gedola 14:00"
+and "Mincha Ketana 18:55" mean the early and late minyanim; the zmanim of those
+names were 13:15 and 16:30 that day. Storing them as anchors would have been
+45 minutes and 2.5 hours wrong.
 
-At 484 expect shapes this sample does not contain. Fail loudly —
-`unrecognized_text` naming the fragment — and let the coverage number fall. A
-low number is information; a high one bought by guessing is a liability.
+**`teimani` unqualified is now a legitimate nusach.** The source usually says
+only `תימני`; recording that is reading it, and choosing baladi or shami on a
+congregation's behalf is still the guess. Storing NULL said "we do not know how
+they daven", which is less true.
+
+**`minyanim.nusach` exists. NULL means the house minyan, not unknown.** One
+building often runs several groups — that is what the municipality's `כללי`
+meant. Never copy the synagogue's nusach down onto its rows.
+
+**`DayType` has `erev_shabbat`, and the parser must never produce it.** The GIS
+shabbat column merges Friday and Saturday, so a row from there stays `shabbat`
+and is held back. Only a source that separates them can set it.

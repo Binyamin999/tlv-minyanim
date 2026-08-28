@@ -74,44 +74,43 @@ and let the human choose before you build. Do not build four and ask which they 
 
 ---
 
-## Where the project actually is (updated 2026-08-26)
+## Where the project actually is (updated 2026-08-28)
 
-Phases 1–4 are built and committed. `npm test` is **275 passing**; `npm run
-typecheck` covers both the parser and the app. Postgres `tlv_minyanim` is live
-locally with the 16 Ramat Aviv shuls: **62 minyanim — 39 fixed, 19 unknown, 4
-relative** — plus 5 shiurim and 0 parse issues. Start it with
-`brew services start postgresql@17`; `README.md` has the runbook.
+Phases 1-4 are built, including the desktop layout. `npm test` is **284
+passing**. Postgres `tlv_minyanim` holds the 16 Ramat Aviv shuls: **65
+minyanim**, of which **one synagogue — כלל ישראל — is verified against its own
+notice board** rather than against the municipal export. `brew services start
+postgresql@17`; `README.md` has the runbook.
 
-**Reuse, never rebuild:** `src/minyan-times/` (the parser), `src/zmanim/` (rules
-to instants), `src/db/queries.ts` (plain SQL, no ORM), `src/lib/curation.ts`
-(hand-curated English names and movement), `src/app/[locale]/` (bilingual
-routing, RTL, hreflang — all working).
+**Reuse, never rebuild:** `src/minyan-times/` (parser), `src/zmanim/` (rules to
+instants), `src/db/queries.ts` (plain SQL), `src/lib/curation.ts` (names,
+movement), `src/lib/verified-times.ts` (times read off a sign), `src/app/`.
 
-**The gap that matters is not code.** Shacharit is known for every shul;
-**Mincha is 69% unknown** and exactly one shul in Ramat Aviv publishes a real
-offset. The afternoon stays thin until gabbaim are asked.
+**The gap that matters is still not code.** Mincha is largely unknown, and one
+photograph of one notice board caught three real defects in a day. Evidence from
+the field beats anything derivable here.
 
-**Not built:** a desktop layout (the page caps at 679px and needs a design board
-first), geo/radius search, the nightly diff job, and any deployment — the site
-runs only on localhost.
+The repo is public: github.com/Binyamin999/tlv-minyanim. `data/seed-*.json` is
+gitignored and carries gabbai phone numbers; it must never be committed, logged
+or served.
 
-**The design is settled — implement it, do not reopen it.** Five directions were
-rejected before this one. The photograph fills the header in **both** modes,
-blurred 6px at night and sharp by day; in dark mode every cyan **accent** turns
-the hero orange while the photograph itself is untouched (that distinction cost
-a wrong turn). Light and dark follow real shkia and netz, with one override
-control. There is no `sunset` chip and no `bleed` chip, ever.
+**The desktop layout is decided and built — The Luach.** One dense table across
+the full width, like a printed זמנים board. Chosen from three directions; the
+other two live on the canvas's "not chosen" page as the record. Do not reopen
+it. Breakpoint is 56.25rem, derived from the table's own arithmetic — the fixed
+columns and gutters spend 638px before the synagogue name gets a pixel, and a
+Hebrew name needs ~260px to stay on one line.
 
-**Two cyans, split by job:** `--tlv-sea #0E93AE` for decoration only,
-`--tlv-sea-ink #0A6C82` wherever cyan does the job of text. Never darken the sea
-to make a label pass.
+**`scripts/render-artboards.py` now renders each pane in its own iframe.** It
+used to apply the LAST artboard's `<helmet>` to every pane, so a day board beside
+a night board took the night board's link colour — and a contrast audit run on
+that preview reported failures that did not exist. Do not undo the isolation.
 
-**Measure contrast, never hand-read it.** `scripts/contrast-audit.js` runs in the
-browser and paints a pixel to resolve colour, because `color-mix()` computes in
-oklab and a regex reads that as near-black — 81 elements on the homepage are
-affected. Current: 104 elements, 0 failures, worst **4.80 light / 5.12 dark**.
+**`scripts/contrast-audit.js` resolves colour by painting a pixel**, never by
+reading the string. `color-mix()` computes in oklab and a regex reads that as
+near-black. It also composites alpha on both sides. Both were real bugs that
+produced confident wrong numbers.
 
-**Open question for you:** there is no desktop layout. The page caps at 679px —
-the day photograph's native width, so the header never upscales past 1×. The old
-desktop boards are superseded and the header boards' body is a walking-radius
-map, which is unbuilt. A real desktop layout needs a board before it needs code.
+**The band's fallback ground is dark** (`--band-ground`). A pale one puts the
+white wordmark at 1.4:1 before the photograph decodes. Three artboards had it
+wrong; a fallback nobody can read is not a fallback.

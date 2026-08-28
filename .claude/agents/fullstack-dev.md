@@ -50,35 +50,39 @@ visible wherever a time is shown, and shul pages emit `PlaceOfWorship` +
 
 ---
 
-## Where the project actually is (updated 2026-08-26)
+## Where the project actually is (updated 2026-08-28)
 
-Phases 1–4 are built and committed. `npm test` is **275 passing**; `npm run
-typecheck` covers both the parser and the app. Postgres `tlv_minyanim` is live
-locally with the 16 Ramat Aviv shuls: **62 minyanim — 39 fixed, 19 unknown, 4
-relative** — plus 5 shiurim and 0 parse issues. Start it with
-`brew services start postgresql@17`; `README.md` has the runbook.
+Phases 1-4 are built, including the desktop layout. `npm test` is **284
+passing**. Postgres `tlv_minyanim` holds the 16 Ramat Aviv shuls: **65
+minyanim**, of which **one synagogue — כלל ישראל — is verified against its own
+notice board** rather than against the municipal export. `brew services start
+postgresql@17`; `README.md` has the runbook.
 
-**Reuse, never rebuild:** `src/minyan-times/` (the parser), `src/zmanim/` (rules
-to instants), `src/db/queries.ts` (plain SQL, no ORM), `src/lib/curation.ts`
-(hand-curated English names and movement), `src/app/[locale]/` (bilingual
-routing, RTL, hreflang — all working).
+**Reuse, never rebuild:** `src/minyan-times/` (parser), `src/zmanim/` (rules to
+instants), `src/db/queries.ts` (plain SQL), `src/lib/curation.ts` (names,
+movement), `src/lib/verified-times.ts` (times read off a sign), `src/app/`.
 
-**The gap that matters is not code.** Shacharit is known for every shul;
-**Mincha is 69% unknown** and exactly one shul in Ramat Aviv publishes a real
-offset. The afternoon stays thin until gabbaim are asked.
+**The gap that matters is still not code.** Mincha is largely unknown, and one
+photograph of one notice board caught three real defects in a day. Evidence from
+the field beats anything derivable here.
 
-**Not built:** a desktop layout (the page caps at 679px and needs a design board
-first), geo/radius search, the nightly diff job, and any deployment — the site
-runs only on localhost.
+The repo is public: github.com/Binyamin999/tlv-minyanim. `data/seed-*.json` is
+gitignored and carries gabbai phone numbers; it must never be committed, logged
+or served.
 
-**Traps this codebase has already sprung, so you do not spring them again:**
+**The desktop layout is built — The Luach**, above a 56.25rem breakpoint, one
+DOM with `display: contents` promoting the card's wrappers into table columns.
+Mobile below it is untouched and must stay so.
 
-- A `SERVICE_FILTERS[0]` fallback made the chip *order* and the *default* the
-  same decision — reordering the chips silently moved the default. Name a
-  constant rather than indexing an array whose order is someone else's choice.
-- `next dev` belongs to the preview tools, never to Bash.
-- The `@/` alias does not resolve under `tsconfig.parser.json`. Anything the
-  parser or a script imports needs a relative path with an explicit `.ts`.
-- Adding a `ReviewReason` code fails typecheck until both locales have a string
-  for it. That is the type system doing its job — write the string, do not widen
-  the type.
+**`DayType` has three values now**: `weekday | erev_shabbat | shabbat`. Friday's
+Mincha and Kabbalat Shabbat are `erev_shabbat` — hours apart from Saturday's
+times and on a different date. Placing a row in the wrong one offers it a day
+late, which is a bug that shipped once.
+
+**Verified times override the parser for a whole synagogue**, and set
+`last_verified_at`. `verified_by` is a CODE, localised in the dictionary — it was
+free text for one commit and rendered English inside the Hebrew page.
+
+**A stale `next start` will serve HTML pointing at a CSS hash the rebuild
+replaced**, and the page renders with no styles at all. If that happens, check
+`lsof -ti:3100` before believing it is a regression.
