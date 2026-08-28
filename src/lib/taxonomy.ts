@@ -20,6 +20,9 @@ export const NUSACHIM = [
   'ashkenaz',
   'sefard',
   'edot_hamizrach',
+  // Unqualified. The source often says only `תימני`, and recording that is
+  // reading it; choosing baladi or shami on a congregation's behalf is not.
+  'teimani',
   'teimani_baladi',
   'teimani_shami',
   'moroccan',

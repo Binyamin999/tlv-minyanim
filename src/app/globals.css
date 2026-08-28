@@ -491,6 +491,13 @@ body {
   color: var(--ink-quiet);
 }
 
+/* Which minyan within the building. Same weight as the season marker beside it
+   — both answer "which of these rows is mine", not "how important is this". */
+.minyan-nusach {
+  color: var(--ink-quiet, var(--ink));
+  opacity: 0.75;
+}
+
 .actions {
   display: flex;
   flex-wrap: wrap;

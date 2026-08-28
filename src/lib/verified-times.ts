@@ -33,11 +33,20 @@
  * `parse_issues`: the failure is data.
  */
 import type { DayType, MinyanTime, Service } from '../minyan-times/index.ts';
+import type { Nusach } from './taxonomy.ts';
 
 export interface VerifiedMinyan {
   service: Service;
   dayType: DayType;
   time: MinyanTime;
+  /**
+   * Set ONLY when this minyan is a distinct group with its own nusach.
+   *
+   * Omitted means the house minyan — it follows the synagogue's own nusach —
+   * and never means unknown. Copying the synagogue's nusach down onto every
+   * row would make every ordinary minyan look like a separate congregation.
+   */
+  nusach?: Nusach;
   /** Why this reading is safe, where that is not obvious from the time itself. */
   note?: string;
 }
@@ -85,12 +94,15 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
    * which is `shkia − 20` — the same rule as their weekday Mincha. We would
    * have sent someone twelve minutes early.
    *
-   * NOT REPRESENTABLE YET: this shul runs TWO minyanim, `מניין אשכנזי-ספרדי`
-   * and `מניין תימני`, at different times. That is why the municipality tagged
-   * it `כללי` — not "unclassified" but "more than one". Our schema has one
-   * nusach per synagogue and none per minyan, so only the times the two
-   * minyanim SHARE can be stored unambiguously. Everything that differs
-   * between the columns is held below.
+   * TWO MINYANIM: `מניין אשכנזי-ספרדי` and `מניין תימני`, at different times.
+   * That is what the municipality's `כללי` meant — not "unclassified" but "more
+   * than one". Migration 0003 put a nusach on the minyan so both fit: the
+   * Teimani group carries `teimani`, and the main one carries nothing, because
+   * `אשכנזי-ספרדי` is two rites in one minyan and the house-minyan null claims
+   * nothing rather than claiming the wrong thing.
+   *
+   * What is still held is held for a DIFFERENT reason now — not "cannot say
+   * which minyan" but "cannot say whether it is a rule".
    */
   'לכלל ישראל': {
     verifiedAt: '2026-08-28',
@@ -114,7 +126,21 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
         service: 'shacharit',
         dayType: 'shabbat',
         time: { kind: 'fixed', time: '08:00' },
-        note: 'the אשכנזי-ספרדי minyan; the תימני minyan at 07:30 is held below',
+        // No nusach: this is the house minyan. The sheet heads its column
+        // `מניין אשכנזי-ספרדי`, which is two rites in one minyan and has no
+        // single enum value — and inventing one would claim something the sign
+        // does not say. Leaving it as the house minyan claims nothing.
+        note: 'the אשכנזי-ספרדי minyan — the house minyan',
+      },
+      {
+        service: 'shacharit',
+        dayType: 'shabbat',
+        time: { kind: 'fixed', time: '07:30' },
+        // The second minyan, and the reason `minyanim.nusach` exists. `תימני`
+        // unqualified, because that is what the sheet says; baladi or shami
+        // would be us choosing.
+        nusach: 'teimani',
+        note: 'the תימני minyan, half an hour before the house minyan',
       },
       {
         service: 'mincha',
@@ -152,10 +178,6 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
           'means the DST clock, not the Hebrew calendar. Selichot is also not ' +
           'shacharit, mincha or arvit, and 00:40 belongs to the Hebrew day that ' +
           'began at the previous sunset. Three separate gaps; none guessed.',
-      },
-      {
-        what: 'Shabbat Shacharit 07:30 (תימני)',
-        why: 'A second minyan. One nusach per synagogue, none per minyan — see above.',
       },
       {
         what: 'Shabbat Mincha 18:20 (אשכנזי-ספרדי) and 18:15 (תימני)',

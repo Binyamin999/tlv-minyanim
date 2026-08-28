@@ -32,6 +32,7 @@ import type { PoolClient } from 'pg';
 import { closePool, withTransaction } from '../src/db/client.ts';
 import { curatedMovement, curatedNameEn } from '../src/lib/curation.ts';
 import { verifiedFor, type VerifiedSynagogue } from '../src/lib/verified-times.ts';
+import type { Nusach } from '../src/lib/taxonomy.ts';
 import { slugCandidates } from '../src/lib/slug.ts';
 import { parseMinyanTimes } from '../src/minyan-times/index.ts';
 import type {
@@ -123,10 +124,12 @@ function str(value: unknown): string | null {
 /**
  * The source labels nusach in Hebrew. Note what is deliberately absent:
  *
- *  - `תימני` alone maps to NULL, not to a guess. The enum distinguishes
- *    teimani_baladi from teimani_shami and the source does not, so choosing
- *    one would be inventing a fact about a congregation's liturgy. NULL, and
- *    the run reports it by name for hand enrichment.
+ *  - `תימני` alone maps to `teimani`, the unqualified value. It used to map to
+ *    NULL on the grounds that the enum distinguishes baladi from shami and the
+ *    source does not — but NULL says "we do not know how they daven", which is
+ *    less true than "Yemenite, sub-rite unstated". Writing down what the sign
+ *    says is reading it; choosing baladi or shami would be the guess, and that
+ *    is still forbidden.
  *  - Nothing here can ever produce a `movement`. Both Ramat Aviv Chabad houses
  *    are tagged `אשכנז`; inferring movement from nusach is forbidden.
  */
@@ -138,6 +141,7 @@ const NUSACH: Record<string, string> = {
   תוניסאי: 'tunisian',
   עיראקי: 'iraqi',
   פרסי: 'persian',
+  תימני: 'teimani',
   סלוניקאי: 'salonikan',
   כללי: 'general',
 };
@@ -187,6 +191,16 @@ function assertImportable(minyan: ParsedMinyan, context: string): asserts minyan
 /* ------------------------------------------------------------------ */
 
 /**
+ * What actually gets written: the parser's shape, plus a nusach.
+ *
+ * `ParsedMinyan` deliberately has no nusach. The parser reads a GIS time
+ * string, and a time string cannot say which of a building's minyanim it
+ * belongs to — only a person standing in front of the sign can. Widening the
+ * parser's own type would invite someone to try.
+ */
+type ImportMinyan = ParsedMinyan & { nusach?: Nusach | null };
+
+/**
  * Turn a hand-verified record into the same shape the parser produces, so
  * everything downstream — the CHECK constraint, `is_publishable`, the timeline
  * — treats it identically. The only difference is provenance, and provenance
@@ -196,7 +210,7 @@ function assertImportable(minyan: ParsedMinyan, context: string): asserts minyan
  * string, because that is literally where the value came from and those columns
  * exist so any row can be traced back to what it was read from.
  */
-function verifiedToParsed(verified: VerifiedSynagogue, nameHe: string): ParsedMinyan[] {
+function verifiedToParsed(verified: VerifiedSynagogue, nameHe: string): ImportMinyan[] {
   return verified.minyanim.map((entry, index) => {
     // The tzeit ambiguity is a property of the anchor, not of who wrote it
     // down: `צאת הכוכבים` on a sign still does not say WHICH nightfall. A human
@@ -222,7 +236,10 @@ function verifiedToParsed(verified: VerifiedSynagogue, nameHe: string): ParsedMi
       rawField: `${verified.verifiedBy} (${verified.verifiedAt})`,
       index,
       needsReview,
-    } satisfies ParsedMinyan;
+      // Absent unless this minyan is its own group. Null is "the house
+      // minyan", not "unknown" — see migration 0003.
+      nusach: entry.nusach ?? null,
+    } satisfies ImportMinyan;
   });
 }
 
@@ -352,7 +369,7 @@ async function pickSlug(client: PoolClient, seed: SeedSynagogue): Promise<string
 async function writeMinyanim(
   client: PoolClient,
   synagogueId: number,
-  minyanim: ParsedMinyan[],
+  minyanim: ImportMinyan[],
 ): Promise<void> {
   const keptIds: number[] = [];
 
@@ -362,11 +379,13 @@ async function writeMinyanim(
       `INSERT INTO minyanim (
          synagogue_id, service, day_type, season, kind,
          fixed_time, anchor, offset_minutes, sign_basis, raw_text,
-         raw_segment, raw_field, source_index, clock_normalisation, needs_review
+         raw_segment, raw_field, source_index, clock_normalisation, needs_review,
+         nusach
        ) VALUES (
          $1, $2::service, $3::day_type, $4::season, $5::minyan_time_kind,
          $6::time, $7::zman, $8, $9::sign_basis, $10,
-         $11, $12, $13, $14::jsonb, $15::jsonb
+         $11, $12, $13, $14::jsonb, $15::jsonb,
+         $16::nusach
        )
        ON CONFLICT (synagogue_id, day_type, source_index) DO UPDATE SET
          service             = EXCLUDED.service,
@@ -381,6 +400,7 @@ async function writeMinyanim(
          raw_field           = EXCLUDED.raw_field,
          clock_normalisation = EXCLUDED.clock_normalisation,
          needs_review        = EXCLUDED.needs_review,
+         nusach              = EXCLUDED.nusach,
          updated_at          = now()
        RETURNING id`,
       [
@@ -402,6 +422,7 @@ async function writeMinyanim(
         minyan.index,
         minyan.clockNormalisation ? JSON.stringify(minyan.clockNormalisation) : null,
         JSON.stringify(minyan.needsReview),
+        minyan.nusach ?? null,
       ],
     );
     const id = rows[0]?.id;

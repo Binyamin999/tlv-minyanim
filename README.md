@@ -143,6 +143,7 @@ brew install postgresql@17 postgis && brew services start postgresql@17
 createdb tlv_minyanim
 psql -v ON_ERROR_STOP=1 -d tlv_minyanim -f db/migrations/0001_init.sql
 psql -v ON_ERROR_STOP=1 -d tlv_minyanim -f db/migrations/0002_shiurim_and_parse_issues.sql
+psql -v ON_ERROR_STOP=1 -d tlv_minyanim -f db/migrations/0003_minyan_nusach.sql
 ```
 
 Put `DATABASE_URL=postgres:///tlv_minyanim` in `.env.local`, then:

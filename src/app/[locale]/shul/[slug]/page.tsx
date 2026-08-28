@@ -291,6 +291,16 @@ function MinyanRow({
             {t.seasons[minyan.season]}
           </span>
         ) : null}
+        {/* Only when this minyan is its own group. The house minyan carries no
+            nusach here and must not be labelled with the synagogue's — every
+            row would then read as a separate congregation, which is the
+            opposite of what this column is for. */}
+        {minyan.nusach ? (
+          <span className="minyan-nusach">
+            {minyan.service || minyan.season ? ' · ' : null}
+            {t.nusachim[minyan.nusach]}
+          </span>
+        ) : null}
       </span>
 
       <span

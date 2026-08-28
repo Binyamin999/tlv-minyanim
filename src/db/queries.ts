@@ -53,6 +53,12 @@ export interface Minyan {
   isPublishable: boolean;
   /** Verbatim slice of the source field. Provenance, not display. */
   rawSegment: string;
+  /**
+   * This minyan's own nusach, when it is a distinct group within the building.
+   * NULL means the house minyan — it follows the synagogue's nusach — and does
+   * NOT mean unknown.
+   */
+  nusach: Nusach | null;
 }
 
 export interface SynagogueWithMinyanim extends Synagogue {
@@ -94,6 +100,8 @@ interface MinyanRow {
   raw_segment: string;
   needs_review: ReviewReason[];
   is_publishable: boolean;
+  /** This minyan's own nusach, when it is a distinct group. NULL = house minyan. */
+  nusach: Nusach | null;
 }
 
 const SYNAGOGUE_COLUMNS = `
@@ -161,6 +169,7 @@ function toMinyan(row: MinyanRow): Minyan {
     needsReview: row.needs_review ?? [],
     isPublishable: row.is_publishable,
     rawSegment: row.raw_segment,
+    nusach: row.nusach,
   };
 }
 
@@ -205,7 +214,7 @@ export async function getSynagogueBySlug(slug: string): Promise<SynagogueWithMin
 
   const minyanRows = await query<MinyanRow>(
     `SELECT id, service, day_type, season, kind, fixed_time, anchor, offset_minutes,
-            sign_basis, raw_text, raw_segment, needs_review, is_publishable
+            sign_basis, raw_text, raw_segment, needs_review, is_publishable, nusach
        FROM minyanim
       WHERE synagogue_id = $1
       ORDER BY day_type, source_index`,

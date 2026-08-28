@@ -114,7 +114,7 @@ All verbatim from the Tel Aviv municipality GIS layer:
 Store `nusach` as an enum, plus separate optional `movement` and `style` tags.
 
 ```
-nusach:   ashkenaz | sefard | edot_hamizrach | teimani_baladi | teimani_shami
+nusach:   ashkenaz | sefard | edot_hamizrach | teimani | teimani_baladi | teimani_shami
           | moroccan | tunisian | iraqi | persian | salonikan | general
 movement: chabad | breslev | null
 style:    carlebach | hashkama | netz | null
@@ -128,6 +128,22 @@ boundary in `displayNusach`, not deleted: the record keeps what the source said,
 so a re-import never disagrees with the database and a shul that later tells us
 its real nusach gets it filled in rather than corrected. It is also not offered
 as a filter chip — `כל הנוסחים` still includes those shuls.
+
+**`teimani` unqualified is a legitimate value.** The source usually says only
+`תימני`, and recording that is reading it — choosing baladi or shami on a
+congregation's behalf is the guess, and is still forbidden. Storing NULL instead
+said "we do not know how they daven", which is less true than "Yemenite,
+sub-rite unstated".
+
+**Nusach also lives on `minyanim`, and NULL there means the house minyan.** One
+building often runs several groups: כלל ישראל has `מניין אשכנזי-ספרדי` and
+`מניין תימני` at different times, which is what the municipality's `כללי` meant
+— not "unclassified" but "more than one". A minyan carries a nusach only when it
+is a distinct group; the house minyan carries none. Never copy the synagogue's
+nusach down onto its rows, or every ordinary minyan reads as a separate
+congregation. `אשכנזי-ספרדי` is deliberately stored as the house minyan rather
+than flattened to `ashkenaz`: two rites in one minyan has no single value, and
+claiming nothing beats claiming the wrong thing.
 
 **The source data has no Chabad or Breslev values** — it labels everything
 `אשכנז / עדות המזרח / תימני / כללי / סלוניקאי`. In Ramat Aviv alone,
