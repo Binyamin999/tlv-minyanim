@@ -30,6 +30,7 @@ import { dirname, resolve } from 'node:path';
 import type { PoolClient } from 'pg';
 
 import { closePool, withTransaction } from '../src/db/client.ts';
+import { curatedMovement, curatedNameEn } from '../src/lib/curation.ts';
 import { slugCandidates } from '../src/lib/slug.ts';
 import { parseMinyanTimes } from '../src/minyan-times/index.ts';
 import type {
@@ -217,7 +218,19 @@ async function upsertSynagogue(
     summary.unmappedNusach.push({ name: seed.name_he, raw: seed.nusach_raw });
   }
 
-  const movement = seed.movement && MOVEMENT.has(seed.movement) ? seed.movement : null;
+  // Movement comes from the seed's own column if it ever gains one, and
+  // otherwise from the hand-curated table. Never from nusach — the source tags
+  // both Ramat Aviv Chabad houses `אשכנז`, so nusach cannot reveal it.
+  const movement =
+    (seed.movement && MOVEMENT.has(seed.movement) ? seed.movement : null) ??
+    curatedMovement(seed.name_he);
+
+  // Transliterated, not translated. See src/lib/curation.ts — an English name
+  // here is the Hebrew one in Latin letters, which is what lets a visitor match
+  // a sign they cannot read. Null for anything not yet curated, because a
+  // machine transliteration of unpointed Hebrew reads as nonsense and a
+  // translation would be a name the congregation does not use.
+  const nameEn = curatedNameEn(seed.name_he);
 
   // "Never claim a listing is verified without a source and a date" — the
   // schema enforces it, and we refuse to send a half-pair at all.
@@ -230,12 +243,13 @@ async function upsertSynagogue(
        gis_source_id, slug, name_he, name_en, address_he, address_en,
        location, nusach, movement, style, status, last_verified_at, verified_by
      ) VALUES (
-       $1, $2, $3, NULL, $4, NULL,
+       $1, $2, $3, $12, $4, NULL,
        ST_SetSRID(ST_MakePoint($5, $6), 4326)::geography,
        $7::nusach, $8::movement, NULL, $9::synagogue_status, $10::timestamptz, $11
      )
      ON CONFLICT (gis_source_id) DO UPDATE SET
        name_he          = EXCLUDED.name_he,
+       name_en          = EXCLUDED.name_en,
        address_he       = EXCLUDED.address_he,
        location         = EXCLUDED.location,
        nusach           = EXCLUDED.nusach,
@@ -249,8 +263,6 @@ async function upsertSynagogue(
       seed.source_id,
       slug,
       seed.name_he,
-      // name_en stays NULL. We have no English name from the source and an
-      // invented one is worse than none.
       seed.address_he,
       seed.lng, // ST_MakePoint is (x, y) = (lng, lat). Getting this backwards
       seed.lat, // puts every shul in the Indian Ocean and no test catches it.
@@ -259,6 +271,7 @@ async function upsertSynagogue(
       status,
       seed.last_verified_at,
       seed.verified_by,
+      nameEn,
     ],
   );
 
