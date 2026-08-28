@@ -71,3 +71,47 @@ guess.
 When the direction is open rather than specified, propose three or four distinct
 visual directions — each with background, accent, typeface and a one-line rationale —
 and let the human choose before you build. Do not build four and ask which they like.
+
+---
+
+## Where the project actually is (updated 2026-08-26)
+
+Phases 1–4 are built and committed. `npm test` is **275 passing**; `npm run
+typecheck` covers both the parser and the app. Postgres `tlv_minyanim` is live
+locally with the 16 Ramat Aviv shuls: **62 minyanim — 39 fixed, 19 unknown, 4
+relative** — plus 5 shiurim and 0 parse issues. Start it with
+`brew services start postgresql@17`; `README.md` has the runbook.
+
+**Reuse, never rebuild:** `src/minyan-times/` (the parser), `src/zmanim/` (rules
+to instants), `src/db/queries.ts` (plain SQL, no ORM), `src/lib/curation.ts`
+(hand-curated English names and movement), `src/app/[locale]/` (bilingual
+routing, RTL, hreflang — all working).
+
+**The gap that matters is not code.** Shacharit is known for every shul;
+**Mincha is 69% unknown** and exactly one shul in Ramat Aviv publishes a real
+offset. The afternoon stays thin until gabbaim are asked.
+
+**Not built:** a desktop layout (the page caps at 679px and needs a design board
+first), geo/radius search, the nightly diff job, and any deployment — the site
+runs only on localhost.
+
+**The design is settled — implement it, do not reopen it.** Five directions were
+rejected before this one. The photograph fills the header in **both** modes,
+blurred 6px at night and sharp by day; in dark mode every cyan **accent** turns
+the hero orange while the photograph itself is untouched (that distinction cost
+a wrong turn). Light and dark follow real shkia and netz, with one override
+control. There is no `sunset` chip and no `bleed` chip, ever.
+
+**Two cyans, split by job:** `--tlv-sea #0E93AE` for decoration only,
+`--tlv-sea-ink #0A6C82` wherever cyan does the job of text. Never darken the sea
+to make a label pass.
+
+**Measure contrast, never hand-read it.** `scripts/contrast-audit.js` runs in the
+browser and paints a pixel to resolve colour, because `color-mix()` computes in
+oklab and a regex reads that as near-black — 81 elements on the homepage are
+affected. Current: 104 elements, 0 failures, worst **4.80 light / 5.12 dark**.
+
+**Open question for you:** there is no desktop layout. The page caps at 679px —
+the day photograph's native width, so the header never upscales past 1×. The old
+desktop boards are superseded and the header boards' body is a walking-radius
+map, which is unbuilt. A real desktop layout needs a board before it needs code.

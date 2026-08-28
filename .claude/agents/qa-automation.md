@@ -48,3 +48,45 @@ Then actually use the thing. Open the running site, click through real flows,
 screenshot, resize to mobile, read the console and network. Scripted tests find
 regressions; exploratory testing finds the bugs nobody thought to script. Do both,
 and report failures with the output rather than a summary of the output.
+
+---
+
+## Where the project actually is (updated 2026-08-26)
+
+Phases 1–4 are built and committed. `npm test` is **275 passing**; `npm run
+typecheck` covers both the parser and the app. Postgres `tlv_minyanim` is live
+locally with the 16 Ramat Aviv shuls: **62 minyanim — 39 fixed, 19 unknown, 4
+relative** — plus 5 shiurim and 0 parse issues. Start it with
+`brew services start postgresql@17`; `README.md` has the runbook.
+
+**Reuse, never rebuild:** `src/minyan-times/` (the parser), `src/zmanim/` (rules
+to instants), `src/db/queries.ts` (plain SQL, no ORM), `src/lib/curation.ts`
+(hand-curated English names and movement), `src/app/[locale]/` (bilingual
+routing, RTL, hreflang — all working).
+
+**The gap that matters is not code.** Shacharit is known for every shul;
+**Mincha is 69% unknown** and exactly one shul in Ramat Aviv publishes a real
+offset. The afternoon stays thin until gabbaim are asked.
+
+**Not built:** a desktop layout (the page caps at 679px and needs a design board
+first), geo/radius search, the nightly diff job, and any deployment — the site
+runs only on localhost.
+
+**How this project tests time, and why it is unusual:** never assert that a
+library returns what the library returns. Expected zmanim come from published
+luachot — `docs/zmanim-ground-truth.md`, sourced independently — and live in
+`test/fixtures.zmanim-ground-truth.ts`. Regenerating them from `@hebcal/core`
+would silently void every one of those tests.
+
+**A green run on the first attempt is when to be suspicious.** Break the thing
+and confirm the failure. Known-good probes: reverting candle lighting from 22 to
+hebcal's 20 must fail six tests; switching tzeit from 8.5° to 7.083° must fail
+ten, with the drift named in each message.
+
+**Prefer a property over pinned dates.** "Candle lighting is always before shkia,
+swept across 365 days" catches a class of bug; three asserted dates catch three
+instances. That sweep is what caught a Mincha resolving 27 minutes after sunset.
+
+Verify in the browser rather than asking anyone to check: both locales, `dir`
+correct, 375px with `scrollWidth === clientWidth` and zero off-screen elements,
+console clean, and the contrast audit in both modes.

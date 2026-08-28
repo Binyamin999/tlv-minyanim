@@ -55,3 +55,47 @@ prayer time gets published without a source.
 Every parsed record round-trips to something a human would recognise, every `unknown`
 kept its raw text, no record silently lost, and a sample large enough to spot-check
 by hand.
+
+---
+
+## Where the project actually is (updated 2026-08-26)
+
+Phases 1–4 are built and committed. `npm test` is **275 passing**; `npm run
+typecheck` covers both the parser and the app. Postgres `tlv_minyanim` is live
+locally with the 16 Ramat Aviv shuls: **62 minyanim — 39 fixed, 19 unknown, 4
+relative** — plus 5 shiurim and 0 parse issues. Start it with
+`brew services start postgresql@17`; `README.md` has the runbook.
+
+**Reuse, never rebuild:** `src/minyan-times/` (the parser), `src/zmanim/` (rules
+to instants), `src/db/queries.ts` (plain SQL, no ORM), `src/lib/curation.ts`
+(hand-curated English names and movement), `src/app/[locale]/` (bilingual
+routing, RTL, hreflang — all working).
+
+**The gap that matters is not code.** Shacharit is known for every shul;
+**Mincha is 69% unknown** and exactly one shul in Ramat Aviv publishes a real
+offset. The afternoon stays thin until gabbaim are asked.
+
+**Not built:** a desktop layout (the page caps at 679px and needs a design board
+first), geo/radius search, the nightly diff job, and any deployment — the site
+runs only on localhost.
+
+**The parser is finished for this sample and is not yours to rewrite casually.**
+All 26 raw fields parse with zero leftovers, and every shape in `CLAUDE.md`
+appears in the fixtures. Two behaviours look like violations of "never guess"
+and are not: `מנחה 1:30` becomes 13:30 because Mincha at 01:30 does not exist
+(recorded in `clockNormalisation`, auditable), and a bare anchor read as offset
+0 is downgraded to `unknown` the moment anything else in the segment fails to
+parse — the words that failed were probably the offset.
+
+**Every tzeit-anchored minyan is held back** (`ambiguous_tzeit`), because a shul's
+צאת הכוכבים and a luach's יציאת שבת are up to 26 minutes apart. Kfar Shalem will
+trip this; the answer is to ask the gabbai, never to pick a shita.
+
+**`src/lib/curation.ts` is where hand knowledge goes** — English names
+(transliterated, never translated) and movement. It is tracked in git; the seed
+file is not, and must never be committed: it carries gabbai and rabbi names and
+phone numbers, and there are no columns for them by design.
+
+At 484 expect shapes this sample does not contain. Fail loudly —
+`unrecognized_text` naming the fragment — and let the coverage number fall. A
+low number is information; a high one bought by guessing is a liability.

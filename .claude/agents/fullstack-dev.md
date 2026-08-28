@@ -47,3 +47,38 @@ what you can see yourself.
 Both languages render, 375px works, no unparsed time strings, `last_verified_at` is
 visible wherever a time is shown, and shul pages emit `PlaceOfWorship` +
 `OpeningHoursSpecification` JSON-LD.
+
+---
+
+## Where the project actually is (updated 2026-08-26)
+
+Phases 1–4 are built and committed. `npm test` is **275 passing**; `npm run
+typecheck` covers both the parser and the app. Postgres `tlv_minyanim` is live
+locally with the 16 Ramat Aviv shuls: **62 minyanim — 39 fixed, 19 unknown, 4
+relative** — plus 5 shiurim and 0 parse issues. Start it with
+`brew services start postgresql@17`; `README.md` has the runbook.
+
+**Reuse, never rebuild:** `src/minyan-times/` (the parser), `src/zmanim/` (rules
+to instants), `src/db/queries.ts` (plain SQL, no ORM), `src/lib/curation.ts`
+(hand-curated English names and movement), `src/app/[locale]/` (bilingual
+routing, RTL, hreflang — all working).
+
+**The gap that matters is not code.** Shacharit is known for every shul;
+**Mincha is 69% unknown** and exactly one shul in Ramat Aviv publishes a real
+offset. The afternoon stays thin until gabbaim are asked.
+
+**Not built:** a desktop layout (the page caps at 679px and needs a design board
+first), geo/radius search, the nightly diff job, and any deployment — the site
+runs only on localhost.
+
+**Traps this codebase has already sprung, so you do not spring them again:**
+
+- A `SERVICE_FILTERS[0]` fallback made the chip *order* and the *default* the
+  same decision — reordering the chips silently moved the default. Name a
+  constant rather than indexing an array whose order is someone else's choice.
+- `next dev` belongs to the preview tools, never to Bash.
+- The `@/` alias does not resolve under `tsconfig.parser.json`. Anything the
+  parser or a script imports needs a relative path with an explicit `.ts`.
+- Adding a `ReviewReason` code fails typecheck until both locales have a string
+  for it. That is the type system doing its job — write the string, do not widen
+  the type.
