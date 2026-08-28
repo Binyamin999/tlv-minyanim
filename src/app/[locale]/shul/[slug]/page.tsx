@@ -26,7 +26,7 @@ import { clockFaceOf, jerusalemDateOf, TEL_AVIV, zmanimFor, type DayZmanim } fro
 export const dynamic = 'force-dynamic';
 
 /** The two day columns, in the order a week runs. */
-const DAY_TYPES: DayType[] = ['weekday', 'shabbat'];
+const DAY_TYPES: DayType[] = ['weekday', 'erev_shabbat', 'shabbat'];
 
 /** Services in the order of the day, not alphabetically. */
 const SERVICE_ORDER: Service[] = ['shacharit', 'mincha', 'arvit'];

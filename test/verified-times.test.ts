@@ -109,14 +109,23 @@ describe('לכלל ישראל — the claims each stored time rests on', () => {
     );
   });
 
-  it('the Shabbat Mincha rule resolves before candle lighting, not after', () => {
+  it('the erev-Shabbat Mincha is stored on FRIDAY, not on Shabbat', () => {
+    // The distinction this shul forced into the schema. The sheet separates
+    // ליל שבת from יום השבת, so the day is stated rather than guessed from the
+    // anchor — which is what previously put this minyan a day late.
+    const mincha = record!.minyanim.find((m) => m.service === 'mincha' && m.dayType !== 'weekday');
+    assert.ok(mincha, 'there is a Shabbat-period Mincha');
+    assert.equal(mincha.dayType, 'erev_shabbat');
+  });
+
+  it('the erev-Shabbat Mincha rule resolves to the printed 18:50', () => {
     // shkia − 20 against a candle lighting of shkia − 22 means Mincha starts
     // two minutes AFTER candles, which is the normal erev Shabbat order and
     // the thing the GIS reading got wrong in the other direction.
     const friday = date('2026-08-28');
     const z = zmanimFor(TEL_AVIV, friday);
     const mincha = record!.minyanim.find(
-      (m) => m.service === 'mincha' && m.dayType === 'shabbat',
+      (m) => m.service === 'mincha' && m.dayType === 'erev_shabbat',
     );
     assert.ok(mincha && mincha.time.kind === 'relative');
     const { resolved } = resolveOnDate(mincha.time, friday, TEL_AVIV);

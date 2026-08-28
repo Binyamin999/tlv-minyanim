@@ -172,6 +172,16 @@ const RESOLVE: Placement = { at: 'resolve' };
 const ABSENT: Placement = { at: 'absent' };
 
 /** A `כניסת שבת`-anchored rule is unambiguously the erev-Shabbat minyan. */
+/**
+ * A PROXY for "this Shabbat-column row is really an erev-Shabbat time", used
+ * only where the source never separated the two days.
+ *
+ * It is a proxy and not a fact: an erev-Shabbat Mincha can be anchored to
+ * anything, and כלל ישראל's is `shkia − 20`. Where the source DOES separate
+ * them, `dayType: 'erev_shabbat'` says so outright and this is never consulted.
+ * Do not extend this function to recognise more anchors — that is guessing the
+ * day from the time, which is what went wrong.
+ */
 function isCandleLightingRule(time: MinyanTime): boolean {
   return time.kind === 'relative' && time.anchor === 'candle_lighting';
 }
@@ -212,6 +222,16 @@ function basePlacement(minyan: TimelineMinyan, service: Service, window: DayWind
       case 'shabbat':
         return ABSENT;
     }
+  }
+
+  // Stated by the source, so nothing has to be guessed from the anchor. This
+  // is the case the `isCandleLightingRule` proxy below was standing in for, and
+  // it exists because that proxy got a real minyan wrong: correcting כלל
+  // ישראל's erev-Shabbat Mincha from the municipality's candle_lighting − 10 to
+  // the sheet's shkia − 20 moved it from Friday to Saturday, and the page
+  // offered it "in a day" when it was ninety minutes off.
+  if (column === 'erev_shabbat') {
+    return window.phase === 'erev_shabbat' ? RESOLVE : ABSENT;
   }
 
   if (column === 'shabbat') {

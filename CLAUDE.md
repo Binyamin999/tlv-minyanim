@@ -426,6 +426,26 @@ Endpoint: `https://gisn.tel-aviv.gov.il/arcgis/rest/services/WM/IView2WM/MapServ
 
 ---
 
+## Erev Shabbat is its own day
+
+`DayType` is `weekday | erev_shabbat | shabbat`. The Mincha and Kabbalat Shabbat
+davened on **Friday** are not the Shacharit and Mincha davened on **Saturday**;
+they are hours apart on different dates, and a row in the wrong one is offered a
+day late.
+
+**The parser never produces `erev_shabbat`.** The GIS `shabbat_times_raw` column
+holds both days without saying which, so a row read from it stays `shabbat` and
+the timeline holds it back as `erev_shabbat_time_unstated`. Only a source that
+separates them — a printed sheet with a `ליל שבת` block — can set it.
+
+**Never infer the day from the anchor.** The timeline used to treat a
+Shabbat-column Mincha as erev Shabbat only if it was candle-lighting-anchored,
+and that proxy failed against real evidence the first time it met any: כלל
+ישראל's erev-Shabbat Mincha is `shkia − 20`, so correcting it away from the
+municipality's wrong `candle_lighting − 10` moved the minyan from Friday to
+Saturday and the homepage offered it "בעוד יום" when it was ninety minutes away.
+An anchor says what a time is measured from, never which day it falls on.
+
 ## Verified times outrank the source
 
 `src/lib/verified-times.ts` holds times a person read off a synagogue's own

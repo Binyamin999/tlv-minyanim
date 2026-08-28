@@ -144,7 +144,11 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
       },
       {
         service: 'mincha',
-        dayType: 'shabbat',
+        // FRIDAY, not Saturday. The sheet's `ליל שבת` block is separate from
+        // its `יום השבת` block, so this is stated rather than inferred — which
+        // matters, because the timeline used to guess the day from the anchor
+        // and put this minyan a day late.
+        dayType: 'erev_shabbat',
         time: { kind: 'relative', anchor: 'shkia', offsetMinutes: -20 },
         // Erev Shabbat Mincha, printed 18:50 against that week's shkia of
         // 19:10. Identical in both minyanim's columns, and the same offset the
@@ -155,7 +159,7 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
       },
       {
         service: 'arvit',
-        dayType: 'shabbat',
+        dayType: 'erev_shabbat',
         time: { kind: 'relative', anchor: 'shkia', offsetMinutes: 0 },
         // קבלת שבת וערבית, printed 19:10 against a shkia of 19:10. Identical
         // in both columns.

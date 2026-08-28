@@ -46,12 +46,24 @@ export type Service = 'shacharit' | 'mincha' | 'arvit';
 export type Season = 'winter' | 'summer';
 
 /**
- * Which day the time applies to. This is NOT derivable from the text — it comes
- * from which column the string was read out of (`weekday_times_raw` vs
- * `shabbat_times_raw`). The parser therefore accepts it from the caller and
- * refuses to infer it. `null` = the caller did not say, and we will not pretend.
+ * Which day a stored time is davened on.
+ *
+ * NOT derivable from the text — it comes from which column the string was read
+ * out of. The parser accepts it from the caller and refuses to infer it;
+ * `null` means the caller did not say, and we will not pretend.
+ *
+ * `erev_shabbat` is Friday afternoon and evening — the Mincha and Kabbalat
+ * Shabbat before sunset. It is a separate day from `shabbat`, and the
+ * distinction is load-bearing: the two are hours apart and fall on different
+ * dates, so a row placed in the wrong one is offered a day late.
+ *
+ * THE PARSER NEVER PRODUCES IT. The GIS `shabbat_times_raw` column holds both
+ * days without saying which is which, so a row read from it stays `shabbat`
+ * and the timeline holds it back rather than assigning a day nobody stated.
+ * Only a source that separates them — a printed sheet with a ליל שבת block —
+ * can set this.
  */
-export type DayType = 'weekday' | 'shabbat';
+export type DayType = 'weekday' | 'erev_shabbat' | 'shabbat';
 
 /** CLAUDE.md's synagogue status enum. Some "time" fields are actually statuses. */
 export type SynagogueStatus =

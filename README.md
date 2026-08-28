@@ -76,7 +76,7 @@ The site says so out loud rather than hiding it:
 | Parser | Hebrew free text → structured values. All 26 raw fields parse, zero leftovers |
 | Data | 16 synagogues, 65 minyanim — 42 fixed, 19 unknown, 4 relative. 1 verified against its own notice board |
 | Zmanim | `@hebcal/core`, GRA, resolved at read time and never stored |
-| Tests | 283, including edge cases asserted against published luachot |
+| Tests | 284, including edge cases asserted against published luachot |
 | Contrast | AA in both modes — 130 elements, 0 failures, worst 5.05 light / 5.73 dark |
 
 **Not built:** geo/radius search, the nightly refresh job, and any deployment —
@@ -144,6 +144,7 @@ createdb tlv_minyanim
 psql -v ON_ERROR_STOP=1 -d tlv_minyanim -f db/migrations/0001_init.sql
 psql -v ON_ERROR_STOP=1 -d tlv_minyanim -f db/migrations/0002_shiurim_and_parse_issues.sql
 psql -v ON_ERROR_STOP=1 -d tlv_minyanim -f db/migrations/0003_minyan_nusach.sql
+psql -v ON_ERROR_STOP=1 -d tlv_minyanim -f db/migrations/0004_erev_shabbat_day_type.sql
 ```
 
 Put `DATABASE_URL=postgres:///tlv_minyanim` in `.env.local`, then:
@@ -154,7 +155,7 @@ npm install && npm run import:seed && npm run dev
 
 | | |
 |---|---|
-| `npm test` | the suite (283) |
+| `npm test` | the suite (284) |
 | `npm run typecheck` | parser and app |
 | `npm run import:seed` | load seed data through the parser — idempotent |
 | `npm run coverage` | how much of the source actually parsed |

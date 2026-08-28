@@ -60,6 +60,7 @@ const he = {
   allSynagogues: 'כל בתי הכנסת',
   dayTypes: {
     weekday: 'ימי חול',
+    erev_shabbat: 'ערב שבת',
     shabbat: 'שבת',
   } satisfies Record<DayType, string>,
   seasons: {
@@ -277,6 +278,7 @@ const en: typeof he = {
   allSynagogues: 'All synagogues',
   dayTypes: {
     weekday: 'Weekdays',
+    erev_shabbat: 'Erev Shabbat',
     shabbat: 'Shabbat',
   },
   seasons: {
