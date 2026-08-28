@@ -346,10 +346,19 @@ minutes late is chillul Shabbat. **Tel Aviv only** — Jerusalem is 40, Haifa 30
 anchor is doing two jobs: `יציאת שבת` on a luach is 8.5° (≈ shkia + 39 here),
 while a shul saying its Arvit is "at tzeit" usually means shkia + 13.5 to 25.
 Resolving an Arvit minyan against 8.5° lists it **20+ minutes late** — the exact
-failure this project exists to prevent. No minyan in the Ramat Aviv 16 uses this
-anchor, so it is latent, not live. **Never map a bare `בזמן` on an Arvit line
-onto any tzeit value** — that is guessing an offset. If a shul's Arvit offset
-matters, ask the gabbai.
+failure this project exists to prevent.
+
+**Any `tzeit`-anchored minyan is therefore flagged `ambiguous_tzeit` and held
+back.** The anchor is kept, never published. This applies even when an offset
+is stated: `20 דק' אחרי צאת הכוכבים` still does not say *which* nightfall it is
+measured from. `shkia` and `netz` are unaffected — those anchors mean one thing
+each. No minyan in the Ramat Aviv 16 uses tzeit, so the guard is ready rather
+than firing; Kfar Shalem will almost certainly trip it.
+
+**Never map a bare `בזמן` on an Arvit line onto any tzeit value** — that is
+guessing an offset, and the flag above must not tempt anyone into treating
+`בזמן` as "probably tzeit, flagged". If a shul's Arvit offset matters, ask the
+gabbai.
 
 **`candle_lighting` is undefined on most dates** and must resolve to *nothing*
 on a Tuesday, never to `shkia − 32`. It is also undefined on the **second night

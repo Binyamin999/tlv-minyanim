@@ -78,7 +78,23 @@ export type ReviewReason =
    * the source and we will not choose which. The time is kept; it must not be
    * published.
    */
-  | { code: 'implausible_for_service'; detail: string };
+  | { code: 'implausible_for_service'; detail: string }
+  /**
+   * The minyan is anchored to `tzeit`, and `tzeit` names two different times.
+   *
+   * On a luach, יציאת שבת is the stringent 8.5° value — about shkia + 39 in Tel
+   * Aviv — and that is what this codebase resolves `tzeit` to, matching the
+   * Rabbanut. But a shul writing צאת הכוכבים on its Arvit line almost always
+   * means the ordinary nightfall it davens at, shkia + 13.5 to 25 depending on
+   * the community. Those are up to twenty-six minutes apart.
+   *
+   * Resolving the shul's word against the luach's definition lists the minyan
+   * that much LATE — someone arrives to an empty room, which is the exact
+   * failure this project exists to prevent. The offset is not written down
+   * anywhere we can read, so we keep the anchor, refuse to publish it, and ask
+   * the gabbai. See CLAUDE.md and docs/zmanim-ground-truth.md §9.1.
+   */
+  | { code: 'ambiguous_tzeit'; detail: string };
 
 /**
  * Recorded when a 12-hour clock face was resolved to its only possible 24-hour

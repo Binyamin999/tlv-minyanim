@@ -91,6 +91,9 @@ const he = {
     unattributed_service: 'המקור לא ציין לאיזו תפילה',
     unparsed_text: 'טקסט שלא פוענח',
     implausible_for_service: 'שעה לא סבירה לתפילה הזאת',
+    // Deliberately says which tzeit is in question rather than just "unclear".
+    // A reader who davens here knows their own shul's minhag and can tell us.
+    ambiguous_tzeit: 'לפי צאת הכוכבים — לא ידוע לפי איזו שיטה',
   } satisfies Record<ReviewReason['code'], string>,
 
   /* --- the timeline (phase 3) -------------------------------------- */
@@ -246,6 +249,7 @@ const en: typeof he = {
     unattributed_service: 'The source did not say which service',
     unparsed_text: 'Text the parser could not read',
     implausible_for_service: 'Implausible time for this service',
+    ambiguous_tzeit: 'At tzeit — but the source does not say which tzeit',
   },
 
   nextMinyanim: 'Next minyan',

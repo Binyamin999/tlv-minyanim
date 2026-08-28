@@ -138,3 +138,65 @@ describe('the module computes nothing', () => {
     assert.deepEqual(Object.keys(time).sort(), ['anchor', 'kind', 'offsetMinutes']);
   });
 });
+
+describe('tzeit names two different times, so a tzeit minyan is never published', () => {
+  // On a luach יציאת שבת is the stringent 8.5° value — about shkia + 39 in Tel
+  // Aviv — and that is what this codebase resolves `tzeit` to, matching the
+  // Rabbanut. A shul writing צאת הכוכבים on its Arvit line means the nightfall
+  // it actually davens at: shkia + 13.5 to 25, depending on the community.
+  //
+  // Resolving the shul's word against the luach's definition lists that minyan
+  // up to twenty-six minutes LATE. Someone walks over and the room is empty,
+  // which is the precise failure this project exists to prevent — and unlike a
+  // blank, it looks confident. So we keep the anchor and hold the record back.
+  const tzeitLines = [
+    'ערבית - צאת הכוכבים',
+    'ערבית-צאת',
+    'מעריב - צאת הכוכבים',
+    "ערבית 20 דק' אחרי צאת הכוכבים",
+    'ערבית - צאת השבת',
+  ];
+
+  for (const raw of tzeitLines) {
+    it(`${raw} is kept but held back`, () => {
+      const [minyan] = parseMinyanTimes(raw, { dayType: 'weekday' }).minyanim;
+      assert.ok(minyan, 'should still parse — we keep the anchor');
+      assert.equal(minyan.time.kind, 'relative');
+      assert.equal(minyan.time.kind === 'relative' && minyan.time.anchor, 'tzeit');
+      assert.ok(
+        minyan.needsReview.some((r) => r.code === 'ambiguous_tzeit'),
+        'must carry ambiguous_tzeit',
+      );
+      assert.equal(isPublishable(minyan), false);
+    });
+  }
+
+  it('an explicit offset from tzeit is still ambiguous — it does not say WHICH tzeit', () => {
+    // The tempting mistake is to treat a stated number as resolving the
+    // question. It does not: 20 minutes after which nightfall?
+    const [minyan] = parseMinyanTimes("ערבית 20 דק' אחרי צאת הכוכבים").minyanim;
+    assert.deepEqual(minyan!.time, { kind: 'relative', anchor: 'tzeit', offsetMinutes: 20 });
+    assert.equal(isPublishable(minyan!), false);
+  });
+
+  it('shkia is unaffected — that anchor means exactly one thing', () => {
+    const [minyan] = parseMinyanTimes("ערבית 20 דק' אחרי השקיעה").minyanim;
+    assert.deepEqual(minyan!.time, { kind: 'relative', anchor: 'shkia', offsetMinutes: 20 });
+    assert.equal(isPublishable(minyan!), true);
+  });
+
+  it('netz is unaffected too, so this did not become a blanket anchor ban', () => {
+    const [minyan] = parseMinyanTimes('שחרית-נץ').minyanim;
+    assert.deepEqual(minyan!.time, { kind: 'relative', anchor: 'netz', offsetMinutes: 0 });
+    assert.equal(isPublishable(minyan!), true);
+  });
+
+  it('a בזמן Arvit stays unknown and is NOT reclassified as tzeit', () => {
+    // CLAUDE.md: "Never map a bare בזמן on an Arvit line onto any tzeit value."
+    // The fix above must not tempt anyone into treating בזמן as "probably
+    // tzeit, flagged" — that would be inventing an anchor to go with the flag.
+    const [minyan] = parseMinyanTimes('ערבית-בזמן').minyanim;
+    assert.deepEqual(minyan!.time, { kind: 'unknown', rawText: 'בזמן' });
+    assert.ok(!minyan!.needsReview.some((r) => r.code === 'ambiguous_tzeit'));
+  });
+});

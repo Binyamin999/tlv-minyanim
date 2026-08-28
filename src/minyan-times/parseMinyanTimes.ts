@@ -607,6 +607,27 @@ export function parseMinyanTimes(raw: string, context: ParseContext = {}): Parse
         }
       }
 
+      // `tzeit` is doing two jobs and only one of them is ours. We resolve it
+      // to the stringent 8.5° יציאת שבת value; a shul writing צאת הכוכבים on a
+      // minyan line means the nightfall it actually davens at, which is
+      // typically fifteen to twenty-six minutes earlier. The source does not
+      // say which, so neither do we: the anchor is kept, the record is held
+      // back, and the offset is a question for the gabbai.
+      //
+      // Deliberately every tzeit-anchored minyan, not just a bare one. Stating
+      // an offset FROM tzeit does not resolve which tzeit it is measured from,
+      // so `20 דק' אחרי צאת הכוכבים` inherits the same ambiguity as `בצאת`.
+      // A shkia-anchored time is unaffected — that anchor means one thing.
+      if (time.kind === 'relative' && time.anchor === 'tzeit') {
+        needsReview.push({
+          code: 'ambiguous_tzeit',
+          detail:
+            `"${segment}" is anchored to tzeit, which means the 8.5° יציאת שבת ` +
+            `here (about shkia + 39) but usually means shkia + 13.5 to 25 on a ` +
+            `shul's own sign. Ask the gabbai which, rather than listing it late.`,
+        });
+      }
+
       const minyan: ParsedMinyan = {
         service,
         time,

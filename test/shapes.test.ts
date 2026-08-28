@@ -78,7 +78,12 @@ describe('the sign of an offset', () => {
 describe('beyond the Ramat Aviv sample — built for all 484', () => {
   it('recognises the other anchors', () => {
     const anchors: Array<[string, string]> = [
-      ['ערבית-צאת הכוכבים', 'arvit tzeit+0'],
+      // The `!` is the needs-review marker. tzeit carries it BY DESIGN: the
+      // anchor is recognised and kept, but it names the 8.5° יציאת שבת here
+      // while a shul's own sign means a nightfall up to twenty-six minutes
+      // earlier, so the record is held back rather than listed late.
+      // See the `ambiguous_tzeit` suite in invariants.test.ts.
+      ['ערבית-צאת הכוכבים', 'arvit tzeit+0 !'],
       ['מנחה-פלג המנחה', 'mincha plag+0'],
       ['שחרית-עלות השחר', 'shacharit alot+0'],
       ['מנחה-הדלקת נרות', 'mincha candle_lighting+0'],
