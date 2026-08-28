@@ -4,7 +4,7 @@ import { VerifiedStamp } from '@/components/VerifiedStamp';
 import { WalkIcon } from '@/components/icons';
 import type { Dictionary } from '@/i18n/dictionaries';
 import type { Locale } from '@/i18n/locales';
-import { walkingDirectionsUrl } from '@/lib/directions';
+import { walkingDirectionsUrl, wazeUrl } from '@/lib/directions';
 import { displayMinyanTime } from '@/lib/minyan-display';
 import { foreignAttrs, localisedAddress, localisedName } from '@/lib/synagogue-display';
 import { warmthPercent } from '@/lib/sunset-warmth';
@@ -62,18 +62,32 @@ export function HeroCard({
     >
       <div className="hero-head">
         <p className="hero-service">{t.services[row.service]}</p>
-        {/* Walking, never driving. Waze is a driving app and lives on the
-            individual shul page only. */}
-        <a
-          className="walk-link"
-          href={walkingDirectionsUrl(row.synagogue.lat, row.synagogue.lng)}
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          <WalkIcon size={13} />
-          {t.walkingDirections}
-          <span className="visually-hidden"> {t.directionsTo(name.text)}</span>
-        </a>
+        {/* Walking first and never displaced: most journeys to a minyan are on
+            foot. Waze beside it for the rarer cross-town trip. */}
+        <span className="hero-directions">
+          <a
+            className="walk-link"
+            href={walkingDirectionsUrl(row.synagogue.lat, row.synagogue.lng)}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <WalkIcon size={13} />
+            {t.walkingDirections}
+            <span className="visually-hidden"> {t.directionsTo(name.text)}</span>
+          </a>
+          <span className="card-dot" aria-hidden="true">
+            ·
+          </span>
+          <a
+            className="walk-link walk-link-quiet"
+            href={wazeUrl(row.synagogue.lat, row.synagogue.lng)}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            {t.wazeDirections}
+            <span className="visually-hidden"> {t.directionsTo(name.text)}</span>
+          </a>
+        </span>
       </div>
 
       {/* The digits are their own bidi run, but the LINE is the page's — a

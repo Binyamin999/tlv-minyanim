@@ -298,8 +298,13 @@ https://www.google.com/maps/dir/?api=1&destination=<lat>,<lng>&travelmode=walkin
 to Oppenheimer 5, on foot, often on erev Shabbat. Driving directions are wrong for
 nearly every journey this site serves.
 
-**Waze belongs on the individual synagogue page, not on the cards** — it is a
-driving app, useful for the rarer cross-town trip:
+**Waze sits beside walking everywhere, and never in front of it.** This
+reverses an earlier decision that kept Waze on the synagogue page only; the
+user asked for it on the cards and the hero too. What did not change is the
+order — walking is always first, always carries the icon and the accent colour,
+and Waze is the quiet second. Order is how the recommendation is made, now that
+presence no longer carries it. It remains a driving app for the rarer
+cross-town trip:
 
 ```
 https://waze.com/ul?ll=<lat>,<lng>&navigate=yes

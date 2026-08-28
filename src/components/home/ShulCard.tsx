@@ -4,7 +4,7 @@ import { VerifiedStamp } from '@/components/VerifiedStamp';
 import { WalkIcon } from '@/components/icons';
 import type { Dictionary } from '@/i18n/dictionaries';
 import type { Locale } from '@/i18n/locales';
-import { walkingDirectionsUrl } from '@/lib/directions';
+import { walkingDirectionsUrl, wazeUrl } from '@/lib/directions';
 import { foreignAttrs, localisedAddress, localisedName } from '@/lib/synagogue-display';
 import { warmthPercent } from '@/lib/sunset-warmth';
 import type { Nusach } from '@/lib/taxonomy';
@@ -140,7 +140,10 @@ function CardShell({
                 ·
               </span>
             ) : null}
-            {/* Walking, never driving — people walk to shul. */}
+            {/* Walking first, and it stays first: most journeys to a minyan are
+                on foot, often on erev Shabbat. Waze sits beside it for the
+                rarer cross-town trip — the user asked for it here as well as on
+                the shul's own page. Order carries the recommendation. */}
             <a
               className="walk-link"
               href={walkingDirectionsUrl(synagogue.lat, synagogue.lng)}
@@ -149,6 +152,18 @@ function CardShell({
             >
               <WalkIcon />
               {t.walkingDirections}
+              <span className="visually-hidden"> {t.directionsTo(name.text)}</span>
+            </a>
+            <span className="card-dot" aria-hidden="true">
+              ·
+            </span>
+            <a
+              className="walk-link walk-link-quiet"
+              href={wazeUrl(synagogue.lat, synagogue.lng)}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              {t.wazeDirections}
               <span className="visually-hidden"> {t.directionsTo(name.text)}</span>
             </a>
           </p>

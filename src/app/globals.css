@@ -1182,6 +1182,26 @@ body {
   text-underline-offset: 3px;
 }
 
+/* Waze, beside walking rather than instead of it.
+   Walking keeps the icon and the accent colour; Waze gets neither, so the
+   recommendation is legible at a glance without anything being hidden. Quiet
+   here means the default ink at the same weight — NOT a lowered opacity, which
+   is how a secondary action ends up failing contrast while looking merely
+   subtle. The ink is the page's own body colour and already passes. */
+.walk-link-quiet {
+  color: var(--ink);
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+/* Keeps the pair together as one run so the flex row that holds them puts the
+   whole group opposite the service label, rather than pushing Waze out alone. */
+.hero-directions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
 .card-value {
   display: flex;
   flex-direction: column;

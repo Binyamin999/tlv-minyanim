@@ -101,7 +101,41 @@ const he = {
   nextMinyanimLink: 'איפה אפשר להתפלל עכשיו',
   /** The horizon the page is answering for. */
   withinMinutes: (minutes: number) => `ב-${minutes} הדקות הקרובות`,
-  inMinutes: (minutes: number) => (minutes <= 0 ? 'עכשיו' : `בעוד ${minutes} דק'`),
+  /**
+   * The countdown beside the clock. Minutes under an hour, hours above it.
+   *
+   * "בעוד 463 דק׳" is arithmetically right and useless — nobody counts in
+   * eight hours' worth of minutes. The exact clock time sits next to this, so
+   * the countdown only has to answer "roughly how far", and at that distance
+   * hours answer it better.
+   *
+   * Floored, not rounded to nearest: seven hours and forty-three minutes reads
+   * as seven, so the number is never larger than the time actually remaining.
+   * The same reasoning as taking the earlier candle-lighting minhag — erring
+   * early costs nothing, erring late means missing the minyan.
+   *
+   * Hebrew has a dual, so two hours is שעתיים and never "2 שעות".
+   */
+  inMinutes: (minutes: number) => {
+    if (minutes <= 0) return 'עכשיו';
+    if (minutes < 60) {
+      if (minutes === 1) return 'בעוד דקה';
+      if (minutes === 2) return 'בעוד שתי דקות';
+      return `בעוד ${minutes} דק'`;
+    }
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) {
+      if (hours === 1) return 'בעוד שעה';
+      if (hours === 2) return 'בעוד שעתיים';
+      return `בעוד ${hours} שעות`;
+    }
+    // The horizon is eight days, so without this rung a Shabbat-only minyan
+    // reads "בעוד 192 שעות" — the same complaint as 463 minutes, one scale up.
+    const days = Math.floor(hours / 24);
+    if (days === 1) return 'בעוד יום';
+    if (days === 2) return 'בעוד יומיים';
+    return `בעוד ${days} ימים`;
+  },
   noneUpcoming: 'אין מניין עם שעה ידועה בטווח הזה',
   /** The honest-unknown list. Quiet on purpose — see CLAUDE.md. */
   unconfirmedTimesHeading: 'מתפללים כאן, השעה לא ידועה',
@@ -271,7 +305,15 @@ const en: typeof he = {
   nextMinyanim: 'Next minyan',
   nextMinyanimLink: 'Where you can daven right now',
   withinMinutes: (minutes: number) => `in the next ${minutes} minutes`,
-  inMinutes: (minutes: number) => (minutes <= 0 ? 'now' : `in ${minutes} min`),
+  /** Minutes under an hour, hours above it. Floored — see the Hebrew note. */
+  inMinutes: (minutes: number) => {
+    if (minutes <= 0) return 'now';
+    if (minutes < 60) return minutes === 1 ? 'in 1 min' : `in ${minutes} min`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return hours === 1 ? 'in 1 hour' : `in ${hours} hours`;
+    const days = Math.floor(hours / 24);
+    return days === 1 ? 'in 1 day' : `in ${days} days`;
+  },
   noneUpcoming: 'No minyan with a known time in this window',
   unconfirmedTimesHeading: 'Davening here, time not known',
   unconfirmedTimesNote:

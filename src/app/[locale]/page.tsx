@@ -103,8 +103,16 @@ export default async function LocaleHome({
 
   // Nusach is not part of placing a time, so the timeline does not carry it.
   const nusachById = new Map(synagogues.map((shul) => [shul.id, shul.nusach]));
-  const availableNusachim = NUSACHIM.filter((option) =>
-    synagogues.some((shul) => shul.nusach === option),
+  // `general` is a chip nobody wants to press. It is what the municipality
+  // writes when a shul does not describe itself as any particular nusach, so
+  // filtering to it answers "show me the ones we could not classify" — a fact
+  // about our data rather than about how anyone davens. The value stays on the
+  // record and still shows as the shul's tag; it is only removed from the
+  // filter row. `all` still includes those shuls, so nothing becomes
+  // unreachable — לכלל ישראל in particular, which is the one synagogue in
+  // Ramat Aviv publishing real offsets.
+  const availableNusachim = NUSACHIM.filter(
+    (option) => option !== 'general' && synagogues.some((shul) => shul.nusach === option),
   );
 
   const requestedNusach = firstParam(query.nusach);
