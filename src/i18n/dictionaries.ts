@@ -142,6 +142,22 @@ const he = {
   /** The count line above the cards. */
   synagogueCount: (count: number) =>
     `${count === 1 ? 'בית כנסת אחד' : `${count} בתי כנסת`} · לפי המניין הבא`,
+  /**
+   * The column headers of the desktop לוח. Drawn only above the breakpoint,
+   * where the cards become one dense table across the full measure — a phone
+   * has one card per shul and nothing to head.
+   *
+   * `aria-hidden` in the markup: these label a visual grid, not a <table>, and
+   * each row already says its own name, time and nusach out loud. A header
+   * row not tied to real table semantics is noise to a screen reader.
+   */
+  columns: {
+    time: 'שעה',
+    service: 'תפילה',
+    synagogue: 'בית הכנסת',
+    nusach: 'נוסח',
+    verified: 'עודכן',
+  },
   /** The service filter chips. `shabbat` is a day, not a service — see the page. */
   filterShabbat: 'שבת',
   filterAllNusachim: 'כל הנוסחים',
@@ -288,6 +304,13 @@ const en: typeof he = {
   neighbourhood: 'Ramat Aviv',
   synagogueCount: (count: number) =>
     `${count === 1 ? '1 synagogue' : `${count} synagogues`} · by next minyan`,
+  columns: {
+    time: 'Time',
+    service: 'Service',
+    synagogue: 'Synagogue',
+    nusach: 'Nusach',
+    verified: 'Updated',
+  },
   filterShabbat: 'Shabbat',
   filterAllNusachim: 'All nusachim',
   filterServicesLabel: 'Filter by service',

@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 
 import { Filters } from '@/components/home/Filters';
 import { HeroCard, HeroEmpty } from '@/components/home/HeroCard';
-import { Masthead } from '@/components/home/Masthead';
+import { Masthead, type RibbonZman } from '@/components/home/Masthead';
 import { ShulCard, UnknownShulCard } from '@/components/home/ShulCard';
 import { PinIcon } from '@/components/icons';
 import { listSynagoguesWithMinyanim } from '@/db/queries';
@@ -145,6 +145,18 @@ export default async function LocaleHome({
   const hebrewDate =
     locale === 'he' ? timeline.hebrewNow.renderGematriya : timeline.hebrewNow.renderEn;
 
+  // The header ribbon, in the order the day happens. A phone shows only shkia
+  // and the desktop board shows all four — which is the honest use of the
+  // extra width: more of the day, not a bigger version of the same line.
+  // Every value comes from the library via `timeline.today`; none is stored.
+  const ribbonZmanim: readonly RibbonZman[] = [
+    { zman: 'netz', clock: clockFaceOf(timeline.today.netz) },
+    { zman: 'mincha_gedola', clock: clockFaceOf(timeline.today.mincha_gedola) },
+    { zman: 'shkia', clock: clockFaceOf(timeline.today.shkia) },
+    { zman: 'tzeit', clock: clockFaceOf(timeline.today.tzeit) },
+  ];
+  const heroWarmth = hero ? warmthFor(hero, now) : 0;
+
   return (
     <>
       <Masthead
@@ -154,7 +166,8 @@ export default async function LocaleHome({
         skyMode={skyMode}
         hebrewDate={hebrewDate}
         parsha={parsha ? (locale === 'he' ? parsha.he : parsha.en) : null}
-        shkia={clockFaceOf(timeline.today.shkia)}
+        zmanim={ribbonZmanim}
+        heroWarmth={heroWarmth}
         localeHrefs={Object.fromEntries(
           LOCALES.map((other) => [other, homeHref(other, service, nusach)]),
         ) as Record<(typeof LOCALES)[number], string>}
@@ -166,7 +179,13 @@ export default async function LocaleHome({
         {hero ? (
           // Mincha only: the window that closes at shkia is Mincha's. A
           // Shacharit does not get warmer because the sun is going down.
-          <HeroCard row={hero} warmth={warmthFor(hero, now)} locale={locale} t={t} />
+          <HeroCard
+            row={hero}
+            nusach={nusachById.get(hero.synagogue.id) ?? null}
+            warmth={heroWarmth}
+            locale={locale}
+            t={t}
+          />
         ) : (
           <HeroEmpty t={t} />
         )}
@@ -194,6 +213,19 @@ export default async function LocaleHome({
         <h2 className="count">
           {t.synagogueCount(cards.length + unknownCards.length + (hero ? 1 : 0))}
         </h2>
+
+        {/* The לוח's column headers. Desktop only — a phone shows one card per
+            shul and has nothing to head — and aria-hidden, because this labels
+            a visual grid rather than a <table>: every row already says its own
+            name, time and nusach, and a header row with no table semantics
+            behind it is noise in a screen reader. */}
+        <div className="table-head" aria-hidden="true">
+          <span>{t.columns.time}</span>
+          <span>{t.columns.service}</span>
+          <span>{t.columns.synagogue}</span>
+          <span>{t.columns.nusach}</span>
+          <span>{t.columns.verified}</span>
+        </div>
 
         <div className="cards">
           {cards.map((row) => (

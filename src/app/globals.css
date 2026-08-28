@@ -813,13 +813,29 @@ body {
   white-space: nowrap;
 }
 
-.ribbon-shkia {
+/* The zmanim end of the ribbon. Four of them exist in the markup; a phone has
+   room for one. The other three are `display: none` here — removed from the
+   a11y tree too, so a phone reader is not read three lines it cannot see —
+   and revealed at the desktop breakpoint, where they are exactly what the
+   extra width is for. */
+.ribbon-zmanim {
+  display: flex;
+  align-items: center;
+  gap: 1.375rem;
+  min-inline-size: 0;
+}
+
+.ribbon-zman {
   display: flex;
   align-items: center;
   gap: 0.3125rem;
   font-weight: 700;
   white-space: nowrap;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.ribbon-zman-wide {
+  display: none;
 }
 
 .ribbon-zman-name {
@@ -859,7 +875,8 @@ body {
    -------------------------------------------------------------------------- */
 
 .hero,
-.card {
+.card,
+.band-hero {
   --warm-pct: 0%;
   /* Nested mixes: B = terra·w + via·w(1−w) + cyan·(1−w)², a quadratic Bézier
      with --warm-via as the control point. See --warm-via above. */
@@ -1075,6 +1092,12 @@ body {
   color: var(--ink-quiet);
 }
 
+/* Column headers for the desktop לוח. A phone shows one card per shul and has
+   nothing to head, so this does not exist below the breakpoint. */
+.table-head {
+  display: none;
+}
+
 .cards {
   display: flex;
   flex-direction: column;
@@ -1204,7 +1227,15 @@ body {
   padding-block-start: 0.5rem;
 }
 
-.card-nusach {
+/* The desktop לוח's fourth column, on the hero row as well as on every row
+   below it. Hidden on a phone: the mobile artboards do not draw it in the
+   hero and there is no room for it there. */
+.hero-nusach {
+  display: none;
+}
+
+.card-nusach,
+.hero-nusach {
   font-size: 0.65625rem;
   font-weight: 700;
   padding: 0.125rem 0.5rem;
@@ -1274,5 +1305,570 @@ body {
 
   .mode-toggle .segment[data-option='auto'] .mode-dot {
     inset-inline-end: 0.375rem;
+  }
+}
+
+/* ==========================================================================
+   THE DESKTOP LAYOUT — "The Luach" (LuachDay.dc.html / LuachNight.dc.html)
+
+   Desktop's extra width does not go to bigger cards; it goes to more rows at
+   once. Everything below turns the same markup into one dense schedule across
+   the full measure — the printed זמנים board in a shul lobby — and the "next
+   minyan" hero stops being a floating object and becomes the board's own top
+   row, picked out by weight and a coloured rule.
+
+   NOTHING HERE RUNS BELOW THE BREAKPOINT. The mobile design is shipped and
+   approved; this is a layout added above a width, not a redesign.
+
+   ---------------------------------------------------------------------------
+   THE BREAKPOINT: 56.25rem (900px at a 16px root)
+   ---------------------------------------------------------------------------
+   Chosen from the table's own arithmetic, not from a device. The four fixed
+   columns are 92 + 84 + 120 + 150 = 446px, the four gaps between them are
+   4 x 20 = 80px, and the page margins are 2 x 56 = 112px: 638px is spent
+   before the synagogue column gets a single pixel. Hebrew shul names —
+   `המרכזי רמת אביב ג׳`, `תומכי תמימים - בית חב״ד` — need about 260px to stay
+   on one line, and a name that wraps breaks the row rhythm the whole
+   direction rests on. 638 + 260 = 898, so 900.
+
+   679px (`--shell`, the day photograph's native width) was the obvious
+   candidate and is wrong: it is the width at which the PHOTOGRAPH stops being
+   downscaled, which is a fact about the header, not about the table. At 679
+   the table would have 41px for names.
+
+   In `rem` rather than `px` so that a reader who has turned their text size up
+   keeps the cards until there is really room for the board.
+   ========================================================================== */
+
+@media (min-width: 56.25rem) {
+  :root {
+    /* 240px, as drawn. Both modes — the mobile band is taller in dark only
+       because the night photograph is a tall portrait filling a narrow
+       column; here it is a crop along the leading edge instead. */
+    --band-block-size: 15rem;
+
+    /* NATIVE PIXEL WIDTHS, and px is deliberate where everything else in this
+       file is rem: these are properties of two image files, not of the type
+       scale. In rem they would grow with the reader's font size and upscale
+       the photograph past 1x, which is the one rule the header exists to
+       obey. tlv-day.jpg is 679x452, tlv-night.jpg is 416x738; in a 240px-tall
+       box of its own native width, `cover` scales each by exactly 1.000 and
+       crops vertically. */
+    --photo-day: 679px;
+    --photo-night: 416px;
+    --photo-inline-size: var(--photo-day);
+
+    /* What the photograph does not cover. This is the answer to "what does the
+       header do at 1440" — the picture keeps its own width and a painted band
+       takes the rest, rather than the picture being stretched to fit. */
+    --band-fill: linear-gradient(
+      180deg,
+      #3fa9e0 0%,
+      #23aecb 46%,
+      #0e93ae 78%,
+      #0b7b93 100%
+    );
+    --band-feather: rgba(35, 174, 203, 0.85);
+
+    /* One wash across the whole 240px band now, rather than the phone's three
+       parts. The band is short enough here that both text rows sit inside the
+       same gradient, so the local scrims have nothing left to do. */
+    --band-scrim: linear-gradient(
+      180deg,
+      rgba(6, 20, 26, 0.56) 0%,
+      rgba(6, 20, 26, 0.36) 30%,
+      rgba(6, 20, 26, 0.54) 66%,
+      rgba(6, 20, 26, 0.88) 100%
+    );
+    --band-head-scrim: none;
+
+    /* The hero strip's ground. OPAQUE in both modes: it sits inside the band,
+       and `--band-ground` behind it is deliberately dark so that the white
+       wordmark is readable before the photograph decodes. A translucent strip
+       would inherit that dark ground and read as a different colour from the
+       page it continues into. #121a23 is rgba(255,255,255,0.03) over the dark
+       page, resolved once. */
+    --strip-surface: #fbfcfc;
+
+    /* The five columns of the board, named once and used by the header row and
+       by every row below it — they have to agree or it is not a table. */
+    --luach-cols: 5.75rem 5.25rem minmax(0, 1fr) 7.5rem 9.375rem;
+    --luach-gap: 1.25rem;
+    /* 56px page margin + the 4px each row is inset by, as drawn. */
+    --gutter: 3.5rem;
+    --row-gutter: 3.75rem;
+
+    /* Gradients have no logical direction — there is no `to inline-end` and no
+       logical `background-position` — so the ONLY two physical directions in
+       this stylesheet are isolated here and flipped by `dir` below. Both
+       describe where the painted band meets the photograph, which is at the
+       band's INLINE-START edge in both writing modes. Everything else in this
+       file is a logical property. */
+    --feather-to: left;
+    --glow-x: 6%;
+  }
+
+  [dir='rtl'] {
+    --feather-to: right;
+    --glow-x: 94%;
+  }
+
+  [data-mode='dark'] {
+    --photo-inline-size: var(--photo-night);
+    --band-fill: linear-gradient(
+      180deg,
+      #1e3a5c 0%,
+      #16293f 42%,
+      #0f1b29 72%,
+      #0b131c 100%
+    );
+    --band-feather: rgba(22, 41, 63, 0.9);
+    --band-scrim: linear-gradient(
+      180deg,
+      rgba(6, 10, 16, 0.52) 0%,
+      rgba(6, 10, 16, 0.28) 30%,
+      rgba(6, 10, 16, 0.5) 66%,
+      rgba(6, 10, 16, 0.92) 100%
+    );
+    --band-head-scrim: none;
+    --strip-surface: #121a23;
+  }
+
+  /* ------------------------------------------------------------------------
+     The band: photograph at 1x on the leading edge, painted gradient beyond
+     ------------------------------------------------------------------------ */
+
+  .band,
+  .home {
+    max-inline-size: none;
+  }
+
+  /* The gradient half of the band. It starts exactly where the photograph
+     ends, so the two never overlap and the picture is never scaled to meet
+     it. Behind it, `--band-ground` stays dark: this element paints from
+     `--photo-inline-size` onward and nothing at all over the photograph, so
+     the fallback under a photograph that has not decoded is unchanged. */
+  .band::before {
+    content: '';
+    position: absolute;
+    inset-block-start: 0;
+    block-size: var(--band-block-size);
+    inset-inline-start: var(--photo-inline-size);
+    inset-inline-end: 0;
+    background: var(--band-fill);
+  }
+
+  /* The night board's amber glow off the promenade — decoration, over the
+     gradient only, never over the photograph. */
+  [data-mode='dark'] .band::before {
+    background:
+      radial-gradient(
+        50% 130% at var(--glow-x) 116%,
+        rgba(240, 180, 92, 0.2) 0%,
+        rgba(240, 180, 92, 0) 72%
+      ),
+      var(--band-fill);
+  }
+
+  /* The photograph now occupies only its own width and only the header's
+     height — the hero strip below it is a sibling in the same band and must
+     not be painted over. */
+  .band-photo,
+  .band-scrim {
+    inset-block-end: auto;
+    block-size: var(--band-block-size);
+  }
+
+  .band-photo {
+    inset-inline-end: auto;
+  }
+
+  .band-photo-day {
+    inline-size: var(--photo-day);
+  }
+
+  .band-photo-night {
+    inline-size: var(--photo-night);
+  }
+
+  /* Softens the seam where the picture meets the paint. Sits inside the
+     photograph's own box, opaque at the edge the gradient starts from. */
+  .band-photo::after {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    inline-size: 10rem;
+    background: linear-gradient(to var(--feather-to), var(--band-feather), transparent);
+  }
+
+  /* ------------------------------------------------------------------------
+     Masthead and zmanim ribbon: one at the top of the band, one at the foot
+     ------------------------------------------------------------------------ */
+
+  .band-head {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-block-size: var(--band-block-size);
+    padding-block-end: 0;
+  }
+
+  .band-top {
+    padding-block: 1.125rem 0;
+    padding-inline: var(--gutter);
+  }
+
+  .wordmark {
+    font-size: 1.4375rem;
+  }
+
+  /* 32px, as drawn, and still well past the 24px target-size floor. The 44px
+     version is for thumbs. */
+  .segment {
+    min-block-size: 2rem;
+  }
+
+  .band-ribbon {
+    padding-block: 0.625rem 1.375rem;
+    padding-inline: var(--gutter);
+    font-size: 0.78125rem;
+  }
+
+  /* What the width was for: the whole day's frame, not one zman. */
+  .ribbon-zman-wide {
+    display: flex;
+  }
+
+  /* ------------------------------------------------------------------------
+     The hero strip — the board's own top row, not a card
+     ------------------------------------------------------------------------ */
+
+  .band-hero {
+    margin-block-start: 0;
+    padding-block: 1.125rem;
+    padding-inline: var(--gutter);
+    background: var(--strip-surface);
+    /* The signature detail, and it lives here now rather than on the card:
+       as real shkia approaches this rule warms from cyan to roof tile. The
+       server writes `--warm-pct` on this element for exactly that reason. */
+    border-block-start: 4px solid var(--accent-now);
+    border-block-end: 1px solid var(--hairline);
+
+    display: grid;
+    /* The slack sits AFTER the walking link, not before it. Putting the 1fr on
+       the synagogue column instead pushed the link the width of the strip away
+       from the address it belongs to. */
+    grid-template-columns: auto auto auto auto minmax(0, auto) minmax(0, 1fr) auto auto;
+    align-items: center;
+    column-gap: 1.5rem;
+    row-gap: 0;
+  }
+
+  /* The card dissolves into the strip: its children become the strip's own
+     columns, which is what makes the hero "the top row" rather than a card
+     that happens to be wide. The colours it computes from `--warm-pct` still
+     inherit down to them. */
+  .hero,
+  .hero-head,
+  .hero-meta,
+  .hero-where {
+    display: contents;
+  }
+
+  .band-hero-label {
+    grid-area: 1 / 1 / 2 / 2;
+    margin: 0 0 0.1875rem;
+    color: var(--ink-quiet);
+    text-shadow: none;
+  }
+
+  .hero-service {
+    grid-area: 2 / 1 / 3 / 2;
+    font-size: 0.78125rem;
+  }
+
+  .hero-clock {
+    grid-area: 1 / 2 / 3 / 3;
+    font-size: 2.875rem;
+  }
+
+  .hero-pill {
+    grid-area: 1 / 3 / 3 / 4;
+    align-self: center;
+  }
+
+  .hero-rule {
+    grid-area: 1 / 4 / 3 / 5;
+    align-self: center;
+    font-size: 0.75rem;
+  }
+
+  /* The divider the board draws between the time and the place. It is the
+     border of these two cells rather than a rule of its own, and they stretch
+     so the two halves meet into one continuous line. */
+  .hero-name,
+  .hero-address {
+    align-self: stretch;
+    display: flex;
+    border-inline-start: 1px solid var(--hairline);
+    padding-inline-start: 1.75rem;
+  }
+
+  /* The name spans the place column AND the walking column. That is what
+     makes the walking link hug the address instead of drifting: a spanning
+     item's excess width goes to the flexible track, so column 5 ends up the
+     width of the ADDRESS, not of the longer name, and column 6 starts right
+     after it. */
+  .hero-name {
+    grid-area: 1 / 5 / 2 / 7;
+    align-items: flex-end;
+    font-size: 1.375rem;
+  }
+
+  .hero-address {
+    grid-area: 2 / 5 / 3 / 6;
+    align-items: flex-start;
+    font-size: 0.78125rem;
+  }
+
+  .hero .walk-link {
+    grid-area: 2 / 6 / 3 / 7;
+    align-self: center;
+    justify-self: start;
+    min-block-size: 1.5rem;
+  }
+
+  .hero-nusach {
+    display: block;
+    grid-area: 1 / 7 / 3 / 8;
+    align-self: center;
+  }
+
+  .hero .verified-compact {
+    grid-area: 1 / 8 / 3 / 9;
+    align-self: center;
+    justify-self: end;
+    text-align: end;
+  }
+
+  /* No hero to draw — the filter in force has nothing resolved in it. Still a
+     strip, still ruled; a hero that vanished would leave the board headless. */
+  .hero-empty-text {
+    grid-area: 1 / 2 / 3 / -1;
+    font-size: 0.875rem;
+  }
+
+  /* ------------------------------------------------------------------------
+     Below the band: place, filters, count, the board, the footer
+     ------------------------------------------------------------------------ */
+
+  .home {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+
+  .place {
+    grid-area: 1 / 1 / 2 / 2;
+    padding-block: 0.875rem 0;
+    padding-inline: var(--gutter);
+  }
+
+  .filters,
+  .count {
+    align-self: stretch;
+    border-block-end: 1px solid var(--hairline);
+  }
+
+  .filters {
+    grid-area: 2 / 1 / 3 / 2;
+    flex-direction: row;
+    align-items: center;
+    gap: 1.5rem;
+    padding-block: 1rem;
+    padding-inline: var(--gutter);
+  }
+
+  .filter-services .chip {
+    flex-grow: 0;
+  }
+
+  .filter-nusach {
+    border-inline-start: 1px solid var(--hairline);
+    padding-inline-start: 1.5rem;
+  }
+
+  .chip {
+    min-block-size: 2.125rem;
+    padding-inline: 1rem;
+    font-size: 0.8125rem;
+  }
+
+  .chip-nusach {
+    min-block-size: 1.75rem;
+    padding-inline: 0.75rem;
+    font-size: 0.75rem;
+  }
+
+  /* The board's own count, at the far end of the filter strip as drawn. */
+  .count {
+    grid-area: 2 / 2 / 3 / 3;
+    display: flex;
+    align-items: center;
+    justify-self: end;
+    padding-block: 1rem;
+    padding-inline: 0 var(--gutter);
+    text-align: end;
+  }
+
+  .table-head {
+    grid-area: 3 / 1 / 4 / -1;
+    display: grid;
+    grid-template-columns: var(--luach-cols);
+    align-items: center;
+    column-gap: var(--luach-gap);
+    padding-block: 0.625rem;
+    padding-inline: var(--row-gutter);
+    border-block-end: 1px solid var(--hairline);
+    font-size: 0.65625rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--ink-quiet);
+  }
+
+  .table-head span:last-child {
+    text-align: end;
+  }
+
+  /* Column headings over nothing are noise, and this page does go empty —
+     there is not one Arvit row in the source data for Ramat Aviv. Header
+     first, list second, so the test has to look forward: `:has(+ ...)`. */
+  .table-head:has(+ .cards:empty) {
+    display: none;
+  }
+
+  .cards {
+    grid-area: 4 / 1 / 5 / -1;
+    display: block;
+    padding-block-end: 2.5rem;
+    padding-inline: 0;
+  }
+
+  /* --- one shul, one row -------------------------------------------------- */
+
+  /* Scoped to `.cards`, not written as a bare `.card`. The shul page's
+     scaffold reuses that class for a completely different object, and a bare
+     rule here turned it into a five-column schedule row with no background. */
+  .cards .card {
+    display: grid;
+    grid-template-columns: var(--luach-cols);
+    align-items: center;
+    column-gap: var(--luach-gap);
+    row-gap: 0;
+    padding-block: 0.6875rem;
+    padding-inline: var(--row-gutter);
+    background: none;
+    border: 0;
+    border-block-end: 1px solid var(--hairline-soft);
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  /* The card's three boxes are scaffolding for a phone; on the board the five
+     leaves are the five columns. `display: contents` promotes them without a
+     second copy of the markup — one DOM, server-rendered, in both layouts. */
+  .card-head,
+  .card-value,
+  .card-foot {
+    display: contents;
+  }
+
+  /* Every cell states its row as well as its column. Without it, sparse
+     auto-placement drops the clock onto a second row: the DOM order is
+     name-then-time (which is right for a phone card), so the cursor has
+     already passed column 1 by the time the clock is placed and never goes
+     back. Explicit rows, and the DOM order stops being load-bearing. */
+  .card-clock {
+    grid-column: 1;
+    grid-row: 1;
+    font-size: 1.1875rem;
+    text-align: start;
+  }
+
+  .card-service-pill {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: start;
+    font-size: 0.6875rem;
+    padding: 0.1875rem 0.5625rem;
+    text-align: start;
+  }
+
+  /* THE HONEST-UNKNOWN ROW. It takes the time column and the service column,
+     because it is what we have instead of both. Still quiet — CLAUDE.md, and
+     the wider measure is not a reason to make it louder. */
+  .card-unknown {
+    grid-column: 1 / 3;
+    grid-row: 1;
+    text-align: start;
+  }
+
+  .card-where {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .card-address {
+    flex-wrap: nowrap;
+  }
+
+  /* 24px rather than the phone's 44px: the pointer-target floor, not the
+     thumb-target one. A 44px link in every row would double the board's
+     height and halve how much of the day is visible at once, which is the
+     entire argument for this layout. Only on the board — the shul page's
+     controls are not in a table and keep the larger target. */
+  .cards .walk-link {
+    min-block-size: 1.5rem;
+  }
+
+  /* The empty <span> is the placeholder for a shul with no nusach on file —
+     it holds the column open so the two columns after it do not shift. */
+  .card-nusach,
+  .card-foot > span {
+    grid-column: 4;
+    grid-row: 1;
+    justify-self: start;
+  }
+
+  .card-cta,
+  .card-foot .verified-compact {
+    grid-column: 5;
+    grid-row: 1;
+    justify-self: end;
+  }
+
+  /* --- the footer --------------------------------------------------------- */
+
+  .home-foot {
+    grid-area: 5 / 1 / 6 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 38.75rem) 1fr;
+    align-items: center;
+    column-gap: 2rem;
+    row-gap: 0.3125rem;
+    padding-block: 1.25rem 1.75rem;
+    padding-inline: var(--gutter);
+  }
+
+  .home-foot p {
+    font-size: 0.71875rem;
+  }
+
+  .home-foot-source {
+    grid-area: 1 / 2 / 3 / 3;
+    justify-self: end;
+    padding-block-start: 0;
+    text-align: end;
   }
 }

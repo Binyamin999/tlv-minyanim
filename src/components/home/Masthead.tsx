@@ -3,7 +3,28 @@ import Link from 'next/link';
 import { ModeToggle } from '@/components/ModeToggle';
 import type { Dictionary } from '@/i18n/dictionaries';
 import { LOCALES, type Locale } from '@/i18n/locales';
+import type { Zman } from '@/minyan-times';
+import { warmthPercent } from '@/lib/sunset-warmth';
 import type { Mode, ModePreference } from '@/lib/theme';
+
+/** One zman as the ribbon prints it: the name, and the wall clock it works out to. */
+export interface RibbonZman {
+  zman: Zman;
+  /** "HH:MM" in Asia/Jerusalem. Print this; never print a Date. */
+  clock: string;
+}
+
+/**
+ * The one zman a phone has room for.
+ *
+ * Named rather than taken as `zmanim[0]`, for the same reason the default
+ * service chip is named: otherwise reordering the ribbon to read the way the
+ * day happens — netz, mincha gedola, shkia, tzeit — would silently change
+ * which zman a phone shows. Shkia is the one on its own merits: it is the
+ * boundary the whole page moves around, and the only zman a person checks
+ * when deciding whether they still have time to get to Mincha.
+ */
+const PHONE_ZMAN: Zman = 'shkia';
 
 /**
  * The photographic header band.
@@ -36,7 +57,8 @@ export function Masthead({
   skyMode,
   hebrewDate,
   parsha,
-  shkia,
+  zmanim,
+  heroWarmth,
   localeHrefs,
   children,
 }: {
@@ -48,8 +70,21 @@ export function Masthead({
   hebrewDate: string;
   /** null on a week whose Shabbat is a chag — we do not name a parsha then. */
   parsha: string | null;
-  /** Today's shkia as a wall clock. Print this; never print a Date. */
-  shkia: string;
+  /**
+   * The zmanim strip, in the order the day happens. All four are rendered;
+   * only `PHONE_ZMAN` is visible below the desktop breakpoint, because the
+   * extra three are exactly what the extra width is for.
+   */
+  zmanim: readonly RibbonZman[];
+  /**
+   * How far the sunset warming has travelled for the hero minyan, 0..1.
+   *
+   * The hero card carries this too, and has to: on desktop the hero stops
+   * being a card and becomes the band's own bottom strip, so the 4px accent
+   * rule that warms toward shkia is painted by THIS element rather than by
+   * the card inside it. Zero for anything that is not Mincha.
+   */
+  heroWarmth: number;
   /**
    * Where each language chip goes, filters and all.
    *
@@ -120,14 +155,31 @@ export function Masthead({
               </>
             ) : null}
           </p>
-          <p className="ribbon-shkia">
-            <span className="ribbon-zman-name">{t.zmanim.shkia}</span>
-            <span className="time tabular">{shkia}</span>
-          </p>
+          <div className="ribbon-zmanim">
+            {zmanim.map(({ zman, clock }) => (
+              <p
+                key={zman}
+                className={
+                  zman === PHONE_ZMAN ? 'ribbon-zman' : 'ribbon-zman ribbon-zman-wide'
+                }
+              >
+                <span className="ribbon-zman-name">{t.zmanim[zman]}</span>
+                <span className="time tabular">{clock}</span>
+              </p>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="band-hero">{children}</div>
+      {/* On a phone this is the pad the hero card floats on; above the desktop
+          breakpoint it IS the hero — a full-width ruled strip, the top row of
+          the לוח rather than a separate object. Hence the warmth here. */}
+      <div
+        className="band-hero"
+        style={{ '--warm-pct': warmthPercent(heroWarmth) } as React.CSSProperties}
+      >
+        {children}
+      </div>
     </header>
   );
 }

@@ -8,6 +8,7 @@ import { walkingDirectionsUrl } from '@/lib/directions';
 import { displayMinyanTime } from '@/lib/minyan-display';
 import { foreignAttrs, localisedAddress, localisedName } from '@/lib/synagogue-display';
 import { warmthPercent } from '@/lib/sunset-warmth';
+import type { Nusach } from '@/lib/taxonomy';
 import type { UpcomingMinyan } from '@/zmanim';
 
 /**
@@ -27,11 +28,23 @@ import type { UpcomingMinyan } from '@/zmanim';
  */
 export function HeroCard({
   row,
+  nusach,
   warmth,
   locale,
   t,
 }: {
   row: UpcomingMinyan;
+  /**
+   * Rendered always, shown only on desktop.
+   *
+   * The phone card has no room for it and the artboards it was built to do
+   * not draw it. The desktop לוח does — the hero is the table's own top row
+   * there, so it has to carry the same five columns as every row below it or
+   * the column rhythm the whole direction rests on breaks at the first row.
+   * Passed in rather than read off `row` for the same reason as ShulCard: a
+   * nusach is not part of placing a time, so the timeline does not carry one.
+   */
+  nusach: Nusach | null;
   warmth: number;
   locale: Locale;
   t: Dictionary;
@@ -90,6 +103,7 @@ export function HeroCard({
             <span {...foreignAttrs(address)}>{address.text}</span>
           </p>
         ) : null}
+        {nusach ? <p className="hero-nusach">{t.nusachim[nusach]}</p> : null}
         {/* A time without its staleness is a claim we cannot back. */}
         <VerifiedStamp
           compact
