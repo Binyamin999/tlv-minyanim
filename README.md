@@ -74,13 +74,13 @@ The site says so out loud rather than hiding it:
 | | |
 |---|---|
 | Parser | Hebrew free text → structured values. All 26 raw fields parse, zero leftovers |
-| Data | 16 synagogues, 62 minyanim — 39 fixed, 19 unknown, 4 relative |
+| Data | 16 synagogues, 65 minyanim — 42 fixed, 19 unknown, 4 relative. 1 verified against its own notice board |
 | Zmanim | `@hebcal/core`, GRA, resolved at read time and never stored |
-| Tests | 275, including edge cases asserted against published luachot |
-| Contrast | AA in both modes — 104 elements, 0 failures, worst 4.80 light / 5.12 dark |
+| Tests | 283, including edge cases asserted against published luachot |
+| Contrast | AA in both modes — 130 elements, 0 failures, worst 5.05 light / 5.73 dark |
 
-**Not built:** a desktop layout, geo/radius search, the nightly refresh job, and
-any deployment — the site currently runs locally only.
+**Not built:** geo/radius search, the nightly refresh job, and any deployment —
+the site currently runs locally only.
 
 **The real gap is not code.** Shacharit is known for every shul. **Mincha is 69%
 unknown**, and exactly one synagogue in the neighbourhood publishes a real
@@ -154,7 +154,7 @@ npm install && npm run import:seed && npm run dev
 
 | | |
 |---|---|
-| `npm test` | the suite (275) |
+| `npm test` | the suite (283) |
 | `npm run typecheck` | parser and app |
 | `npm run import:seed` | load seed data through the parser — idempotent |
 | `npm run coverage` | how much of the source actually parsed |
