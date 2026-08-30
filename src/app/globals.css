@@ -1267,10 +1267,31 @@ body {
 }
 
 /* The desktop לוח's fourth column, on the hero row as well as on every row
-   below it. Hidden on a phone: the mobile artboards do not draw it in the
-   hero and there is no room for it there. */
+   below it.
+
+   It used to be `display: none` on a phone, because the mobile artboards do
+   not draw it in the hero. That made the hero the ONE listing on a phone whose
+   nusach could not be seen — and the hero is the shul a reader is most likely
+   to act on. It bit exactly where you would expect: כלל ישראל serves three
+   rites, is frequently the next minyan, and on a phone showed none of them
+   while every card below it showed all three.
+
+   The artboard omitted it when a shul had one nusach and the hero had a
+   different shape. Neither is true now. */
 .hero-nusach {
-  display: none;
+  /* inline-block, not block: this is a bordered pill and a block one stretches
+     to the full card width, which reads as a banner rather than a tag.
+     `justify-self` does nothing here — on a phone the hero is not a grid, so
+     the element has to size to its own content. The desktop rule below makes
+     it a grid child again and takes over. */
+  display: inline-block;
+  /* Both are needed. `.hero-where` is a flex column, which blockifies an
+     inline-block child and then stretches it to the full width — so the pill
+     read as a banner across the card. `align-self` opts out of the stretch;
+     `fit-content` sizes it in the non-flex case too. */
+  align-self: start;
+  inline-size: fit-content;
+  margin-block-start: 0.375rem;
 }
 
 .card-nusach,
