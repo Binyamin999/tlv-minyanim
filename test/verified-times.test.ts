@@ -9,7 +9,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { VERIFIED, verifiedFor } from '../src/lib/verified-times.ts';
+import { SHARED_BOARD, VERIFIED, verifiedFor } from '../src/lib/verified-times.ts';
 import { TEL_AVIV, addDays, isoDate, resolveOnDate, zmanimFor } from '../src/zmanim/index.ts';
 import type { JerusalemDate } from '../src/zmanim/index.ts';
 
@@ -248,5 +248,46 @@ describe('the mall shul Arvit', () => {
     const arvit = VERIFIED['בית חב"ד קניון רמת אביב']!.minyanim.find((m) => m.service === 'arvit')!;
     assert.equal(arvit.validFrom, undefined);
     assert.equal(arvit.validUntil, undefined);
+  });
+});
+
+/**
+ * One board, two synagogues.
+ *
+ * What is checked here is that sharing is by REFERENCE. A copy would agree on
+ * the day it was made and drift the moment כלל ישראל's weekly board is read
+ * again — and a stale copy still carries its own `last_verified_at`, so it
+ * would go on looking freshly checked while being wrong.
+ */
+describe('a shared notice board', () => {
+  it('gives the sharing shul the very same record, not an equal one', () => {
+    const host = verifiedFor('לכלל ישראל');
+    const sharer = verifiedFor("המרכזי רמת אביב ג'");
+    assert.ok(host);
+    // Identity, not deepEqual: deepEqual would pass for a copy, which is the
+    // thing this is here to forbid.
+    assert.equal(sharer, host);
+  });
+
+  it('names a synagogue that actually has a record', () => {
+    for (const [from, to] of Object.entries(SHARED_BOARD)) {
+      assert.ok(VERIFIED[to], `${from} shares the board of ${to}, which has no record`);
+    }
+  });
+
+  it('never chains, so one hop always lands', () => {
+    // A pointer to another pointer would resolve to null under the one-hop
+    // rule and silently drop a shul's times.
+    for (const [from, to] of Object.entries(SHARED_BOARD)) {
+      assert.equal(SHARED_BOARD[to], undefined, `${from} -> ${to} -> … is a chain`);
+    }
+  });
+
+  it('does not also carry a record of its own', () => {
+    // Both would be a second source of truth, and verifiedFor would silently
+    // prefer the shared one while the local one sat there looking authoritative.
+    for (const from of Object.keys(SHARED_BOARD)) {
+      assert.equal(VERIFIED[from], undefined, `${from} both shares a board and has one`);
+    }
   });
 });

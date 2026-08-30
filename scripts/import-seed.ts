@@ -36,6 +36,7 @@ import {
   curatedNameHe,
   curatedAddressEn,
   curatedNusachim,
+  sharesBuildingWith,
 } from '../src/lib/curation.ts';
 import { verifiedFor, type VerifiedSynagogue } from '../src/lib/verified-times.ts';
 import { ADDED, isLocatable, type AddedSynagogue } from '../src/lib/added-synagogues.ts';
@@ -602,8 +603,36 @@ const TIME_FIELDS: Array<{ field: 'weekday_times_raw' | 'shabbat_times_raw'; day
   { field: 'shabbat_times_raw', dayType: 'shabbat' },
 ];
 
+/**
+ * A seed row moved to the building it actually stands in.
+ *
+ * The GIS layer puts `המרכזי רמת אביב ג'` at אבא אחימאיר 31, which is 329 m
+ * from where it davens — a different building, and a four-minute walk to the
+ * wrong door for someone who has never been. Where `SAME_BUILDING_AS` names
+ * another shul, its coordinates and address are taken instead.
+ *
+ * The other shul's own row is the source, rather than a pair of numbers copied
+ * into a table: if that point is ever corrected, this follows it. Throws
+ * rather than falling back, because a silent miss here is the exact failure
+ * being fixed — the shul would quietly keep the wrong location.
+ */
+function relocated(seed: SeedSynagogue, byName: Map<string, SeedSynagogue>): SeedSynagogue {
+  const sharesWith = sharesBuildingWith(seed.name_he);
+  if (!sharesWith) return seed;
+
+  const host = byName.get(sharesWith.replace(/\s+/g, ' ').trim());
+  if (!host) {
+    throw new Error(
+      `${seed.name_he}: SAME_BUILDING_AS names "${sharesWith}", which is not in the seed. ` +
+        'Fix the key in src/lib/curation.ts — it must be the name as the source writes it.',
+    );
+  }
+  return { ...seed, lat: host.lat, lng: host.lng, address_he: host.address_he };
+}
+
 async function main(): Promise<void> {
   const seeds = readSeed().sort((a, b) => a.source_id - b.source_id);
+  const seedsByName = new Map(seeds.map((s) => [s.name_he.replace(/\s+/g, ' ').trim(), s]));
 
   const summary: Summary = {
     synagogues: 0,
@@ -623,13 +652,14 @@ async function main(): Promise<void> {
   };
 
   await withTransaction(async (client) => {
-    for (const seed of seeds) {
+    for (const raw of seeds) {
+      const seed = relocated(raw, seedsByName);
       const results: Array<{ sourceField: string; result: ParseResult }> = [];
 
       for (const { field, dayType } of TIME_FIELDS) {
-        const raw = seed[field];
-        if (raw === null) continue;
-        results.push({ sourceField: field, result: parseMinyanTimes(raw, { dayType }) });
+        const rawTimes = seed[field];
+        if (rawTimes === null) continue;
+        results.push({ sourceField: field, result: parseMinyanTimes(rawTimes, { dayType }) });
       }
 
       // The shiur column. No dayType is passed because the column name states

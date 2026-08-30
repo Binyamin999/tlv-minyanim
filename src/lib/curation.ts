@@ -128,6 +128,33 @@ export const MOVEMENT: Record<string, Movement> = {
 };
 
 /**
+ * Hebrew name -> the source name of the synagogue it shares a building with.
+ *
+ * `בית חב"ד רמת אביב ג'` is at כלל ישראל's location, not at the אבא אחימאיר 31
+ * the GIS layer gives it — 329 m away, which is a different building and a
+ * four-minute walk to the wrong door.
+ *
+ * Written as a RELATIONSHIP rather than a pair of copied coordinates, for the
+ * same reason SHARED_BOARD is: a copied number is a second source of truth
+ * that silently stops agreeing. If כלל ישראל's own point is ever corrected —
+ * the GIS layer is fourteen months stale — this follows it.
+ *
+ * CLAUDE.md already says an address is not a unique key: היכל חיים and נוה קודש
+ * are two congregations at Oppenheimer 5. This is that shape again, with the
+ * warning that those two have DIFFERENT times and these two do not, so the
+ * timeline will offer one room under two names until somebody establishes
+ * whether they are one congregation the municipality recorded twice.
+ */
+export const SAME_BUILDING_AS: Record<string, string> = {
+  "המרכזי רמת אביב ג'": 'לכלל ישראל',
+};
+
+/** The source name of the shul this one shares a building with, or null. */
+export function sharesBuildingWith(nameHe: string): string | null {
+  return SAME_BUILDING_AS[key(nameHe)] ?? null;
+}
+
+/**
  * Hebrew street name -> the same name in Latin script.
  *
  * Keyed on the STREET rather than the whole address, because the house number

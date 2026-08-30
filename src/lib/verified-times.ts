@@ -460,6 +460,38 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
 };
 
 /** The verified record for a synagogue, or null if nobody has read its board. */
+/**
+ * One notice board, two synagogues.
+ *
+ * `בית חב"ד רמת אביב ג'` keeps the same times as `כלל ישראל`, in the same
+ * building — reported by the user, and independently corroborated by the
+ * municipality's own record for it: the GIS layer writes `שחרית-6:30-8:00` and
+ * `מנחה-14:00`, against a board reading 6:20, 8:00 and 14:00.
+ *
+ * REFERENCED, NEVER COPIED. כלל ישראל reprints its weekday board every week
+ * and every line of it moved between the two readings we have, which is why
+ * those rows carry a validity window at all. Pasting a copy into a second
+ * record would mean two sets of times that agree today and disagree the moment
+ * the next board is read — and the one nobody remembered to update would go on
+ * publishing a stale clock face under its own `last_verified_at`. Sharing the
+ * record makes that impossible: one reading updates both.
+ *
+ * It also keeps provenance true. `verified_by: notice_board` is a claim that
+ * somebody read a board for this synagogue, and here that is literally the
+ * same board.
+ *
+ * The key and the value are both source names, like every other table keyed on
+ * what the municipality wrote.
+ */
+export const SHARED_BOARD: Record<string, string> = {
+  "המרכזי רמת אביב ג'": 'לכלל ישראל',
+};
+
 export function verifiedFor(nameHe: string): VerifiedSynagogue | null {
-  return VERIFIED[nameHe.replace(/\s+/g, ' ').trim()] ?? null;
+  const folded = nameHe.replace(/\s+/g, ' ').trim();
+  const shared = SHARED_BOARD[folded];
+  // One hop only. A chain would let two entries point at each other and hang
+  // the importer, and there is no case for one: a board belongs to a building.
+  if (shared) return VERIFIED[shared] ?? null;
+  return VERIFIED[folded] ?? null;
 }

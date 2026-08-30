@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { splitSignedNumbers } from '../src/lib/bidi.ts';
-import { curatedAddressEn } from '../src/lib/curation.ts';
+import { SAME_BUILDING_AS, curatedAddressEn } from '../src/lib/curation.ts';
 
 /**
  * The segments written back out, with any isolated run marked.
@@ -79,5 +79,20 @@ describe('addresses in Latin script', () => {
       curatedAddressEn('קניון רמת אביב, איינשטיין 40, קומה -1'),
       'Ramat Aviv Mall, Einstein 40, level -1',
     );
+  });
+});
+
+/**
+ * Two congregations in one building — the shape CLAUDE.md already allows for
+ * היכל חיים and נוה קודש at Oppenheimer 5.
+ */
+describe('a shared building', () => {
+  it('names a shul by the spelling the source uses', () => {
+    // Resolved against the seed at import time, so a key the source does not
+    // contain throws there rather than leaving the shul at the wrong address.
+    for (const [from, to] of Object.entries(SAME_BUILDING_AS)) {
+      assert.equal(to.trim(), to, `${from} -> "${to}" has stray whitespace`);
+      assert.ok(to.length > 0);
+    }
   });
 });
