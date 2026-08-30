@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 
 import { Filters } from '@/components/home/Filters';
+import { NearMe } from '@/components/NearMe';
 import { HeroCard, HeroEmpty } from '@/components/home/HeroCard';
 import { Masthead, type RibbonZman } from '@/components/home/Masthead';
 import { ShulCard, UnknownShulCard } from '@/components/home/ShulCard';
@@ -207,14 +208,16 @@ export default async function LocaleHome({
       </Masthead>
 
       <main className="home">
-        {/* Geo search is not built, so this states where the data is rather
-            than offering to move. The artboard's "שנה מיקום" action is the
-            entry point to radius search and arrives with it. */}
+        {/* Where the data is, and — since the artboard always meant this slot
+            to be the entry point to geo — the offer to measure from where the
+            reader actually is. The neighbourhood name stays: it is the honest
+            statement of coverage for anyone who does not tap. */}
         <p className="place">
           <span className="place-pin" aria-hidden="true">
             <PinIcon />
           </span>
           <span>{t.neighbourhood}</span>
+          <NearMe labels={t.nearMe} />
         </p>
 
         <Filters

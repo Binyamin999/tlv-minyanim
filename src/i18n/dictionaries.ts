@@ -98,6 +98,32 @@ const he = {
   // board writes just the letter. Saturday is שבת, never ז׳.
   weekdaysShort: ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'שבת'] as [string, string, string, string, string, string, string],
   onDays: (days: string) => `ימים ${days}`,
+  /**
+   * Every value here is a PLAIN STRING, and the group is flat.
+   *
+   * This is the only part of the dictionary handed to a client component, and
+   * functions cannot cross that boundary — passing the whole `t` object threw
+   * "Functions cannot be passed directly to Client Components" on every render
+   * and 500'd the homepage. So the interpolation that `inMinutes` and friends
+   * do on the server happens in the component instead, out of these pieces.
+   */
+  nearMe: {
+    // The verb is about the minyan, not the person: the site offers to find
+    // something, rather than asking to be told where somebody is.
+    action: 'מצאו מניין לידי',
+    locating: 'מאתרים…',
+    // A refusal is a decision, not an error, and the page keeps working. No
+    // second ask, and no account of what they are missing.
+    denied: 'אין גישה למיקום — הלוח מוצג לפי הזמן',
+    failed: 'לא הצלחנו לאתר את המיקום',
+    // Distance shown, verdict withheld: the position is too vague to promise
+    // anyone they will arrive in time.
+    vague: 'המיקום משוער — המרחקים בקירוב',
+    walk: 'דק׳ הליכה',
+    metres: 'מ׳',
+    kilometres: 'ק״מ',
+    tooFar: 'לא תספיקו להגיע',
+  },
   // The board's own words. A room is a code precisely so each language can
   // print its own — see the minyan_location enum.
   locations: { upstairs: 'למעלה', downstairs: 'למטה', sukkah: 'בסוכה' },
@@ -349,6 +375,17 @@ const en: typeof he = {
   noKnownTimes: 'No times known',
   weekdaysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
   onDays: (days: string) => days,
+  nearMe: {
+    action: 'Find a minyan near me',
+    locating: 'Locating…',
+    denied: 'No location access — showing the board by time',
+    failed: "Couldn't find your location",
+    vague: 'Approximate location — distances are rough',
+    walk: 'min walk',
+    metres: 'm',
+    kilometres: 'km',
+    tooFar: "You won't get there in time",
+  },
   locations: { upstairs: 'upstairs', downstairs: 'downstairs', sukkah: 'in the sukkah' },
   // Spelled out, because a visitor who cannot read the board cannot be
   // expected to know the shorthand either. The Hebrew term is kept alongside

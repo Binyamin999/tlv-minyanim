@@ -2013,3 +2013,66 @@ body {
 .minyan-style {
   color: color-mix(in srgb, var(--ink) 62%, transparent);
 }
+
+/* ------------------------------------------------------------------ */
+/* Near me                                                             */
+/* ------------------------------------------------------------------ */
+
+/* The control sits inside the place line, after the neighbourhood name: the
+   page says where the data is, then offers to measure from where you are. */
+.near-me {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-inline-start: 0.625rem;
+}
+
+/* A button, and it looks like one — this is the one control on the page that
+   asks the reader for something, and dressing it as a quiet link would hide
+   that. Still small: the board is the page, not this. */
+.near-me-button {
+  border: 1px solid color-mix(in srgb, var(--tlv-sea-ink) 40%, transparent);
+  border-radius: 999px;
+  background: transparent;
+  padding: 0.15rem 0.7rem;
+  color: var(--tlv-sea-ink);
+  font: inherit;
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+
+.near-me-button:hover {
+  background: color-mix(in srgb, var(--tlv-sea-ink) 8%, transparent);
+}
+
+.near-me-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* Refusals and caveats. Quiet, and never repeated as a nag. */
+.near-me-note {
+  color: color-mix(in srgb, var(--ink) 62%, transparent);
+  font-size: 0.75rem;
+}
+
+/* The measured distance, once it exists. Tabular so a column of walking times
+   lines up the way every other number on this site does. */
+.near-slot {
+  color: var(--tlv-sea-ink);
+}
+
+/* "You won't get there in time." This is the only place on the site that
+   contradicts a time it is showing, so it carries the warning colour rather
+   than the quiet one — but the row stays, because a bike or a willingness to
+   arrive late is the reader's call and not ours to make by hiding it. */
+.near-too-far {
+  color: var(--tlv-terra-ink);
+  font-size: 0.75rem;
+}
+
+/* A row you cannot reach recedes without disappearing. */
+[data-reach='too_far'] {
+  opacity: 0.62;
+}

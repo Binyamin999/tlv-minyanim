@@ -49,6 +49,7 @@ export function ShulCard({
       synagogue={row.synagogue}
       nusachim={nusachim}
       warmth={warmth}
+      instant={row.instant}
       locale={locale}
       t={t}
       value={
@@ -119,6 +120,7 @@ function CardShell({
   synagogue,
   nusachim,
   warmth,
+  instant,
   locale,
   t,
   value,
@@ -131,6 +133,8 @@ function CardShell({
   t: Dictionary;
   value: React.ReactNode;
   footerEnd: React.ReactNode;
+  /** When this row has a time. Absent on the unknown-time card. */
+  instant?: Date;
 }) {
   const name = localisedName(synagogue, locale);
   const address = localisedAddress(synagogue, locale);
@@ -139,6 +143,15 @@ function CardShell({
     <article
       className="card"
       style={{ '--warm-pct': warmthPercent(warmth) } as React.CSSProperties}
+      /* Read by NearMe, which is the only reason they are here. The server
+         cannot know where anyone is, so it prints the fixed half of the
+         arithmetic and lets the browser supply the other half — which keeps
+         the page whole for a crawler and for anyone who declines. `data-at` is
+         the row's own instant, so reachability is judged against the real
+         countdown rather than one that expired while the tab sat open. */
+      data-lat={synagogue.lat}
+      data-lng={synagogue.lng}
+      data-at={instant?.toISOString()}
     >
       <div className="card-head">
         <div className="card-where">
@@ -148,6 +161,11 @@ function CardShell({
             </Link>
           </h3>
           <p className="card-address">
+            {/* Filled by NearMe and hidden until then. Present in the server
+                HTML rather than created at runtime so the row never reflows
+                around a node that appears from nowhere. */}
+            <span className="near-slot tabular" hidden />
+            <span className="near-too-far" hidden />
             {address ? <span {...foreignAttrs(address)}>{bidiText(address.text)}</span> : null}
             {address ? (
               <span className="card-dot" aria-hidden="true">

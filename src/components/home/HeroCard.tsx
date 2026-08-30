@@ -60,6 +60,12 @@ export function HeroCard({
     <article
       className="hero"
       style={{ '--warm-pct': warmthPercent(warmth) } as React.CSSProperties}
+      /* The hero carries a distance but is never re-sorted — it is the next
+         minyan by TIME, and a shul 200 m away whose next minyan is tomorrow
+         morning is not the answer to "where can I daven now". See NearMe. */
+      data-lat={row.synagogue.lat}
+      data-lng={row.synagogue.lng}
+      data-at={row.instant.toISOString()}
     >
       <div className="hero-head">
         <p className="hero-service">{t.services[row.service]}</p>
@@ -95,6 +101,8 @@ export function HeroCard({
             // edge, so the name sits left and its own address sits right.
             <p className="hero-address">
               <span {...foreignAttrs(address)}>{bidiText(address.text)}</span>
+              <span className="near-slot tabular" hidden />
+              <span className="near-too-far" hidden />
             </p>
           ) : (
             <span />
