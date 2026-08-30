@@ -5,6 +5,7 @@ import { WalkIcon } from '@/components/icons';
 import type { Dictionary } from '@/i18n/dictionaries';
 import type { Locale } from '@/i18n/locales';
 import { walkingDirectionsUrl, wazeUrl } from '@/lib/directions';
+import { bidiText } from '@/components/BidiText';
 import { foreignAttrs, localisedAddress, localisedName } from '@/lib/synagogue-display';
 import { relativeDayLabel } from '@/lib/resolved-times';
 import { warmthPercent } from '@/lib/sunset-warmth';
@@ -147,7 +148,7 @@ function CardShell({
             </Link>
           </h3>
           <p className="card-address">
-            {address ? <span {...foreignAttrs(address)}>{address.text}</span> : null}
+            {address ? <span {...foreignAttrs(address)}>{bidiText(address.text)}</span> : null}
             {address ? (
               <span className="card-dot" aria-hidden="true">
                 ·

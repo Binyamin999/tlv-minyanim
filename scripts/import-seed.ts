@@ -34,6 +34,7 @@ import {
   curatedMovement,
   curatedNameEn,
   curatedNameHe,
+  curatedAddressEn,
   curatedNusachim,
 } from '../src/lib/curation.ts';
 import { verifiedFor, type VerifiedSynagogue } from '../src/lib/verified-times.ts';
@@ -210,7 +211,7 @@ async function upsertAdded(
        location, nusachim, movement, style, status, last_verified_at, verified_by,
        no_minyanim_on
      ) VALUES (
-       NULL, $1, $2, $3, $4, NULL,
+       NULL, $1, $2, $3, $4, $13,
        ST_SetSRID(ST_MakePoint($5, $6), 4326)::geography,
        $7::nusach[], $8::movement, NULL, $9::synagogue_status, $10::timestamptz, $11,
        $12::day_type[]
@@ -219,6 +220,7 @@ async function upsertAdded(
        name_he          = EXCLUDED.name_he,
        name_en          = EXCLUDED.name_en,
        address_he       = EXCLUDED.address_he,
+       address_en       = EXCLUDED.address_en,
        location         = EXCLUDED.location,
        nusachim         = EXCLUDED.nusachim,
        movement         = EXCLUDED.movement,
@@ -244,6 +246,7 @@ async function upsertAdded(
       // verified record. Nothing verified means nothing stated, which is not
       // the same as "it davens every day" — it is the honest unknown.
       verified ? verified.noMinyanimOn : [],
+      curatedAddressEn(added.addressHe),
     ],
   );
   return rows[0]!.id;
@@ -367,6 +370,12 @@ async function upsertSynagogue(
   // this row.
   const nameHe = curatedNameHe(seed.name_he);
 
+  // The GIS layer separates street from number with two spaces — `נח  20` —
+  // which is an artefact of a fixed-width export, not part of the address.
+  // Folded here rather than at display time so the stored value is the one the
+  // slug, the curation keys and schema.org all agree on.
+  const addressHe = seed.address_he ? seed.address_he.replace(/\s+/g, ' ').trim() : null;
+
   // Movement comes from the seed's own column if it ever gains one, and
   // otherwise from the hand-curated table. Never from nusach — the source tags
   // both Ramat Aviv Chabad houses `אשכנז`, so nusach cannot reveal it.
@@ -398,7 +407,7 @@ async function upsertSynagogue(
        location, nusachim, movement, style, status, last_verified_at, verified_by,
        no_minyanim_on
      ) VALUES (
-       $1, $2, $3, $12, $4, NULL,
+       $1, $2, $3, $12, $4, $14,
        ST_SetSRID(ST_MakePoint($5, $6), 4326)::geography,
        $7::nusach[], $8::movement, NULL, $9::synagogue_status, $10::timestamptz, $11,
        $13::day_type[]
@@ -407,6 +416,7 @@ async function upsertSynagogue(
        name_he          = EXCLUDED.name_he,
        name_en          = EXCLUDED.name_en,
        address_he       = EXCLUDED.address_he,
+       address_en       = EXCLUDED.address_en,
        location         = EXCLUDED.location,
        nusachim         = EXCLUDED.nusachim,
        movement         = EXCLUDED.movement,
@@ -420,7 +430,7 @@ async function upsertSynagogue(
       seed.source_id,
       slug,
       nameHe,
-      seed.address_he,
+      addressHe,
       seed.lng, // ST_MakePoint is (x, y) = (lng, lat). Getting this backwards
       seed.lat, // puts every shul in the Indian Ocean and no test catches it.
       nusachim,
@@ -433,6 +443,7 @@ async function upsertSynagogue(
       // nothing on Shabbat — it can only fail to mention Shabbat, which is the
       // unknown. So this is empty unless a person put a day in it.
       verified ? verified.noMinyanimOn : [],
+      curatedAddressEn(addressHe),
     ],
   );
 

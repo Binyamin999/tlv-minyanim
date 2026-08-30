@@ -12,6 +12,7 @@ import { displayNusach } from '@/lib/taxonomy';
 import { displayMinyanTime } from '@/lib/minyan-display';
 import { synagogueJsonLd } from '@/lib/jsonld';
 import { nextOccurrences, weekdayName, type NextOccurrence } from '@/lib/resolved-times';
+import { bidiText } from '@/components/BidiText';
 import { foreignAttrs, localisedAddress, localisedName } from '@/lib/synagogue-display';
 import type { DayType, Service } from '@/minyan-times';
 import { clockFaceOf, jerusalemDateOf, TEL_AVIV, zmanimFor, type DayZmanim } from '@/zmanim';
@@ -117,7 +118,19 @@ export default async function ShulPage({
 
         {address ? (
           <p className="address" {...foreignAttrs(address)}>
-            {address.text}
+            {bidiText(address.text)}
+          </p>
+        ) : null}
+        {/* The Hebrew address stays on the English page, under the Latin one.
+            A transliteration is what a visitor says to a driver and matches
+            against a bilingual street sign; the Hebrew is what is painted on
+            the building and what they can hold up to somebody. Neither
+            replaces the other, and this page has room for both — the cards do
+            not, which is why they carry the transliteration alone. Suppressed
+            when it IS the Hebrew already, or the line would appear twice. */}
+        {locale === 'en' && synagogue.addressHe && !address?.foreign ? (
+          <p className="address address-native" lang="he" dir="rtl">
+            {bidiText(synagogue.addressHe)}
           </p>
         ) : null}
 

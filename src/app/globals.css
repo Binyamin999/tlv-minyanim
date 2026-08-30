@@ -1968,3 +1968,13 @@ body {
     text-align: end;
   }
 }
+
+/* The Hebrew address beneath the transliterated one on the English page. It is
+   a second reading of the same fact, not a second fact, so it sits smaller and
+   quieter — present for the visitor who needs to show it to somebody, without
+   competing with the line above it. */
+.address-native {
+  margin-block-start: 0.15rem;
+  font-size: 0.9em;
+  opacity: 0.75;
+}

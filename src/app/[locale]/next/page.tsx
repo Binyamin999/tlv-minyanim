@@ -9,6 +9,7 @@ import { getDictionary, type Dictionary } from '@/i18n/dictionaries';
 import { isLocale, type Locale } from '@/i18n/locales';
 import { walkingDirectionsUrl } from '@/lib/directions';
 import { displayMinyanTime } from '@/lib/minyan-display';
+import { bidiText } from '@/components/BidiText';
 import { foreignAttrs, localisedAddress, localisedName } from '@/lib/synagogue-display';
 import {
   clockFaceOf,
@@ -196,7 +197,7 @@ function UpcomingRow({
       </p>
       {address ? (
         <p className="address" {...foreignAttrs(address)}>
-          {address.text}
+          {bidiText(address.text)}
         </p>
       ) : null}
       {row.minyan.time.kind === 'relative' ? <p className="quiet rule">{rule.text}</p> : null}

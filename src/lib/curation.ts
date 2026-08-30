@@ -64,6 +64,15 @@ import type { Movement, Nusach } from './taxonomy.ts';
  */
 export const NAME_HE: Record<string, string> = {
   'לכלל ישראל': 'כלל ישראל',
+  // A third Chabad house the source does not mark as one. `המרכזי` — "the
+  // central [synagogue]" — is what the municipality wrote for two different
+  // buildings, and this one calls itself בית חב"ד רמת אביב ג'. Note what the
+  // wrong name cost beyond the name: nothing about `המרכזי` suggests Chabad,
+  // so this shul sat with no movement while the two known Chabad houses in
+  // the same neighbourhood carried theirs. Correcting the name is what
+  // surfaced it — which is precisely why MOVEMENT is hand-curated and never
+  // read off a nusach field.
+  "המרכזי רמת אביב ג'": 'בית חב"ד רמת אביב ג\'',
 };
 
 /** Hebrew name as the source writes it -> the name in Latin script. */
@@ -73,7 +82,7 @@ export const NAME_EN: Record<string, string> = {
   'אור גבריאל - משמעות': 'Or Gavriel — Mashmaut',
   'היכל חיים': 'Heichal Chaim',
   המרכזי: 'HaMerkazi',
-  "המרכזי רמת אביב ג'": 'HaMerkazi Ramat Aviv Gimel',
+  "המרכזי רמת אביב ג'": 'Chabad Ramat Aviv Gimmel',
   'הרמב"ם': 'HaRambam',
   'לכלל ישראל': 'Klal Yisrael',
   'מנין צעירים בני עקיבא': "Minyan Tze'irim Bnei Akiva",
@@ -113,8 +122,78 @@ export const NUSACHIM_SERVED: Record<string, readonly Nusach[]> = {
  */
 export const MOVEMENT: Record<string, Movement> = {
   'אוהל יוסף יצחק': 'chabad',
+  // Found by way of its real name, not by inspecting its nusach — see NAME_HE.
+  "המרכזי רמת אביב ג'": 'chabad',
   'תומכי תמימים - בית חב"ד': 'chabad',
 };
+
+/**
+ * Hebrew street name -> the same name in Latin script.
+ *
+ * Keyed on the STREET rather than the whole address, because the house number
+ * needs no translation and a street carries many shuls: אופנהיימר 5 is two
+ * separate congregations, and at 484 rows a per-address table would be mostly
+ * duplicated. The number is re-attached by `curatedAddressEn`.
+ *
+ * Transliterated, never translated — exactly the rule NAME_EN follows, and for
+ * the same reason. `רידינג` is Reading, the power station it is named after,
+ * not "the reading street". A visitor matching a bilingual street sign or
+ * saying the name aloud to a driver needs the sound, and a translation is a
+ * street nobody in this city has heard of.
+ *
+ * Where the Hebrew is itself ambiguous we transliterate what is written and
+ * resolve nothing: the source says `יהודה`, so this says Yehuda, and which
+ * Yehuda the municipality meant is not a question a transliteration table gets
+ * to answer.
+ */
+export const STREET_EN: Record<string, string> = {
+  'אבא אחימאיר': 'Abba Ahimeir',
+  אופנהיימר: 'Oppenheimer',
+  'אליהו חכים': 'Eliyahu Hakim',
+  'בשוויס זינגר': 'Bashevis Singer',
+  ברודצקי: 'Brodetsky',
+  'חיים לבנון': 'Haim Levanon',
+  טאגור: 'Tagore',
+  יהודה: 'Yehuda',
+  נח: 'Noach',
+  רידינג: 'Reading',
+  'שרגא פרידמן': 'Shraga Friedman',
+};
+
+/**
+ * Whole addresses that are not `<street> <number>`.
+ *
+ * The mall shul's address names a building, a street and a floor, so there is
+ * no street to look up. Written out rather than forced through the splitter.
+ */
+export const ADDRESS_EN: Record<string, string> = {
+  'קניון רמת אביב, איינשטיין 40, קומה -1':
+    'Ramat Aviv Mall, Einstein 40, level -1',
+};
+
+/** `<street> <number>`, which is the shape the GIS layer writes. */
+const STREET_AND_NUMBER = /^(.+?)\s+(\d+\S*)$/;
+
+/**
+ * The address in Latin script, or null when we cannot write one.
+ *
+ * Null is the honest answer for an uncurated street: `localisedAddress` then
+ * shows the Hebrew on the English page, marked as a foreign run, which is true
+ * and readable-to-somebody rather than a machine transliteration of unpointed
+ * Hebrew — which reads as nonsense and would be worse than the Hebrew itself.
+ */
+export function curatedAddressEn(addressHe: string | null): string | null {
+  if (!addressHe) return null;
+  const folded = key(addressHe);
+
+  const whole = ADDRESS_EN[folded];
+  if (whole) return whole;
+
+  const parts = STREET_AND_NUMBER.exec(folded);
+  if (!parts) return null;
+  const street = STREET_EN[parts[1]!];
+  return street ? `${street} ${parts[2]}` : null;
+}
 
 /** Fold whitespace the way `slug.ts` does, so one key works for both files. */
 function key(nameHe: string): string {

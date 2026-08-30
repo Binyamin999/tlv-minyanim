@@ -6,6 +6,7 @@ import type { Dictionary } from '@/i18n/dictionaries';
 import type { Locale } from '@/i18n/locales';
 import { walkingDirectionsUrl, wazeUrl } from '@/lib/directions';
 import { displayMinyanTime } from '@/lib/minyan-display';
+import { bidiText } from '@/components/BidiText';
 import { foreignAttrs, localisedAddress, localisedName } from '@/lib/synagogue-display';
 import { warmthPercent } from '@/lib/sunset-warmth';
 import type { Nusach } from '@/lib/taxonomy';
@@ -93,7 +94,7 @@ export function HeroCard({
             // attribute on the <p> would also flush the whole line to the far
             // edge, so the name sits left and its own address sits right.
             <p className="hero-address">
-              <span {...foreignAttrs(address)}>{address.text}</span>
+              <span {...foreignAttrs(address)}>{bidiText(address.text)}</span>
             </p>
           ) : (
             <span />

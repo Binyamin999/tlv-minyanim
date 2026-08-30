@@ -47,7 +47,12 @@ const CURATED: Record<string, string> = {
   'אור גבריאל - משמעות': 'or-gavriel-mashmaut',
   'היכל חיים': 'heichal-chaim',
   המרכזי: 'hamerkazi-ramat-aviv',
-  "המרכזי רמת אביב ג'": 'hamerkazi-ramat-aviv-gimel',
+  // Keyed on the source's name, like every entry here, but slugged from the
+  // one the shul uses. The URL is read by people and indexed by search
+  // engines, so `hamerkazi` — the municipality's word, and its word for two
+  // different buildings — is the wrong thing for it to say. Changed while
+  // nothing is published; after launch this would cost every link to the page.
+  "המרכזי רמת אביב ג'": 'chabad-ramat-aviv-gimmel',
   'הרמב"ם': 'harambam',
   'לכלל ישראל': 'klal-yisrael',
   'מנין צעירים בני עקיבא': 'minyan-tzeirim-bnei-akiva',
