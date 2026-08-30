@@ -92,14 +92,19 @@ describe('לכלל ישראל — the claims each stored time rests on', () => {
   };
 
   it('every unwindowed clock face holds on all 365 days', () => {
-    for (const entry of record!.minyanim) {
+    // Across EVERY verified record, not just the one this sweep was written
+    // for. Scoped to כלל ישראל it silently stopped guarding as soon as a
+    // second shul was added — and the next two brought fourteen clock faces,
+    // five of which do not hold all year.
+    for (const [name, r] of Object.entries(VERIFIED))
+    for (const entry of r.minyanim) {
       if (entry.time.kind !== 'fixed') continue;
       if (entry.validUntil) continue; // windowed: it claims only its own week
       if (entry.service === 'shacharit') continue; // morning does not track shkia
       assert.ok(
         holdsAllYear(entry.time.time, entry.service),
-        `${entry.service} ${entry.time.time} has no validity window, so it claims ` +
-          'to hold all year — and it does not. Give it a window or hold it back.',
+        `${name}: ${entry.service} ${entry.time.time} has no validity window, so it ` +
+          'claims to hold all year — and it does not. Give it a window or hold it back.',
       );
     }
   });
@@ -107,12 +112,13 @@ describe('לכלל ישראל — the claims each stored time rests on', () => {
   it('every clock face that does NOT hold all year carries a window', () => {
     // The negative half, and the one that catches the real mistake. 18:45 is
     // shkia − 22 this week and shkia + 65 in December.
-    for (const entry of record!.minyanim) {
+    for (const [name, r] of Object.entries(VERIFIED))
+    for (const entry of r.minyanim) {
       if (entry.time.kind !== 'fixed' || entry.service === 'shacharit') continue;
       if (holdsAllYear(entry.time.time, entry.service)) continue;
       assert.ok(
         entry.validFrom && entry.validUntil,
-        `${entry.service} ${entry.time.time} cannot hold all year and has no window`,
+        `${name}: ${entry.service} ${entry.time.time} cannot hold all year and has no window`,
       );
     }
   });

@@ -94,6 +94,10 @@ const he = {
   } satisfies Record<SynagogueStatus, string>,
   /** No time at all for a day. Honest blank, not an empty table. */
   noKnownTimes: 'אין שעות ידועות',
+  // Hebrew names its weekdays by letter — יום א׳ .. יום ו׳ — and a schedule
+  // board writes just the letter. Saturday is שבת, never ז׳.
+  weekdaysShort: ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'שבת'] as [string, string, string, string, string, string, string],
+  onDays: (days: string) => `ימים ${days}`,
   // Not the same sentence as the one above, and deliberately so: that one says
   // we are missing data, this one says the synagogue told us there is nothing.
   noServicesHeld: 'לא מתקיימות תפילות',
@@ -332,6 +336,8 @@ const en: typeof he = {
     closed: 'Closed',
   },
   noKnownTimes: 'No times known',
+  weekdaysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+  onDays: (days: string) => days,
   noServicesHeld: 'No services held',
   unconfirmedHeading: 'Needs checking — not confirmed',
   unconfirmedNote: 'The source is unclear and these have not been confirmed. Do not rely on them.',

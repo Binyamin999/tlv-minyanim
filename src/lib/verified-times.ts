@@ -32,7 +32,8 @@
  * was, and re-deriving the same dead end. It is the same instinct as
  * `parse_issues`: the failure is data.
  */
-import type { DayType, MinyanTime, Service } from '../minyan-times/index.ts';
+import { TORAH_READING_DAYS } from '../minyan-times/index.ts';
+import type { DayType, MinyanTime, Service, Weekday } from '../minyan-times/index.ts';
 import type { Nusach } from './taxonomy.ts';
 
 export interface VerifiedMinyan {
@@ -60,6 +61,20 @@ export interface VerifiedMinyan {
    */
   validFrom?: string;
   validUntil?: string;
+  /**
+   * The weekdays this minyan runs on, when it does not run on all of them.
+   *
+   * Omitted means every day of its `dayType`, which is the common case — and
+   * means it, rather than meaning unknown. Set it where a board states two
+   * different times for one service: צימבליסטה davens Shacharit at 07:15 on
+   * Sunday, Tuesday and Wednesday and at 07:10 on Monday and Thursday, because
+   * Monday and Thursday carry קריאת התורה and the service runs longer.
+   *
+   * Without this the two honest options were both wrong — store 07:15 alone and
+   * send a reader five minutes late twice a week, or hold both and show nothing
+   * for a time we know.
+   */
+  daysOfWeek?: readonly Weekday[];
   /** Why this reading is safe, where that is not obvious from the time itself. */
   note?: string;
 }
@@ -232,6 +247,214 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
           'displays it — the schema has no field for where inside a building a ' +
           'minyan meets. Second time this has come up; היכל חיים has a minyan ' +
           'בסוכה with the same problem. Two rows is closer to worth a column.',
+      },
+    ],
+  },
+
+  /**
+   * תהילת אביב, שרגא פרידמן 1. Weekday board for the week of 2026-08-30.
+   * Shabbat is not here yet — the user is supplying it separately, so those
+   * days stay unknown rather than being claimed empty.
+   *
+   * NINE weekday minyanim, three of each service, which is the densest board
+   * in the database.
+   *
+   * WHY THE WHOLE BLOCK CARRIES A WINDOW. Five of the nine cannot hold all
+   * year, and the 365-day sweep is what found them rather than an eye:
+   *   mincha 13:15 is two minutes BEFORE mincha gedola on 2026-03-27
+   *   mincha 17:45 and 18:50 are after shkia from November
+   *   arvit  18:10 is before shkia on 2026-03-27
+   *   arvit  19:35 is before shkia on 2026-05-21
+   * 05:40 is marked נץ and is netz − 34 today, so it moves with sunrise across
+   * an hour of the year. Only 20:00 and the two morning times would survive
+   * unwindowed, and they are printed on the same board as the rest — claiming
+   * more durability for them than the source does would be inventing it. Same
+   * reasoning as כלל ישראל's 14:00.
+   *
+   * The parentheses on the board are labels, not anchors, and none is stored
+   * as one. נץ says which minyan; הודו is a point inside the service; פלג is
+   * plag + 23 today, which is not a round offset and so not evidence of a rule.
+   * Storing any of them as an anchor would be the "Mincha Gedola 14:00"
+   * mistake — reading a name as arithmetic.
+   */
+  'תהילת אביב': {
+    verifiedAt: '2026-08-30',
+    verifiedBy: 'notice_board',
+    minyanim: [
+      {
+        service: 'shacharit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '05:40' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'first minyan, marked נץ — netz − 34 this week, not stored as a rule',
+      },
+      {
+        service: 'shacharit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '07:13' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'second minyan, marked הודו',
+      },
+      {
+        service: 'shacharit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '08:15' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'third minyan, marked הודו',
+      },
+      {
+        service: 'mincha',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '13:15' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'first Mincha; before mincha gedola on 2026-03-27, so never year-round',
+      },
+      {
+        service: 'mincha',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '17:45' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'second Mincha',
+      },
+      {
+        service: 'mincha',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '18:50' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'third Mincha; shkia − 17 this week and after sunset from November',
+      },
+      {
+        service: 'arvit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '18:10' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'first Arvit, marked פלג — plag + 23 this week, not a round offset',
+      },
+      {
+        service: 'arvit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '19:35' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'second Arvit, marked למעלה (upstairs)',
+      },
+      {
+        service: 'arvit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '20:00' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'third Arvit, marked למטה (downstairs)',
+      },
+    ],
+    noMinyanimOn: [],
+    held: [
+      {
+        what: 'למעלה / למטה — which room each Arvit meets in',
+        why:
+          'Both are stored as minyanim and neither says where. The schema has no ' +
+          'field for a room, which is now the third time it has come up: the mall ' +
+          "shul's level −1 and היכל חיים's minyan בסוכה are the others. Three rows " +
+          'is past the point where a column would have been cheaper.',
+      },
+      {
+        what: 'נץ / הודו / פלג as anchors rather than labels',
+        why:
+          'The board writes them beside clock faces, and one week of arithmetic ' +
+          'is not evidence of a rule — 18:10 is plag + 23, which no shul would ' +
+          'choose as an offset. A netz minyan does track sunrise, but its offset ' +
+          'is whatever makes the Amidah land at netz, and that is not derivable ' +
+          'from a single printing. Three consecutive boards would settle all of ' +
+          'them; the windows hold the line until then.',
+      },
+    ],
+  },
+
+  /**
+   * המרכז למורשת היהדות ע"ש צימבליסטה, חיים לבנון 42 — the synagogue on the
+   * Tel Aviv University campus. Weekday board for the week of 2026-08-30.
+   *
+   * THE FIRST RECORD THAT NEEDS `daysOfWeek`. Shacharit is 07:15 on Sunday,
+   * Tuesday and Wednesday and 07:10 on Monday and Thursday, because Monday and
+   * Thursday carry קריאת התורה and the service runs longer. Before migration
+   * 0008 there was no way to hold both: storing 07:15 alone would have sent a
+   * reader five minutes late twice a week, and holding both would have shown
+   * nothing for a time we know.
+   *
+   * Only the Arvit forces a window — 19:10 is three minutes before shkia on
+   * 2026-04-15. The rest of the block takes one anyway, because it is printed
+   * on the same board and vouched for exactly as long.
+   */
+  'אוניברסיטת ת"א - צימבוליסטה': {
+    verifiedAt: '2026-08-30',
+    verifiedBy: 'notice_board',
+    minyanim: [
+      {
+        service: 'shacharit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '07:15' },
+        daysOfWeek: [0, 2, 3],
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'Sunday, Tuesday, Wednesday — the days without קריאת התורה',
+      },
+      {
+        service: 'shacharit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '07:10' },
+        daysOfWeek: TORAH_READING_DAYS,
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'Monday and Thursday — five minutes earlier for קריאת התורה',
+      },
+      {
+        service: 'mincha',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '13:30' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'first Mincha',
+      },
+      {
+        service: 'mincha',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '13:55' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'second Mincha, ללא חזרת הש״ץ — see held',
+      },
+      {
+        service: 'arvit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '19:10' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'three minutes before shkia on 2026-04-15, so never year-round',
+      },
+    ],
+    noMinyanimOn: [],
+    held: [
+      {
+        what: 'ללא חזרת הש״ץ on the 13:55 Mincha',
+        why:
+          'A real and useful distinction — a shorter minyan, which is why a ' +
+          'campus offers it at five to two — and there is no field for it. It is ' +
+          'not a nusach, not a style in our taxonomy, and not a time. Stored in ' +
+          'the note so the next reader knows the board said it.',
+      },
+      {
+        what: 'whether the schedule follows the university term',
+        why:
+          'A campus shul plausibly thins out over the summer and between ' +
+          'semesters, and nothing on the board addresses it. Not guessed either ' +
+          'way: the week-long window says only what was read.',
       },
     ],
   },

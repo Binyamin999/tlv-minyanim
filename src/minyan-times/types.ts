@@ -65,6 +65,23 @@ export type Season = 'winter' | 'summer';
  */
 export type DayType = 'weekday' | 'erev_shabbat' | 'shabbat';
 
+/**
+ * A civil weekday, 0 = Sunday .. 6 = Saturday — the numbering `Date.getDay()`
+ * and Postgres `EXTRACT(DOW)` both use, so no translation table is needed.
+ *
+ * NOT a Hebrew day. The Hebrew day rolls at sunset, so Friday evening is not
+ * `5` here; a Friday-night minyan is `dayType: 'erev_shabbat'`, and this type
+ * only ever narrows WITHIN a day type.
+ */
+export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+
+/**
+ * Monday and Thursday: the two weekdays that carry קריאת התורה, so the service
+ * runs longer and many shuls start it earlier. Named because it is the reason
+ * this concept exists at all, and it will recur at hundreds of the 484.
+ */
+export const TORAH_READING_DAYS: readonly Weekday[] = [1, 4];
+
 /** CLAUDE.md's synagogue status enum. Some "time" fields are actually statuses. */
 export type SynagogueStatus =
   | 'active'

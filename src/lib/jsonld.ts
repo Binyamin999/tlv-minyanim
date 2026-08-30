@@ -38,6 +38,16 @@ import type { Minyan, Synagogue } from '@/db/queries';
  */
 const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'] as const;
 const SHABBAT = ['Saturday'] as const;
+/** 0 = Sunday, matching minyanim.days_of_week and Date.getDay(). */
+const DAY_NAMES = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+] as const;
 
 const DAY_URL = (day: string): string => `https://schema.org/${day}`;
 
@@ -63,7 +73,15 @@ export function openingHours(minyanim: Minyan[], t: Dictionary): OpeningHours[] 
     specs.push({
       '@type': 'OpeningHoursSpecification',
       name: t.services[minyan.service],
-      dayOfWeek: (minyan.dayType === 'shabbat' ? SHABBAT : WEEKDAYS).map(DAY_URL),
+      // A minyan restricted to certain weekdays says so here too, or the
+      // structured data claims a Monday-only time runs all week — the same
+      // lie as the visible row, told to a search engine instead of a reader.
+      dayOfWeek: (minyan.daysOfWeek.length > 0
+        ? minyan.daysOfWeek.map((d) => DAY_NAMES[d]!)
+        : minyan.dayType === 'shabbat'
+          ? SHABBAT
+          : WEEKDAYS
+      ).map(DAY_URL),
       // No `closes`: a minyan is a start time, not an interval. schema.org
       // makes both optional; a made-up end time would be worse than silence.
       opens: minyan.time.time,

@@ -46,6 +46,7 @@ import { parseMinyanTimes } from '../src/minyan-times/index.ts';
 import type {
   DayType,
   ParsedMinyan,
+  Weekday,
   ParseIssue,
   ParseResult,
   ShiurFinding,
@@ -269,6 +270,8 @@ type ImportMinyan = ParsedMinyan & {
   nusach?: Nusach | null;
   validFrom?: string | null;
   validUntil?: string | null;
+  /** Empty = every day of the day type. The parser never sets this. */
+  daysOfWeek?: readonly Weekday[];
 };
 
 /**
@@ -314,6 +317,9 @@ function verifiedToParsed(verified: VerifiedSynagogue, nameHe: string): ImportMi
       // stated end, which is a rule or a clock face that holds year round.
       validFrom: entry.validFrom ?? null,
       validUntil: entry.validUntil ?? null,
+      // Which weekdays this one runs on, where the board says. Empty means all
+      // of them — the normal case, and not an unknown.
+      daysOfWeek: entry.daysOfWeek ?? [],
     } satisfies ImportMinyan;
   });
 }
@@ -483,12 +489,12 @@ async function writeMinyanim(
          synagogue_id, service, day_type, season, kind,
          fixed_time, anchor, offset_minutes, sign_basis, raw_text,
          raw_segment, raw_field, source_index, clock_normalisation, needs_review,
-         nusach, valid_from, valid_until
+         nusach, valid_from, valid_until, days_of_week
        ) VALUES (
          $1, $2::service, $3::day_type, $4::season, $5::minyan_time_kind,
          $6::time, $7::zman, $8, $9::sign_basis, $10,
          $11, $12, $13, $14::jsonb, $15::jsonb,
-         $16::nusach, $17::date, $18::date
+         $16::nusach, $17::date, $18::date, $19::smallint[]
        )
        ON CONFLICT (synagogue_id, day_type, source_index) DO UPDATE SET
          service             = EXCLUDED.service,
@@ -506,6 +512,7 @@ async function writeMinyanim(
          nusach              = EXCLUDED.nusach,
          valid_from          = EXCLUDED.valid_from,
          valid_until         = EXCLUDED.valid_until,
+         days_of_week        = EXCLUDED.days_of_week,
          updated_at          = now()
        RETURNING id`,
       [
@@ -530,6 +537,10 @@ async function writeMinyanim(
         minyan.nusach ?? null,
         minyan.validFrom ?? null,
         minyan.validUntil ?? null,
+        // Empty = every day of the day type. The parser never produces a day
+        // restriction — the GIS layer has no way to state one — so this is only
+        // ever non-empty for a verified record.
+        minyan.daysOfWeek ?? [],
       ],
     );
     const id = rows[0]?.id;

@@ -33,7 +33,7 @@
  * both DST mornings and in Adar II without a clock or a Postgres.
  */
 import type { Location } from '@hebcal/core';
-import type { DayType, MinyanTime, Season, Service, Zman } from '../minyan-times/index.ts';
+import type { DayType, MinyanTime, Season, Service, Weekday, Zman } from '../minyan-times/index.ts';
 import type { DayZmanim, HebrewDay } from './day.ts';
 import { hebrewDayAt, zmanimFor } from './day.ts';
 import { addDays, dayOfWeek, isoDate, jerusalemDateOf, type JerusalemDate } from './jerusalem-date.ts';
@@ -63,6 +63,11 @@ export interface TimelineMinyan {
    */
   validFrom?: string | null;
   validUntil?: string | null;
+  /**
+   * Civil weekdays this minyan runs on. Empty (or absent) = every day of its
+   * day type, which is the normal case and does not mean unknown.
+   */
+  daysOfWeek?: readonly Weekday[];
 }
 
 export interface TimelineSynagogue {
@@ -230,6 +235,18 @@ function basePlacement(minyan: TimelineMinyan, service: Service, window: DayWind
     (minyan.validUntil && on > minyan.validUntil)
   ) {
     return { at: 'unconfirmed', reason: { code: 'validity_expired' } };
+  }
+
+  // A minyan that runs only on some weekdays is simply absent on the others.
+  // ABSENT, not `unconfirmed`: we are not missing its time on a Tuesday, it
+  // does not meet on a Tuesday. Empty means every day, which is the norm.
+  //
+  // Compared against the WINDOW's civil date. `motzaei_shabbat` is Saturday
+  // evening by the clock and Sunday by the Hebrew day, and a weekday minyan
+  // restricted to Sunday must not be offered on Saturday night — the window's
+  // own date is what says which.
+  if (minyan.daysOfWeek && minyan.daysOfWeek.length > 0 && !minyan.daysOfWeek.includes(dayOfWeek(window.date) as Weekday)) {
+    return ABSENT;
   }
 
   const column = minyan.dayType;

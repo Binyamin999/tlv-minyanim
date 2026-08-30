@@ -14,7 +14,9 @@ export type {
   SignBasis,
   StatusFinding,
   SynagogueStatus,
+  Weekday,
   Zman,
 } from './types.ts';
 
+export { TORAH_READING_DAYS } from './types.ts';
 export { isPublishable, minyanimOnly, parseMinyanTimes } from './parseMinyanTimes.ts';

@@ -317,6 +317,18 @@ function MinyanRow({
             {t.seasons[minyan.season]}
           </span>
         ) : null}
+        {/* Which weekdays, when it is not all of them. Never omitted: a 07:10
+            row sitting under a 07:15 row with nothing to separate them reads
+            as a contradiction, and a reader picking the wrong one is five
+            minutes late on exactly the two days the difference exists for.
+            Empty means every day and prints nothing — silence is correct
+            there, because there is no restriction to state. */}
+        {minyan.daysOfWeek.length > 0 ? (
+          <span className="minyan-days">
+            {minyan.service || minyan.season ? ' · ' : null}
+            {t.onDays(minyan.daysOfWeek.map((d) => t.weekdaysShort[d]).join(' '))}
+          </span>
+        ) : null}
         {/* Only when this minyan is its own group. The house minyan carries no
             nusach here and must not be labelled with the synagogue's — every
             row would then read as a separate congregation, which is the

@@ -11,6 +11,7 @@
 import { query } from '@/db/client';
 import type {
   DayType,
+  Weekday,
   MinyanTime,
   ReviewReason,
   Season,
@@ -60,6 +61,11 @@ export interface Minyan {
   needsReview: ReviewReason[];
   /** Generated in the database: no review pending, and service + day known. */
   isPublishable: boolean;
+  /**
+   * The weekdays this minyan runs on. Empty = every day of its dayType, which
+   * is the normal case and does NOT mean unknown.
+   */
+  daysOfWeek: readonly Weekday[];
   /** Verbatim slice of the source field. Provenance, not display. */
   rawSegment: string;
   /**
@@ -123,6 +129,7 @@ interface MinyanRow {
   nusach: Nusach | null;
   valid_from: Date | string | null;
   valid_until: Date | string | null;
+  days_of_week: number[];
 }
 
 const SYNAGOGUE_COLUMNS = `
@@ -203,6 +210,10 @@ function toMinyan(row: MinyanRow): Minyan {
     nusach: row.nusach,
     validFrom: asIsoDate(row.valid_from),
     validUntil: asIsoDate(row.valid_until),
+    // `?? []` for the same reason asIsoDate tolerates undefined: a SELECT that
+    // forgets the column would otherwise hand the timeline an undefined and
+    // 500 at `.includes`. Empty is also the honest value — every day.
+    daysOfWeek: (row.days_of_week ?? []) as Weekday[],
   };
 }
 
@@ -267,7 +278,7 @@ export async function getSynagogueBySlug(slug: string): Promise<SynagogueWithMin
   const minyanRows = await query<MinyanRow>(
     `SELECT id, service, day_type, season, kind, fixed_time, anchor, offset_minutes,
             sign_basis, raw_text, raw_segment, needs_review, is_publishable, nusach,
-            valid_from, valid_until
+            valid_from, valid_until, days_of_week
        FROM minyanim
       WHERE synagogue_id = $1
       ORDER BY day_type, source_index`,
@@ -305,7 +316,7 @@ export async function listSynagoguesWithMinyanim(): Promise<SynagogueWithMinyani
   const minyanRows = await query<MinyanRow & { synagogue_id: number }>(
     `SELECT synagogue_id, id, service, day_type, season, kind, fixed_time, anchor,
             offset_minutes, sign_basis, raw_text, raw_segment, needs_review, is_publishable,
-            nusach, valid_from, valid_until
+            nusach, valid_from, valid_until, days_of_week
        FROM minyanim
       WHERE is_publishable
       ORDER BY synagogue_id, day_type, source_index`,

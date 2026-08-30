@@ -1978,3 +1978,10 @@ body {
   font-size: 0.9em;
   opacity: 0.75;
 }
+
+/* Which weekdays a minyan runs on, beside the service name. Same weight and
+   colour as the season and nusach qualifiers next to it — it qualifies the row
+   rather than competing with the time. */
+.minyan-days {
+  color: color-mix(in srgb, var(--ink) 62%, transparent);
+}
