@@ -225,19 +225,29 @@ export default async function LocaleHome({
           availableNusachim={availableNusachim}
         />
 
-        <h2 className="count">
-          {t.synagogueCount(cards.length + unknownCards.length + (hero ? 1 : 0))}
-        </h2>
+        {/* The count, and then the board — but only when there IS a board.
+
+            When a filter matches exactly one synagogue, the hero IS that
+            synagogue and nothing follows it. Rendering "בית כנסת אחד" over an
+            empty region then reads as a result that failed to appear, which is
+            how ?service=mincha&nusach=teimani looked: כלל ישראל was right
+            there in the hero, tagged with all three of its rites, and the
+            blank below it said otherwise louder.
+
+            So when the hero is the whole answer, the hero is the whole answer
+            — no count, no column headers, no empty board. The filter chips
+            stay, because they are how a reader gets back out. */}
+        {cards.length + unknownCards.length > 0 ? (
+          <h2 className="count">
+            {t.synagogueCount(cards.length + unknownCards.length + (hero ? 1 : 0))}
+          </h2>
+        ) : null}
 
         {/* The לוח's column headers. Desktop only — a phone shows one card per
             shul and has nothing to head — and aria-hidden, because this labels
             a visual grid rather than a <table>: every row already says its own
             name, time and nusach, and a header row with no table semantics
             behind it is noise in a screen reader. */}
-        {/* Nothing to head when nothing follows. `?service=arvit` has exactly
-            one match and it is the hero, so the board below is empty — and a
-            header row with no rows under it reads as a page that failed to
-            load rather than as a page with one result. */}
         {cards.length + unknownCards.length > 0 ? (
           <div className="table-head" aria-hidden="true">
             <span>{t.columns.time}</span>
