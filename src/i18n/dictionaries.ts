@@ -116,6 +116,13 @@ const he = {
     // second ask, and no account of what they are missing.
     denied: 'אין גישה למיקום — הלוח מוצג לפי הזמן',
     failed: 'לא הצלחנו לאתר את המיקום',
+    // A THIRD refusal, and not the reader's doing. Browsers hand out a
+    // position only in a secure context, so over plain http on a LAN address
+    // the request is refused before anyone is asked — and it comes back as
+    // PERMISSION_DENIED, indistinguishable from a real refusal unless we look.
+    // Saying "no access to location" there blames the reader for a decision
+    // they were never offered. Never seen in production, which is https.
+    insecure: 'איתור מיקום דורש חיבור מאובטח (https)',
     // Distance shown, verdict withheld: the position is too vague to promise
     // anyone they will arrive in time.
     vague: 'המיקום משוער — המרחקים בקירוב',
@@ -384,6 +391,7 @@ const en: typeof he = {
     locating: 'Locating…',
     denied: 'No location access — showing the board by time',
     failed: "Couldn't find your location",
+    insecure: 'Locating you needs a secure (https) connection',
     vague: 'Approximate location — distances are rough',
     walk: 'min walk',
     metres: 'm',

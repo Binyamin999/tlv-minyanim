@@ -51,6 +51,7 @@ type State =
   | { status: 'locating' }
   | { status: 'done'; count: number; vague: boolean }
   | { status: 'denied' }
+  | { status: 'insecure' }
   | { status: 'failed' };
 
 export function NearMe({ labels }: { labels: NearMeLabels }) {
@@ -74,6 +75,26 @@ export function NearMe({ labels }: { labels: NearMeLabels }) {
   const locate = () => {
     if (!('geolocation' in navigator)) {
       setState({ status: 'failed' });
+      return;
+    }
+    /*
+     * A secure context is required, and its absence must not read as a
+     * refusal.
+     *
+     * Browsers only hand out a position over https or on localhost. Served to
+     * a phone over a LAN address — which is how this site is reviewed — the
+     * request is refused before anyone is asked, and it arrives as
+     * PERMISSION_DENIED: byte for byte what a real "no" looks like. Reporting
+     * that as "no access to location" blames the reader for a decision they
+     * were never offered, and sends them into their settings to fix something
+     * that is not broken.
+     *
+     * Checked here rather than at render, deliberately. Branching on
+     * `isSecureContext` while rendering is the same hydration trap the
+     * capability check fell into: the server cannot know.
+     */
+    if (!window.isSecureContext) {
+      setState({ status: 'insecure' });
       return;
     }
     setState({ status: 'locating' });
@@ -114,6 +135,8 @@ export function NearMe({ labels }: { labels: NearMeLabels }) {
         ? labels.denied
         : state.status === 'failed'
           ? labels.failed
+          : state.status === 'insecure'
+            ? labels.insecure
           : state.status === 'done'
             ? // `count` earns its place here. It was carried in state and read
               // by nothing, which the QA pass called out as a comment
@@ -128,6 +151,9 @@ export function NearMe({ labels }: { labels: NearMeLabels }) {
       </button>
       {state.status === 'denied' ? <span className="near-me-note">{labels.denied}</span> : null}
       {state.status === 'failed' ? <span className="near-me-note">{labels.failed}</span> : null}
+      {state.status === 'insecure' ? (
+        <span className="near-me-note">{labels.insecure}</span>
+      ) : null}
       {state.status === 'done' && state.vague ? (
         <span className="near-me-note">{labels.vague}</span>
       ) : null}
