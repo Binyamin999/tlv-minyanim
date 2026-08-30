@@ -210,9 +210,17 @@ describe('near-me: reachability arithmetic through the real component', () => {
         const tooFar = card.locator('.near-too-far');
         assert.notEqual(await tooFar.getAttribute('hidden'), '');
         assert.equal(await tooFar.textContent(), 'לא תספיקו להגיע');
-        // The row recedes — CLAUDE.md/CSS: opacity 0.62 on [data-reach="too_far"].
+        // The row RECEDES. Asserting that, not the exact figure: how far it
+        // recedes is a live design decision — 0.62 at first, then 0.72 once the
+        // dimming was found to be diluting the warning inside it — and a test
+        // that pins a design constant fails every time the design improves
+        // while proving nothing extra. What must hold is that an unreachable
+        // row is dimmed and still readable.
         const opacity = await card.evaluate((el) => getComputedStyle(el).opacity);
-        assert.equal(opacity, '0.62');
+        assert.ok(
+          Number(opacity) < 1 && Number(opacity) > 0.4,
+          `an unreachable row should recede but stay readable; got ${opacity}`,
+        );
       },
     );
   });
@@ -433,7 +441,11 @@ describe('near-me: a second tap fully re-decorates, leaving nothing stale', () =
         await clickLocate(page);
         const card = page.locator('[data-testid="rerun"]');
         assert.equal(await card.getAttribute('data-reach'), 'too_far');
-        assert.equal(await card.evaluate((el) => getComputedStyle(el).opacity), '0.62');
+        // Dimmed, without pinning how much — see the note in the too_far test.
+        assert.ok(
+          Number(await card.evaluate((el) => getComputedStyle(el).opacity)) < 1,
+          'a card that is too far should be dimmed',
+        );
 
         // Walk over to it (simulated) and tap again.
         await context.setGeolocation({
