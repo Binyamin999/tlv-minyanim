@@ -147,6 +147,17 @@ export const MOVEMENT: Record<string, Movement> = {
  */
 export const SAME_BUILDING_AS: Record<string, string> = {
   "המרכזי רמת אביב ג'": 'לכלל ישראל',
+  // Reported by the user: it is at ברודצקי 19, which is הרמב"ם's address. The
+  // GIS layer had it at טאגור 32, 950 m away — a twenty-minute walk to the
+  // wrong door, and the third municipal coordinate found to be wrong rather
+  // than merely imprecise.
+  //
+  // Unlike the pair above, these two keep entirely different schedules —
+  // הרמב"ם davens Shacharit at 06:00 and 07:00 on Shabbat, this one at 06:30,
+  // 07:30, 09:00, 10:00 — which is what separate congregations sharing a
+  // building look like, and what makes this an ordinary Oppenheimer-5 case
+  // rather than one shul recorded twice.
+  'תומכי תמימים - בית חב"ד': 'הרמב"ם',
 };
 
 /** The source name of the shul this one shares a building with, or null. */
