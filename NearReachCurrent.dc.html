@@ -1,0 +1,284 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&family=Frank+Ruhl+Libre:wght@400;500;700&display=swap">
+  <style>
+    body { margin: 0; }
+    .tnum { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+    a { text-decoration: none; }
+  </style>
+</helmet>
+
+<!--
+  TREATMENT A — CURRENT / BASELINE, rebuilt to match the REAL card's address
+  line exactly (distance, address, "מסלול הליכה", "ניווט ב-Waze" — four things
+  already sharing one flex-wrap row before .near-too-far is even added), not a
+  simplified stand-in. That crowding is real and is part of what this pane is
+  arguing against: the fifth item (the too-far note) is appended into the same
+  wrapping row, which is exactly what ships today.
+
+  [data-reach='too_far'] → opacity:0.62 on the WHOLE card/hero, plus the note
+  in terra-ink inline. Real CSS opacity is used below (not a pre-mixed
+  colour), so the browser's own compositing produces the true result.
+
+  MEASURED (hand-computed, same maths scripts/contrast-audit.js uses — see
+  the written report for the working): the terra-ink note diluted through
+  opacity:0.62 on a white card/page comes out near 2.55:1 in light mode, and
+  in dark mode the same hardcoded terra-ink (never swapped for the amber this
+  codebase already uses elsewhere as its dark-mode cta-ink) compounds with
+  the opacity to roughly 2:1 — both fail WCAG AA's 4.5:1 for 11px text.
+
+  OPTIMISES FOR: zero new work — already built. The baseline the other three
+  are measured against.
+-->
+
+<div dir="rtl" style="width: 375px; background: {{pageBg}}; color: {{ink}}; font-family: 'Assistant', -apple-system, 'Segoe UI', Arial, sans-serif; display: flex; flex-direction: column;">
+
+  <!-- Masthead -->
+  <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border-block-end: 1px solid {{hairline}};">
+    <div style="font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 700; font-size: 19px; letter-spacing: -0.01em;">מניינים · תל אביב</div>
+    <div style="display: flex; align-items: center; gap: 0; border: 1px solid {{seaInk}}; border-radius: 2px; overflow: hidden;">
+      <div style="min-width: 40px; min-height: 40px; display: flex; align-items: center; justify-content: center; padding: 0 9px; font-size: 12px; font-weight: 700; background: {{seaInk}}; color: #FFFFFF;">עב</div>
+      <div style="min-width: 40px; min-height: 40px; display: flex; align-items: center; justify-content: center; padding: 0 9px; font-size: 12px; font-weight: 700; color: {{seaInk}};">EN</div>
+    </div>
+  </div>
+
+  <!-- Zmanim ribbon -->
+  <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 16px; border-block-end: 1px solid {{hairline}}; font-size: 11.5px;">
+    <div style="opacity: 0.72;">ד׳ באלול תשפ״ו · פרשת כי תצא</div>
+    <div style="display: flex; align-items: center; gap: 5px; font-weight: 700;">
+      <span style="opacity: 0.6; font-weight: 400;">שקיעה</span>
+      <span class="tnum">19:03</span>
+    </div>
+  </div>
+
+  <!-- Place / near-me row, resolved -->
+  <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 16px 6px; flex-wrap: wrap;">
+    <div style="display: flex; align-items: center; gap: 7px;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="{{seaInk}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+        <circle cx="12" cy="10" r="3"></circle>
+      </svg>
+      <span style="font-size: 14px; font-weight: 700;">רמת אביב</span>
+    </div>
+    <div style="min-height: 32px; display: flex; align-items: center; padding: 0.15rem 0.7rem; border: 1px solid {{seaInkBorder}}; border-radius: 999px; font-size: 12.5px; color: {{seaInk}};">מצאו מניין לידי</div>
+  </div>
+  <div style="padding: 0 16px 14px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; opacity: 0.6;">5 בתי כנסת · לפי מרחק הליכה</div>
+
+  <!-- Hero — the next minyan by TIME. 18:41 now; מנחה at 18:45; 7 minutes on
+       foot. Unreachable, and it is the single biggest element on the page. -->
+  <div style="padding: 0 16px 16px;">
+    <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.04em; opacity: 0.55; margin-bottom: 9px;">המניין הבא לידך</div>
+
+    <div style="opacity: 0.62; background: {{surface}}; border: 1px solid {{hairline}}; border-radius: 2px; border-block-start: 3px solid {{seaInk}}; padding: 16px; display: flex; flex-direction: column; gap: 8px;">
+      <div style="font-size: 12px; font-weight: 700; color: {{seaInk}};">מנחה</div>
+
+      <div class="tnum" style="font-size: 42px; font-weight: 700; line-height: 1;">18:45</div>
+
+      <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+        <div class="tnum" style="font-size: 12.5px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: {{pillBg}}; color: {{seaInk}};">בעוד 4 דק׳</div>
+      </div>
+
+      <div style="border-block-start: 1px solid {{hairline}}; padding-block-start: 10px; margin-block-start: 2px; display: flex; flex-direction: column; gap: 3px;">
+        <div style="font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: 19px;">נווה קודש</div>
+        <div style="font-size: 12px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+          <span style="opacity: 0.7;">רוקח 12</span>
+          <span style="opacity: 0.7;">כ־7 דק׳ הליכה</span>
+          <span style="opacity: 0.4;" aria-hidden="true">·</span>
+          <a style="display: inline-flex; align-items: center; gap: 4px; color: {{seaInk}}; font-weight: 700;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="8" cy="7" rx="2.1" ry="3" transform="rotate(-15 8 7)"></ellipse><ellipse cx="16" cy="15" rx="2.1" ry="3" transform="rotate(15 16 15)"></ellipse></svg>
+            מסלול הליכה
+          </a>
+          <span style="opacity: 0.4;" aria-hidden="true">·</span>
+          <a style="color: {{ink}}; font-weight: 600; opacity: 0.85;">ניווט ב־Waze</a>
+          <span style="color: #AD5634; font-size: 11px; font-weight: 700;">· לא תספיקו להגיע</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div style="display: flex; flex-direction: column; gap: 8px; padding: 0 16px 18px;">
+
+    <!-- 1. reachable -->
+    <div style="background: {{surface}}; border: 1px solid {{hairline}}; border-radius: 2px; padding: 13px 14px; display: flex; flex-direction: column; gap: 9px;">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+        <div style="display: flex; flex-direction: column; gap: 2px;">
+          <div style="font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: 18px;">היכל חיים</div>
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; flex-wrap: wrap;">
+            <span style="opacity: 0.7;">אופנהיימר 5</span>
+            <span style="opacity: 0.4;" aria-hidden="true">·</span>
+            <span style="opacity: 0.7;">כ־3 דק׳</span>
+            <a style="display: inline-flex; align-items: center; gap: 4px; color: {{seaInk}}; font-weight: 700;">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="8" cy="7" rx="2.1" ry="3" transform="rotate(-15 8 7)"></ellipse><ellipse cx="16" cy="15" rx="2.1" ry="3" transform="rotate(15 16 15)"></ellipse></svg>
+              מסלול הליכה
+            </a>
+            <span style="opacity: 0.4;" aria-hidden="true">·</span>
+            <a style="color: {{ink}}; font-weight: 600; opacity: 0.85;">Waze</a>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 3px;">
+          <div class="tnum" style="font-size: 20px; font-weight: 700; line-height: 1;">18:50</div>
+          <div style="font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 999px; background: {{pillBg}}; color: {{seaInk}};">מנחה</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; border-block-start: 1px solid {{hairlineSoft}}; padding-block-start: 8px;">
+        <div style="font-size: 10.5px; padding: 2px 8px; border-radius: 2px; border: 1px solid {{seaInk}}; color: {{seaInk}}; font-weight: 700;">עדות המזרח</div>
+        <div style="font-size: 10px; color: {{inkQuiet}};">נבדק 12.8.26</div>
+      </div>
+    </div>
+
+    <!-- 2. TOO FAR — marginal, 1-minute miss. Note crammed into the same
+         wrapping row as distance + walk link + Waze: on 375px this pushes
+         the row to three lines and the note is easy to miss inside the wrap. -->
+    <div style="opacity: 0.62; background: {{surface}}; border: 1px solid {{hairline}}; border-radius: 2px; padding: 13px 14px; display: flex; flex-direction: column; gap: 9px;">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+        <div style="display: flex; flex-direction: column; gap: 2px;">
+          <div style="font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: 18px;">הרמב״ם</div>
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; flex-wrap: wrap;">
+            <span style="opacity: 0.7;">ברודצקי 19</span>
+            <span style="opacity: 0.4;" aria-hidden="true">·</span>
+            <span style="opacity: 0.7;">כ־6 דק׳</span>
+            <a style="display: inline-flex; align-items: center; gap: 4px; color: {{seaInk}}; font-weight: 700;">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="8" cy="7" rx="2.1" ry="3" transform="rotate(-15 8 7)"></ellipse><ellipse cx="16" cy="15" rx="2.1" ry="3" transform="rotate(15 16 15)"></ellipse></svg>
+              מסלול הליכה
+            </a>
+            <span style="opacity: 0.4;" aria-hidden="true">·</span>
+            <a style="color: {{ink}}; font-weight: 600; opacity: 0.85;">Waze</a>
+            <span style="color: #AD5634; font-size: 11px; font-weight: 700;">· לא תספיקו להגיע</span>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 3px;">
+          <div class="tnum" style="font-size: 20px; font-weight: 700; line-height: 1;">18:46</div>
+          <div style="font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 999px; background: {{pillBg}}; color: {{seaInk}};">מנחה</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; border-block-start: 1px solid {{hairlineSoft}}; padding-block-start: 8px;">
+        <div style="font-size: 10.5px; padding: 2px 8px; border-radius: 2px; border: 1px solid {{seaInk}}; color: {{seaInk}}; font-weight: 700;">אשכנז</div>
+        <div style="font-size: 10px; color: {{inkQuiet}};">נבדק 3.8.26</div>
+      </div>
+    </div>
+
+    <!-- 3. reachable -->
+    <div style="background: {{surface}}; border: 1px solid {{hairline}}; border-radius: 2px; padding: 13px 14px; display: flex; flex-direction: column; gap: 9px;">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+        <div style="display: flex; flex-direction: column; gap: 2px;">
+          <div style="font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: 18px;">תהילת אביב</div>
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; flex-wrap: wrap;">
+            <span style="opacity: 0.7;">שרגא פרידמן 1</span>
+            <span style="opacity: 0.4;" aria-hidden="true">·</span>
+            <span style="opacity: 0.7;">כ־9 דק׳</span>
+            <a style="display: inline-flex; align-items: center; gap: 4px; color: {{seaInk}}; font-weight: 700;">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="8" cy="7" rx="2.1" ry="3" transform="rotate(-15 8 7)"></ellipse><ellipse cx="16" cy="15" rx="2.1" ry="3" transform="rotate(15 16 15)"></ellipse></svg>
+              מסלול הליכה
+            </a>
+            <span style="opacity: 0.4;" aria-hidden="true">·</span>
+            <a style="color: {{ink}}; font-weight: 600; opacity: 0.85;">Waze</a>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 3px;">
+          <div class="tnum" style="font-size: 20px; font-weight: 700; line-height: 1;">19:05</div>
+          <div style="font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 999px; background: {{pillBg}}; color: {{seaInk}};">מנחה</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; border-block-start: 1px solid {{hairlineSoft}}; padding-block-start: 8px;">
+        <div style="font-size: 10.5px; padding: 2px 8px; border-radius: 2px; border: 1px solid {{seaInk}}; color: {{seaInk}}; font-weight: 700;">עדות המזרח</div>
+        <div style="font-size: 10px; color: {{inkQuiet}};">נבדק 12.8.26</div>
+      </div>
+    </div>
+
+    <!-- 4. TOO FAR — clearly, not marginal -->
+    <div style="opacity: 0.62; background: {{surface}}; border: 1px solid {{hairline}}; border-radius: 2px; padding: 13px 14px; display: flex; flex-direction: column; gap: 9px;">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+        <div style="display: flex; flex-direction: column; gap: 2px;">
+          <div style="font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: 18px;">אוהל יוסף יצחק</div>
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; flex-wrap: wrap;">
+            <span style="opacity: 0.7;">חיים לבנון 30</span>
+            <span style="opacity: 0.4;" aria-hidden="true">·</span>
+            <span style="opacity: 0.7;">כ־13 דק׳</span>
+            <a style="display: inline-flex; align-items: center; gap: 4px; color: {{seaInk}}; font-weight: 700;">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="8" cy="7" rx="2.1" ry="3" transform="rotate(-15 8 7)"></ellipse><ellipse cx="16" cy="15" rx="2.1" ry="3" transform="rotate(15 16 15)"></ellipse></svg>
+              מסלול הליכה
+            </a>
+            <span style="opacity: 0.4;" aria-hidden="true">·</span>
+            <a style="color: {{ink}}; font-weight: 600; opacity: 0.85;">Waze</a>
+            <span style="color: #AD5634; font-size: 11px; font-weight: 700;">· לא תספיקו להגיע</span>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 3px;">
+          <div class="tnum" style="font-size: 20px; font-weight: 700; line-height: 1;">18:50</div>
+          <div style="font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 999px; background: {{pillBg}}; color: {{seaInk}};">מנחה</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; border-block-start: 1px solid {{hairlineSoft}}; padding-block-start: 8px;">
+        <div style="font-size: 10.5px; padding: 2px 8px; border-radius: 2px; border: 1px solid {{seaInk}}; color: {{seaInk}}; font-weight: 700;">חב״ד</div>
+        <div style="font-size: 10px; color: {{inkQuiet}};">נבדק 5.7.26</div>
+      </div>
+    </div>
+
+    <!-- 5. reachable -->
+    <div style="background: {{surface}}; border: 1px solid {{hairline}}; border-radius: 2px; padding: 13px 14px; display: flex; flex-direction: column; gap: 9px;">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+        <div style="display: flex; flex-direction: column; gap: 2px;">
+          <div style="font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: 18px;">אוניברסיטת תל אביב · צימבליסטה</div>
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; flex-wrap: wrap;">
+            <span style="opacity: 0.7;">חיים לבנון 42</span>
+            <span style="opacity: 0.4;" aria-hidden="true">·</span>
+            <span style="opacity: 0.7;">כ־15 דק׳</span>
+            <a style="display: inline-flex; align-items: center; gap: 4px; color: {{seaInk}}; font-weight: 700;">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="8" cy="7" rx="2.1" ry="3" transform="rotate(-15 8 7)"></ellipse><ellipse cx="16" cy="15" rx="2.1" ry="3" transform="rotate(15 16 15)"></ellipse></svg>
+              מסלול הליכה
+            </a>
+            <span style="opacity: 0.4;" aria-hidden="true">·</span>
+            <a style="color: {{ink}}; font-weight: 600; opacity: 0.85;">Waze</a>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 3px;">
+          <div class="tnum" style="font-size: 20px; font-weight: 700; line-height: 1;">19:10</div>
+          <div style="font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 999px; background: {{pillBg}}; color: {{seaInk}};">מנחה</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; border-block-start: 1px solid {{hairlineSoft}}; padding-block-start: 8px;">
+        <div style="font-size: 10.5px; padding: 2px 8px; border-radius: 2px; border: 1px solid {{seaInk}}; color: {{seaInk}}; font-weight: 700;">אשכנז</div>
+        <div style="font-size: 10px; color: {{inkQuiet}};">נבדק 3.8.26</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div style="border-block-start: 1px solid {{hairline}}; padding: 14px 16px 18px; display: flex; flex-direction: column; gap: 5px;">
+    <div style="font-size: 10.5px; color: {{inkQuiet75}}; line-height: 1.5;">כל הזמנים מחושבים לפי מיקום בית הכנסת, ומתעדכנים מדי יום עם השקיעה.</div>
+    <div style="font-size: 10.5px; color: {{inkQuiet75}};">זמן לא ידוע מוצג כלא ידוע — לעולם לא ננחש.</div>
+  </div>
+
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{"dark":{"editor":"boolean","default":false,"section":"State"}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dark = this.props.dark ?? false;
+    return {
+      pageBg:        dark ? '#0B131C' : '#FFFFFF',
+      surface:       dark ? '#161E26' : '#FFFFFF',
+      ink:           dark ? '#F2EFE7' : '#12181C',
+      inkQuiet:      dark ? '#9EA09E' : '#6C7072',
+      inkQuiet75:    dark ? '#B8B8B4' : '#4D5255',
+      hairline:      dark ? 'rgba(242,239,231,0.14)' : 'rgba(18,24,28,0.12)',
+      hairlineSoft:  dark ? 'rgba(242,239,231,0.10)' : 'rgba(18,24,28,0.10)',
+      seaInk:        dark ? '#0A6C82' : '#0A6C82',
+      seaInkBorder:  dark ? 'rgba(10,108,130,0.55)' : 'rgba(10,108,130,0.4)',
+      pillBg:        dark ? 'rgba(14,147,174,0.16)' : 'rgba(14,147,174,0.12)'
+    };
+  }
+}
+</script>
+</body>
+</html>

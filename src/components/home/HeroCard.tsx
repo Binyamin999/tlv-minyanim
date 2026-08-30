@@ -101,8 +101,6 @@ export function HeroCard({
             // edge, so the name sits left and its own address sits right.
             <p className="hero-address">
               <span {...foreignAttrs(address)}>{bidiText(address.text)}</span>
-              <span className="near-slot tabular" hidden />
-              <span className="near-too-far" hidden />
             </p>
           ) : (
             <span />
@@ -140,6 +138,12 @@ export function HeroCard({
           </a>
         </span>
         </div>
+        {/* Its own line, for the reason given in ShulCard: the address line
+            is already full. */}
+        <p className="hero-near">
+          <span className="near-slot tabular" hidden />
+          <span className="near-too-far" hidden />
+        </p>
         {nusachim.length > 0 ? (
           <p className="hero-nusach">{nusachim.map((n) => t.nusachim[n]).join(' · ')}</p>
         ) : null}

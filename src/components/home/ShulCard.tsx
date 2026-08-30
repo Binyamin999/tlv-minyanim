@@ -160,12 +160,21 @@ function CardShell({
               {name.text}
             </Link>
           </h3>
-          <p className="card-address">
+          {/* Its OWN line, not the address line.
+              The address line already carries the address, a walking-directions
+              link and a Waze link. Adding distance to it took every card from
+              three wrapped lines to five and grew each card from 136px to
+              186px at 375px wide — a third taller, on every row, the moment
+              anyone used the feature. Measured before and after, in a real
+              browser at the width the client reviews at. */}
+          <p className="card-near">
             {/* Filled by NearMe and hidden until then. Present in the server
                 HTML rather than created at runtime so the row never reflows
                 around a node that appears from nowhere. */}
             <span className="near-slot tabular" hidden />
             <span className="near-too-far" hidden />
+          </p>
+          <p className="card-address">
             {address ? <span {...foreignAttrs(address)}>{bidiText(address.text)}</span> : null}
             {address ? (
               <span className="card-dot" aria-hidden="true">

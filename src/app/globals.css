@@ -2019,7 +2019,16 @@ body {
 /* ------------------------------------------------------------------ */
 
 /* The control sits inside the place line, after the neighbourhood name: the
-   page says where the data is, then offers to measure from where you are. */
+   page says where the data is, then offers to measure from where you are.
+
+   EVERY COLOUR HERE IS A MODE-AWARE TOKEN, never a raw --tlv-* primitive.
+   This block shipped using --tlv-sea-ink and --tlv-terra-ink directly, which
+   are the LIGHT-mode values of those roles — so dark mode inherited a dark
+   cyan on a near-black card and produced 21 contrast failures at 2.81:1,
+   against zero in light. `--accent-ink` and `--cta-ink` are the same roles
+   with a night value, and `.walk-link` two hundred lines up was already using
+   them correctly. Measured with scripts/contrast-audit.js against the real
+   page in the real too_far state, in both modes. */
 .near-me {
   display: inline-flex;
   flex-wrap: wrap;
@@ -2032,18 +2041,18 @@ body {
    asks the reader for something, and dressing it as a quiet link would hide
    that. Still small: the board is the page, not this. */
 .near-me-button {
-  border: 1px solid color-mix(in srgb, var(--tlv-sea-ink) 40%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-ink) 45%, transparent);
   border-radius: 999px;
   background: transparent;
   padding: 0.15rem 0.7rem;
-  color: var(--tlv-sea-ink);
+  color: var(--accent-ink);
   font: inherit;
   font-size: 0.8125rem;
   cursor: pointer;
 }
 
 .near-me-button:hover {
-  background: color-mix(in srgb, var(--tlv-sea-ink) 8%, transparent);
+  background: color-mix(in srgb, var(--accent-ink) 10%, transparent);
 }
 
 .near-me-button:disabled {
@@ -2057,22 +2066,48 @@ body {
   font-size: 0.75rem;
 }
 
-/* The measured distance, once it exists. Tabular so a column of walking times
-   lines up the way every other number on this site does. */
-.near-slot {
-  color: var(--tlv-sea-ink);
+/* The near-me row: distance, and the warning when there is one. Its own line
+   on both the card and the hero — see the note in ShulCard for what sharing
+   the address line cost. Empty and invisible until someone taps, so it adds
+   nothing to a page nobody has used the feature on. */
+.card-near,
+.hero-near {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 0;
 }
 
-/* "You won't get there in time." This is the only place on the site that
-   contradicts a time it is showing, so it carries the warning colour rather
-   than the quiet one — but the row stays, because a bike or a willingness to
-   arrive late is the reader's call and not ours to make by hiding it. */
+/* :empty rather than a hidden attribute on the row: the two spans inside are
+   always present in the server HTML, so the row exists but has no visible
+   content until it is filled. Without this it would reserve a line's worth of
+   gap on every card, forever, for text that may never arrive. */
+.card-near:empty,
+.hero-near:empty {
+  display: none;
+}
+
+/* The measured distance, once it exists. */
+.near-slot {
+  color: var(--accent-ink);
+}
+
+/* "You won't get there in time." The only place on the site that contradicts
+   a time it is showing, so it carries the CTA register rather than the quiet
+   one — terracotta by day, amber by night. The row stays, because a bike or a
+   willingness to arrive late is the reader's call and not ours to make by
+   hiding it. */
 .near-too-far {
-  color: var(--tlv-terra-ink);
+  color: var(--cta-ink);
   font-size: 0.75rem;
 }
 
-/* A row you cannot reach recedes without disappearing. */
+/* A row you cannot reach recedes without disappearing.
+
+   0.72 rather than 0.62: the dimming compounds with every colour inside the
+   card, and at 0.62 it was pulling the warning itself toward its background —
+   diluting the one label whose whole job is to be read. */
 [data-reach='too_far'] {
-  opacity: 0.62;
+  opacity: 0.72;
 }
