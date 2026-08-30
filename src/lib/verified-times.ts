@@ -256,6 +256,13 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
    * Shabbat is not here yet — the user is supplying it separately, so those
    * days stay unknown rather than being claimed empty.
    *
+   * THE WEEKLY REPRINT IS CONFIRMED, not assumed. The user was asked directly
+   * whether this board is reprinted each week and said yes, so the windows
+   * below are what the source vouches for rather than a cautious guess. That
+   * matters: without it, the three times that DO hold all year would have been
+   * arguable, and the shul reading unknown from Saturday would have been an
+   * over-claim of caution rather than an accurate one.
+   *
    * NINE weekday minyanim, three of each service, which is the densest board
    * in the database.
    *
@@ -390,7 +397,9 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
    *
    * Only the Arvit forces a window — 19:10 is three minutes before shkia on
    * 2026-04-15. The rest of the block takes one anyway, because it is printed
-   * on the same board and vouched for exactly as long.
+   * on the same board and vouched for exactly as long — and the user has
+   * confirmed these boards are reprinted weekly, so that is the literal scope
+   * of the claim rather than a cautious reading of it.
    */
   'אוניברסיטת ת"א - צימבוליסטה': {
     verifiedAt: '2026-08-30',

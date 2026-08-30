@@ -1972,9 +1972,24 @@ body {
 /* The Hebrew address beneath the transliterated one on the English page. It is
    a second reading of the same fact, not a second fact, so it sits smaller and
    quieter — present for the visitor who needs to show it to somebody, without
-   competing with the line above it. */
-.address-native {
-  margin-block-start: 0.15rem;
+   competing with the line above it.
+
+   TWO class names, not one. `.card .address` already sets a font-size and is
+   two classes; a single-class rule loses to it however far down the file it
+   sits, so the size silently did nothing while the opacity beside it worked —
+   which is exactly the shape of bug that looks fine in the source and wrong on
+   screen. Measured, not assumed: computed font-size was 15px, identical to the
+   line above.
+
+   The pair reads as one block, so the first line drops its bottom margin when
+   a native line follows it. Sibling margins collapse to the larger of the two,
+   so zeroing the native's top alone would have left the full gap. */
+.address:has(+ .address-native) {
+  margin-block-end: 0;
+}
+
+.address.address-native {
+  margin-block: 0.15rem 0.75rem;
   font-size: 0.9em;
   opacity: 0.75;
 }
