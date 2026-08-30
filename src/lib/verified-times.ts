@@ -134,6 +134,75 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
    * Shabbat rows go too rather than being kept as though they were a different
    * kind of fact. They are recorded below instead.
    */
+  /**
+   * בית חב"ד קניון רמת אביב — level −1 of the mall. Not in the municipal
+   * export at all; see `added-synagogues.ts`.
+   *
+   * The Shacharit changes mid-week, which is what the validity columns were
+   * built for: 10:30 through Monday, 10:00 from Tuesday. Two rows with
+   * adjacent windows rather than one row that is wrong half the time.
+   *
+   * `Mincha 3:30` is stored as 15:30. Mincha at 03:30 does not exist, so only
+   * one clock convention is possible and reading it is not guessing — the
+   * shift is recorded in clockNormalisation either way.
+   *
+   * Arvit is at צאת הכוכבים and is HELD. That anchor names two different
+   * times: the luach's 8.5° value, about 19:45 tonight, and the nightfall a
+   * shul actually davens at, shkia + 13 to 25 — so 19:20 to 19:32. Publishing
+   * the first would list this minyan up to twenty-five minutes late. One
+   * question at the shul turns it into a rule.
+   */
+  'בית חב"ד קניון רמת אביב': {
+    verifiedAt: '2026-08-30',
+    verifiedBy: 'notice_board',
+    minyanim: [
+      {
+        service: 'shacharit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '10:30' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-08-31',
+        note: 'Sunday and Monday; from Tuesday it is 10:00',
+      },
+      {
+        service: 'shacharit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '10:00' },
+        validFrom: '2026-09-01',
+        validUntil: '2026-09-04',
+        note: 'from Tuesday',
+      },
+      {
+        service: 'mincha',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '15:30' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'the board writes 3:30; Mincha at 03:30 does not exist',
+      },
+    ],
+    held: [
+      {
+        what: 'Arvit at צאת הכוכבים',
+        why:
+          'The anchor names two different times. On a luach צאת הכוכבים is the ' +
+          'stringent 8.5° value — 19:45 tonight — while a shul saying "at tzeit" ' +
+          'usually means shkia + 13 to 25, so 19:20 to 19:32. Resolving the ' +
+          'shul\'s word against the luach\'s definition would list this minyan up ' +
+          'to twenty-five minutes late, which is the failure this project exists ' +
+          'to refuse. Ask how many minutes after shkia and it becomes a rule.',
+      },
+      {
+        what: 'that the minyan is on level −1 of the mall',
+        why:
+          'Recorded on the synagogue in added-synagogues.ts, but nothing ' +
+          'displays it — the schema has no field for where inside a building a ' +
+          'minyan meets. Second time this has come up; היכל חיים has a minyan ' +
+          'בסוכה with the same problem. Two rows is closer to worth a column.',
+      },
+    ],
+  },
+
   'היכל חיים': {
     verifiedAt: '2026-08-30',
     verifiedBy: 'notice_board',

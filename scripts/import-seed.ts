@@ -37,6 +37,7 @@ import {
   curatedNusachim,
 } from '../src/lib/curation.ts';
 import { verifiedFor, type VerifiedSynagogue } from '../src/lib/verified-times.ts';
+import { ADDED, isLocatable, type AddedSynagogue } from '../src/lib/added-synagogues.ts';
 import type { Nusach } from '../src/lib/taxonomy.ts';
 import { slugCandidates } from '../src/lib/slug.ts';
 import { parseMinyanTimes } from '../src/minyan-times/index.ts';
@@ -191,6 +192,56 @@ function assertImportable(minyan: ParsedMinyan, context: string): asserts minyan
   }
 }
 
+/**
+ * A synagogue the municipal export does not contain.
+ *
+ * Keyed on `slug` rather than `gis_source_id`, which is null for these — the
+ * slug is authored in `added-synagogues.ts` precisely so there is a stable
+ * natural key to upsert against.
+ */
+async function upsertAdded(
+  client: PoolClient,
+  added: AddedSynagogue & { lat: number; lng: number },
+): Promise<number> {
+  const verified = verifiedFor(added.nameHe);
+  const { rows } = await client.query<{ id: number }>(
+    `INSERT INTO synagogues (
+       gis_source_id, slug, name_he, name_en, address_he, address_en,
+       location, nusachim, movement, style, status, last_verified_at, verified_by
+     ) VALUES (
+       NULL, $1, $2, $3, $4, NULL,
+       ST_SetSRID(ST_MakePoint($5, $6), 4326)::geography,
+       $7::nusach[], $8::movement, NULL, $9::synagogue_status, $10::timestamptz, $11
+     )
+     ON CONFLICT (slug) DO UPDATE SET
+       name_he          = EXCLUDED.name_he,
+       name_en          = EXCLUDED.name_en,
+       address_he       = EXCLUDED.address_he,
+       location         = EXCLUDED.location,
+       nusachim         = EXCLUDED.nusachim,
+       movement         = EXCLUDED.movement,
+       status           = EXCLUDED.status,
+       last_verified_at = EXCLUDED.last_verified_at,
+       verified_by      = EXCLUDED.verified_by,
+       updated_at       = now()
+     RETURNING id`,
+    [
+      added.slug,
+      added.nameHe,
+      added.nameEn,
+      added.addressHe,
+      added.lng, // (x, y) = (lng, lat). Backwards puts the shul in the sea.
+      added.lat,
+      added.nusachim,
+      added.movement ?? null,
+      added.status,
+      verified ? verified.verifiedAt : null,
+      verified ? verified.verifiedBy : null,
+    ],
+  );
+  return rows[0]!.id;
+}
+
 /* ------------------------------------------------------------------ */
 /* Verified times — a person reading the sign outranks the GIS layer   */
 /* ------------------------------------------------------------------ */
@@ -262,6 +313,10 @@ function verifiedToParsed(verified: VerifiedSynagogue, nameHe: string): ImportMi
 
 interface Summary {
   synagogues: number;
+  /** Hand-added, i.e. not present in the municipal export. */
+  added: number;
+  /** Hand-added but missing coordinates, so not inserted. Reported by name. */
+  skippedNoLocation: string[];
   /** How many had their times read off the sign rather than from the GIS layer. */
   verified: number;
   minyanim: number;
@@ -527,6 +582,8 @@ async function main(): Promise<void> {
 
   const summary: Summary = {
     synagogues: 0,
+    added: 0,
+    skippedNoLocation: [],
     verified: 0,
     minyanim: 0,
     publishable: 0,
@@ -621,6 +678,30 @@ async function main(): Promise<void> {
         summary.issuesByCode[issue.code] = (summary.issuesByCode[issue.code] ?? 0) + 1;
       }
     }
+
+    // Synagogues the municipality does not list. Same transaction, so the run
+    // is still all-or-nothing.
+    for (const added of ADDED) {
+      if (!isLocatable(added)) {
+        // Skipped rather than thrown: the other sixteen are fine and breaking
+        // the whole import over one missing coordinate pair would be worse.
+        // Reported by name so it is not a silent omission.
+        summary.skippedNoLocation.push(added.nameHe);
+        continue;
+      }
+      const id = await upsertAdded(client, added);
+      const verified = verifiedFor(added.nameHe);
+      const rows = verified ? verifiedToParsed(verified, added.nameHe) : [];
+      await writeMinyanim(client, id, rows);
+      summary.added += 1;
+      summary.synagogues += 1;
+      summary.minyanim += rows.length;
+      for (const minyan of rows) {
+        summary.byKind[minyan.time.kind] = (summary.byKind[minyan.time.kind] ?? 0) + 1;
+        if (minyan.needsReview.length === 0 && minyan.service !== null) summary.publishable += 1;
+        else summary.needsReview += 1;
+      }
+    }
   });
 
   report(summary);
@@ -658,6 +739,13 @@ function report(summary: Summary): void {
             .join(', ')
     }`,
   ];
+
+  if (summary.skippedNoLocation.length > 0) {
+    console.log('\nHand-added, NOT imported — no coordinates:');
+    for (const name of summary.skippedNoLocation) {
+      console.log(`  ${name} — a walking link needs an exact point; none was guessed`);
+    }
+  }
 
   if (summary.unmappedNusach.length > 0) {
     lines.push('', 'Nusach left NULL rather than guessed:');
