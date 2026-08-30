@@ -213,7 +213,21 @@ const he = {
   /** The card's honest-unknown line. Quiet on purpose — see CLAUDE.md. */
   unknownTimeCard: 'בזמן — שעה טרם פורסמה',
   /** Beside it. Not a link: there is nowhere honest to send anyone yet. */
-  knowTheTime: 'יודעים את השעה? עדכנו',
+  /**
+   * The footer of an honest-unknown card, where a known card carries its
+   * verified stamp.
+   *
+   * A STATEMENT, not an imperative. It read "יודעים את השעה? עדכנו" — telling
+   * the reader to do something they cannot do, since there is no gabbai portal
+   * to do it through. Quieting the styling reduced the misread; the wording
+   * still commanded.
+   *
+   * It also must not repeat `unknownTimeCard` directly above it, which already
+   * says the time was never published. So it says the other true thing: nobody
+   * has asked the synagogue. That names what would change the answer without
+   * asking the reader to be the one who changes it.
+   */
+  timeNotCheckedWithShul: 'לא אומת מול בית הכנסת',
   /** The compact staleness stamp on a card footer. */
   verifiedShort: (date: string) => `נבדק ${date}`,
   /** The two footer lines. */
@@ -379,7 +393,7 @@ const en: typeof he = {
   filterServicesLabel: 'Filter by service',
   filterNusachLabel: 'Filter by nusach',
   unknownTimeCard: 'At the proper time — not yet published',
-  knowTheTime: 'Know the time? Tell us',
+  timeNotCheckedWithShul: 'Not checked with the synagogue',
   verifiedShort: (date: string) => `Checked ${date}`,
   footerComputed:
     'Every time is computed for the synagogue\u2019s own location and moves with the sunset each day.',

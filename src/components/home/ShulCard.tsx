@@ -103,10 +103,12 @@ export function UnknownShulCard({
       t={t}
       value={<p className="card-unknown">{t.unknownTimeCard}</p>}
       footerEnd={
-        // Deliberately not a link. There is nowhere honest to send anyone yet
-        // — the gabbai portal does not exist — and a dead link would be a
-        // worse lie than a line of text. The artboard draws it as text too.
-        <p className="card-cta">{t.knowTheTime}</p>
+        // Deliberately not a link, and no longer phrased as one. There is
+        // nowhere honest to send anyone until the gabbai portal exists, and a
+        // dead link would be a worse lie than a line of text — but so is text
+        // that tells the reader to act. This states where our knowledge stops
+        // instead, which is what this slot holds on every other card.
+        <p className="card-cta">{t.timeNotCheckedWithShul}</p>
       }
     />
   );

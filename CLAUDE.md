@@ -275,7 +275,11 @@ in the CTA colour next to a real walking link, so it read as tappable on most
 rows of the default view — and it is not a link, because there is nowhere honest
 to send anyone until the gabbai portal exists. It takes the same treatment as
 the verified stamp it replaces in that slot: a note about what we know, not an
-invitation. The wording still reads as an imperative and is worth revisiting.
+invitation. The wording is a statement for the same reason — it read
+`יודעים את השעה? עדכנו`, telling a reader to do something no mechanism exists
+for. It now says `לא אומת מול בית הכנסת`, which names what would change the
+answer without asking the reader to be the one who changes it, and does not
+repeat the unknown value directly above it.
 
 Re-measure with `scripts/contrast-audit.js` in a browser, never by hand from the
 source — real contrast depends on what is painted behind the label.
