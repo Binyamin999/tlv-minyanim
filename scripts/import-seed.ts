@@ -203,7 +203,11 @@ function assertImportable(minyan: ParsedMinyan, context: string): asserts minyan
  * belongs to — only a person standing in front of the sign can. Widening the
  * parser's own type would invite someone to try.
  */
-type ImportMinyan = ParsedMinyan & { nusach?: Nusach | null };
+type ImportMinyan = ParsedMinyan & {
+  nusach?: Nusach | null;
+  validFrom?: string | null;
+  validUntil?: string | null;
+};
 
 /**
  * Turn a hand-verified record into the same shape the parser produces, so
@@ -244,6 +248,10 @@ function verifiedToParsed(verified: VerifiedSynagogue, nameHe: string): ImportMi
       // Absent unless this minyan is its own group. Null is "the house
       // minyan", not "unknown" — see migration 0003.
       nusach: entry.nusach ?? null,
+      // How long the source vouched for this time. Null on both means no
+      // stated end, which is a rule or a clock face that holds year round.
+      validFrom: entry.validFrom ?? null,
+      validUntil: entry.validUntil ?? null,
     } satisfies ImportMinyan;
   });
 }
@@ -394,12 +402,12 @@ async function writeMinyanim(
          synagogue_id, service, day_type, season, kind,
          fixed_time, anchor, offset_minutes, sign_basis, raw_text,
          raw_segment, raw_field, source_index, clock_normalisation, needs_review,
-         nusach
+         nusach, valid_from, valid_until
        ) VALUES (
          $1, $2::service, $3::day_type, $4::season, $5::minyan_time_kind,
          $6::time, $7::zman, $8, $9::sign_basis, $10,
          $11, $12, $13, $14::jsonb, $15::jsonb,
-         $16::nusach
+         $16::nusach, $17::date, $18::date
        )
        ON CONFLICT (synagogue_id, day_type, source_index) DO UPDATE SET
          service             = EXCLUDED.service,
@@ -415,6 +423,8 @@ async function writeMinyanim(
          clock_normalisation = EXCLUDED.clock_normalisation,
          needs_review        = EXCLUDED.needs_review,
          nusach              = EXCLUDED.nusach,
+         valid_from          = EXCLUDED.valid_from,
+         valid_until         = EXCLUDED.valid_until,
          updated_at          = now()
        RETURNING id`,
       [
@@ -437,6 +447,8 @@ async function writeMinyanim(
         minyan.clockNormalisation ? JSON.stringify(minyan.clockNormalisation) : null,
         JSON.stringify(minyan.needsReview),
         minyan.nusach ?? null,
+        minyan.validFrom ?? null,
+        minyan.validUntil ?? null,
       ],
     );
     const id = rows[0]?.id;

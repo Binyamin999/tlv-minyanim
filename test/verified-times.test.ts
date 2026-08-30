@@ -56,57 +56,76 @@ describe('לכלל ישראל — the claims each stored time rests on', () => {
 
   it('exists', () => assert.ok(record));
 
-  it('the weekday Mincha clock face is possible on every day of the year', () => {
-    // 14:00 is stored as `fixed`, which is only honest if it lands after
-    // mincha gedola and before shkia on EVERY date — otherwise it is a summer
-    // time masquerading as a rule. This is exactly the check that rules out
-    // storing the 18:55 Mincha, which is shkia + 135 in December.
-    const mincha = record!.minyanim.find(
-      (m) => m.service === 'mincha' && m.dayType === 'weekday',
-    );
-    assert.ok(mincha && mincha.time.kind === 'fixed');
-    const [h, min] = (mincha.time as { time: string }).time.split(':').map(Number);
-    const asMinutes = h! * 60 + min!;
+  /**
+   * The rule that replaced "hold anything not valid year-round".
+   *
+   * A stored clock face makes a claim, and the claim has a scope. Either it
+   * holds every day — in which case it needs no window — or it does not, in
+   * which case it MUST carry one. What is forbidden is the middle: an
+   * unwindowed 18:45 Mincha is shkia + 65 in December and would be shown, with
+   * confidence, all winter.
+   */
+  const clockMinutes = (d: Date) => {
+    const [h, m] = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Jerusalem',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+      .format(d)
+      .split(':')
+      .map(Number);
+    return h! * 60 + m!;
+  };
 
+  const holdsAllYear = (hhmm: string, service: string): boolean => {
+    const [h, m] = hhmm.split(':').map(Number);
+    const at = h! * 60 + m!;
     const start = date('2026-01-01');
     for (let i = 0; i < 365; i++) {
-      const day = addDays(start, i);
-      const z = zmanimFor(TEL_AVIV, day);
-      const clock = (d: Date) => {
-        const s = new Intl.DateTimeFormat('en-GB', {
-          timeZone: 'Asia/Jerusalem',
-          hour: '2-digit',
-          minute: '2-digit',
-        }).format(d);
-        const [hh, mm] = s.split(':').map(Number);
-        return hh! * 60 + mm!;
-      };
+      const z = zmanimFor(TEL_AVIV, addDays(start, i));
+      if (service === 'mincha' && !(at > clockMinutes(z.mincha_gedola) && at < clockMinutes(z.shkia))) {
+        return false;
+      }
+      if (service === 'arvit' && !(at > clockMinutes(z.shkia))) return false;
+    }
+    return true;
+  };
+
+  it('every unwindowed clock face holds on all 365 days', () => {
+    for (const entry of record!.minyanim) {
+      if (entry.time.kind !== 'fixed') continue;
+      if (entry.validUntil) continue; // windowed: it claims only its own week
+      if (entry.service === 'shacharit') continue; // morning does not track shkia
       assert.ok(
-        asMinutes > clock(z.mincha_gedola),
-        `${isoDate(day)}: 14:00 is before mincha gedola`,
+        holdsAllYear(entry.time.time, entry.service),
+        `${entry.service} ${entry.time.time} has no validity window, so it claims ` +
+          'to hold all year — and it does not. Give it a window or hold it back.',
       );
-      assert.ok(asMinutes < clock(z.shkia), `${isoDate(day)}: 14:00 is after shkia`);
     }
   });
 
-  it('the held 18:55 Mincha would NOT survive that check — which is why it is held', () => {
-    // The negative case. If this ever passes, the reason for holding it back
-    // has evaporated and the entry should be revisited.
-    const winter = zmanimFor(TEL_AVIV, date('2026-12-21'));
-    const shkiaMinutes = (() => {
-      const s = new Intl.DateTimeFormat('en-GB', {
-        timeZone: 'Asia/Jerusalem',
-        hour: '2-digit',
-        minute: '2-digit',
-      }).format(winter.shkia);
-      const [hh, mm] = s.split(':').map(Number);
-      return hh! * 60 + mm!;
-    })();
-    assert.ok(18 * 60 + 55 > shkiaMinutes, '18:55 should be after the December shkia');
-    assert.ok(
-      record!.held.some((h) => h.what.includes('18:55')),
-      'and it should be recorded as held',
-    );
+  it('every clock face that does NOT hold all year carries a window', () => {
+    // The negative half, and the one that catches the real mistake. 18:45 is
+    // shkia − 22 this week and shkia + 65 in December.
+    for (const entry of record!.minyanim) {
+      if (entry.time.kind !== 'fixed' || entry.service === 'shacharit') continue;
+      if (holdsAllYear(entry.time.time, entry.service)) continue;
+      assert.ok(
+        entry.validFrom && entry.validUntil,
+        `${entry.service} ${entry.time.time} cannot hold all year and has no window`,
+      );
+    }
+  });
+
+  it('a rule never carries a window — sunset moves and it moves with it', () => {
+    for (const entry of record!.minyanim) {
+      if (entry.time.kind !== 'relative') continue;
+      assert.equal(
+        entry.validUntil,
+        undefined,
+        `${entry.service} is anchored to ${entry.time.anchor} and needs no expiry`,
+      );
+    }
   });
 
   it('the erev-Shabbat Mincha is stored on FRIDAY, not on Shabbat', () => {

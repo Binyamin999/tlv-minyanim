@@ -60,6 +60,15 @@ export interface Minyan {
    * NOT mean unknown.
    */
   nusach: Nusach | null;
+  /**
+   * How long the source vouched for this time, inclusive. Null on both means
+   * no stated end — a rule, or a clock face that holds year round.
+   *
+   * A weekly printed board sets them, and outside the window the time is not
+   * merely stale but WRONG: an 18:45 Mincha is shkia + 65 in December.
+   */
+  validFrom: string | null;
+  validUntil: string | null;
 }
 
 export interface SynagogueWithMinyanim extends Synagogue {
@@ -103,6 +112,8 @@ interface MinyanRow {
   is_publishable: boolean;
   /** This minyan's own nusach, when it is a distinct group. NULL = house minyan. */
   nusach: Nusach | null;
+  valid_from: Date | string | null;
+  valid_until: Date | string | null;
 }
 
 const SYNAGOGUE_COLUMNS = `
@@ -176,7 +187,28 @@ function toMinyan(row: MinyanRow): Minyan {
     isPublishable: row.is_publishable,
     rawSegment: row.raw_segment,
     nusach: row.nusach,
+    validFrom: asIsoDate(row.valid_from),
+    validUntil: asIsoDate(row.valid_until),
   };
+}
+
+/** `date` columns arrive as Date or string depending on the driver's mood. */
+function asIsoDate(value: Date | string | null | undefined): string | null {
+  // `undefined` means the caller's SELECT did not fetch the column — a
+  // different failure from "the column is NULL", and one TypeScript cannot see
+  // because the row type promises a field the query never provided. It cost a
+  // 500 on the homepage while the shul page, whose query did fetch it, was
+  // fine. Tolerate it here AND fetch it there.
+  if (value === null || value === undefined) return null;
+  if (value instanceof Date) {
+    return new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Jerusalem',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(value);
+  }
+  return value.slice(0, 10);
 }
 
 /* ------------------------------------------------------------------ */
@@ -220,7 +252,8 @@ export async function getSynagogueBySlug(slug: string): Promise<SynagogueWithMin
 
   const minyanRows = await query<MinyanRow>(
     `SELECT id, service, day_type, season, kind, fixed_time, anchor, offset_minutes,
-            sign_basis, raw_text, raw_segment, needs_review, is_publishable, nusach
+            sign_basis, raw_text, raw_segment, needs_review, is_publishable, nusach,
+            valid_from, valid_until
        FROM minyanim
       WHERE synagogue_id = $1
       ORDER BY day_type, source_index`,
@@ -257,7 +290,8 @@ export async function listSynagoguesWithMinyanim(): Promise<SynagogueWithMinyani
 
   const minyanRows = await query<MinyanRow & { synagogue_id: number }>(
     `SELECT synagogue_id, id, service, day_type, season, kind, fixed_time, anchor,
-            offset_minutes, sign_basis, raw_text, raw_segment, needs_review, is_publishable
+            offset_minutes, sign_basis, raw_text, raw_segment, needs_review, is_publishable,
+            nusach, valid_from, valid_until
        FROM minyanim
       WHERE is_publishable
       ORDER BY synagogue_id, day_type, source_index`,

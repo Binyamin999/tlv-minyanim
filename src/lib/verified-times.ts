@@ -47,6 +47,19 @@ export interface VerifiedMinyan {
    * row would make every ordinary minyan look like a separate congregation.
    */
   nusach?: Nusach;
+  /**
+   * How long the source vouched for this time.
+   *
+   * Set BOTH for a clock face off a board that is reprinted — כלל ישראל's
+   * weekday times change every week, and outside their week they are not
+   * merely stale but wrong: an 18:45 Mincha is shkia + 65 in December.
+   *
+   * Leave both unset for a rule, or for a clock face that genuinely holds all
+   * year. `shkia − 20` never expires because sunset moves with it, and a 14:00
+   * Mincha is after mincha gedola and before shkia on all 365 days.
+   */
+  validFrom?: string;
+  validUntil?: string;
   /** Why this reading is safe, where that is not obvious from the time itself. */
   note?: string;
 }
@@ -108,72 +121,105 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
     verifiedAt: '2026-08-28',
     verifiedBy: 'notice_board',
     minyanim: [
-      // Morning times do not track shkia, so a clock face is the rule.
-      { service: 'shacharit', dayType: 'weekday', time: { kind: 'fixed', time: '06:15' } },
-      { service: 'shacharit', dayType: 'weekday', time: { kind: 'fixed', time: '08:00' } },
+      /* ------------------------------------------------------------------
+         THIS WEEK'S WEEKDAY BOARD — 2026-08-30 to 2026-09-04.
+
+         The whole weekday block is reprinted weekly and every line of it
+         moved: Shacharit 6:15 -> 6:20, evening Mincha 18:55 -> 18:45, and an
+         Arvit appeared that the previous reading did not have. So all four
+         carry a window and expire with it.
+
+         Not a rule in disguise: the evening Mincha was shkia − 17 one week and
+         shkia − 22 the next, so there is no offset to extract. Outside the
+         window these rows stop resolving and the shul reads as honestly
+         unknown, which is what it will be until the next board is read.
+         ------------------------------------------------------------------ */
+      {
+        service: 'shacharit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '06:20' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'first minyan',
+      },
+      {
+        service: 'shacharit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '08:00' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'second minyan',
+      },
       {
         service: 'mincha',
         dayType: 'weekday',
         time: { kind: 'fixed', time: '14:00' },
-        // Labelled "Mincha Gedola" on the board, but that is descriptive — the
-        // zman of that name is 13:15 in August and 12:04 in December, neither
-        // of which is 14:00. Storing it as an anchor would have been wrong by
-        // three quarters of an hour. Safe as a clock face because 14:00 falls
-        // after mincha gedola and before shkia on every day of the year.
-        note: 'early Mincha; the board\'s "Mincha Gedola" is a label, not the zman',
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        // Would survive without a window — 14:00 is after mincha gedola and
+        // before shkia on all 365 days — but it is printed on the same weekly
+        // board as the rest and is vouched for exactly as long. Claiming more
+        // for it than the source does would be inventing durability.
+        note: 'first Mincha; the board calls it Mincha Gedola, which is a label',
       },
+      {
+        service: 'mincha',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '18:45' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'second Mincha; the board calls it Mincha Ketana, which is a label',
+      },
+      {
+        service: 'arvit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '19:25' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        // The first weekday Arvit anywhere in the data. Until this the only
+        // Arvit we held was a Kabbalat Shabbat, so `?service=arvit` on a
+        // Sunday answered "in 5 days".
+        note: 'follows the second Mincha',
+      },
+
+      /* --- Shabbat and erev Shabbat: no window, these are rules or hold --- */
       {
         service: 'shacharit',
         dayType: 'shabbat',
         time: { kind: 'fixed', time: '08:00' },
-        // No nusach: this is the house minyan. The sheet heads its column
-        // `מניין אשכנזי-ספרדי`, which is two rites in one minyan and has no
-        // single enum value — and inventing one would claim something the sign
-        // does not say. Leaving it as the house minyan claims nothing.
         note: 'the אשכנזי-ספרדי minyan — the house minyan',
       },
       {
         service: 'shacharit',
         dayType: 'shabbat',
         time: { kind: 'fixed', time: '07:30' },
-        // The second minyan, and the reason `minyanim.nusach` exists. `תימני`
-        // unqualified, because that is what the sheet says; baladi or shami
-        // would be us choosing.
         nusach: 'teimani',
         note: 'the תימני minyan, half an hour before the house minyan',
       },
       {
         service: 'mincha',
-        // FRIDAY, not Saturday. The sheet's `ליל שבת` block is separate from
-        // its `יום השבת` block, so this is stated rather than inferred — which
-        // matters, because the timeline used to guess the day from the anchor
-        // and put this minyan a day late.
         dayType: 'erev_shabbat',
         time: { kind: 'relative', anchor: 'shkia', offsetMinutes: -20 },
-        // Erev Shabbat Mincha, printed 18:50 against that week's shkia of
-        // 19:10. Identical in both minyanim's columns, and the same offset the
-        // weekday board uses, which is why this is read as the rule rather
-        // than as one week's clock face. Supersedes the GIS layer's
-        // `candle_lighting − 10min`, which resolved twelve minutes early.
+        // A RULE, so no window: sunset moves and the time moves with it. This
+        // is the difference the validity columns exist to record.
         note: 'erev Shabbat; corrects the GIS reading of candle_lighting − 10',
       },
       {
         service: 'arvit',
         dayType: 'erev_shabbat',
         time: { kind: 'relative', anchor: 'shkia', offsetMinutes: 0 },
-        // קבלת שבת וערבית, printed 19:10 against a shkia of 19:10. Identical
-        // in both columns.
         note: 'Kabbalat Shabbat, at shkia',
       },
     ],
     held: [
       {
-        what: 'weekday Mincha 18:55 ("Mincha Ketana")',
+        what: 'a weekday time that outlives its week',
         why:
-          'Cannot be a year-round clock face: 18:55 is shkia − 17 in late August ' +
-          'and shkia + 135 in December, and a Mincha two hours after sunset does ' +
-          'not exist. So it follows a rule or changes seasonally, and the sign ' +
-          'does not say which. Ask the gabbai, or compare three weekly sheets.',
+          'RESOLVED, and worth keeping as the record of how. The evening Mincha ' +
+          'read 18:55 on 2026-08-26 and 18:45 on 2026-08-30 — shkia − 17 then ' +
+          'shkia − 22 — so there is no offset to extract, and the user confirmed ' +
+          'the board is reprinted weekly. The times are stored with a validity ' +
+          'window instead of being held or being claimed year-round.',
       },
       {
         what: 'סליחות 00:40',

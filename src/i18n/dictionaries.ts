@@ -156,6 +156,8 @@ const he = {
   unconfirmedReasons: {
     unknown_offset: 'המקור כתב "בזמן" בלבד',
     erev_shabbat_time_unstated: 'ערב שבת — התפילה זזה לכניסת שבת, והמקור לא ציין לאיזו שעה',
+    // The board this came from is reprinted every week, and its week has ended.
+    validity_expired: 'הלוח שהשעה נלקחה ממנו התחלף — צריך לקרוא אותו מחדש',
     erev_yom_tov_time_unstated: 'ערב חג — התפילה זזה, והמקור לא ציין לאיזו שעה',
     yom_tov_schedule_unknown: 'חג — לוח הזמנים של החג אינו ידוע לנו',
     anchor_not_on_this_date: 'הזמן שהכלל נשען עליו לא קיים ביום הזה',
@@ -357,6 +359,7 @@ const en: typeof he = {
     unknown_offset: 'The source said only "at the proper time"',
     erev_shabbat_time_unstated:
       'Erev Shabbat — the service moves to candle lighting, and the source never said to when',
+    validity_expired: 'The board this came from has been replaced — it needs reading again',
     erev_yom_tov_time_unstated:
       'Erev Yom Tov — the service moves, and the source never said to when',
     yom_tov_schedule_unknown: 'Yom Tov — we do not have the festival schedule',

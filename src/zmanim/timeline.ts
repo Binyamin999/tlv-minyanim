@@ -57,6 +57,12 @@ export interface TimelineMinyan {
   season: Season | null;
   time: MinyanTime;
   isPublishable: boolean;
+  /**
+   * How long the source vouched for this time, as ISO dates. Null on both
+   * means no stated end — a rule, or a clock face that holds year round.
+   */
+  validFrom?: string | null;
+  validUntil?: string | null;
 }
 
 export interface TimelineSynagogue {
@@ -115,6 +121,16 @@ export type UnconfirmedReason =
   /** Erev Shabbat: Mincha and Arvit move to candle lighting and the source
    *  never said to when. The shul davens; the time is not ours to state. */
   | { code: 'erev_shabbat_time_unstated' }
+  /**
+   * The source vouched for this time only until a date now past.
+   *
+   * A weekly printed board is the case: כלל ישראל's evening Mincha was 18:55
+   * one week and 18:45 the next, and by December an 18:45 Mincha would be
+   * shkia + 65. Showing last week's number would be worse than showing
+   * nothing, so the row falls back to the honest unknown — this synagogue
+   * davens this service, and we no longer know when.
+   */
+  | { code: 'validity_expired' }
   /** Erev Yom Tov, same reasoning as erev Shabbat. */
   | { code: 'erev_yom_tov_time_unstated'; yomTov: string }
   /** A Yom Tov schedule is neither the weekday nor the Shabbat column. */
@@ -206,6 +222,16 @@ function isCandleLightingRule(time: MinyanTime): boolean {
  *                          when the Kfar Shalem import lands.
  */
 function basePlacement(minyan: TimelineMinyan, service: Service, window: DayWindow): Placement {
+  // A stated lifetime outranks every other rule here: whatever day the row
+  // belongs to, it cannot be resolved on a date the source did not vouch for.
+  const on = isoDate(window.date);
+  if (
+    (minyan.validFrom && on < minyan.validFrom) ||
+    (minyan.validUntil && on > minyan.validUntil)
+  ) {
+    return { at: 'unconfirmed', reason: { code: 'validity_expired' } };
+  }
+
   const column = minyan.dayType;
 
   if (column === 'weekday') {
@@ -336,9 +362,13 @@ const REASON_RANK: Record<UnconfirmedReason['code'], number> = {
   yom_tov_schedule_unknown: 0,
   erev_yom_tov_time_unstated: 1,
   erev_shabbat_time_unstated: 2,
-  anchor_not_on_this_date: 3,
-  zman_not_computable: 4,
-  unknown_offset: 5,
+  // Ranks above the generic ones because it is the most actionable thing we
+  // can say: not "the source was vague" but "we had this and it ran out".
+  // Somebody can fix it by walking past the shul.
+  validity_expired: 3,
+  anchor_not_on_this_date: 4,
+  zman_not_computable: 5,
+  unknown_offset: 6,
 };
 
 export function nextMinyanim(options: NextMinyanimOptions): Timeline {

@@ -146,6 +146,7 @@ psql -v ON_ERROR_STOP=1 -d tlv_minyanim -f db/migrations/0002_shiurim_and_parse_
 psql -v ON_ERROR_STOP=1 -d tlv_minyanim -f db/migrations/0003_minyan_nusach.sql
 psql -v ON_ERROR_STOP=1 -d tlv_minyanim -f db/migrations/0004_erev_shabbat_day_type.sql
 psql -v ON_ERROR_STOP=1 -d tlv_minyanim -f db/migrations/0005_synagogue_nusachim.sql
+psql -v ON_ERROR_STOP=1 -d tlv_minyanim -f db/migrations/0006_minyan_validity.sql
 ```
 
 Put `DATABASE_URL=postgres:///tlv_minyanim` in `.env.local`, then:

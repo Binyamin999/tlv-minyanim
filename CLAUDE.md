@@ -476,6 +476,19 @@ about.
 free text renders one language's sentence inside the other's page. It says *how*
 rather than *who* — the file is public.
 
+**A clock time can be true for a week and false afterwards.** כלל ישראל
+reprints its weekday board weekly — its evening Mincha read 18:55 one week and
+18:45 the next, `shkia − 17` then `shkia − 22`, so there is no offset to
+extract. `valid_from` / `valid_until` on `minyanim` record how long the source
+vouched for a time. Outside the window the row stops resolving and the shul
+reads as honestly unknown (`validity_expired`), because 18:45 in December is
+`shkia + 65` and showing it would be worse than showing nothing.
+
+**Null on both means no stated end — and that is what a rule is.** `shkia − 20`
+never expires because sunset moves with it. Never give a window to a relative
+time, and never omit one from a clock face that cannot hold all year: there is
+a test for each direction.
+
 **`held` is part of the record.** A sign carries more than we can store, and
 writing down what was seen and deliberately not kept — with the reason — is what
 stops the next reader thinking the sign was shorter than it was. Same instinct
