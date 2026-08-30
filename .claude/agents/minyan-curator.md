@@ -83,7 +83,9 @@ The repo is public: github.com/Binyamin999/tlv-minyanim. `data/seed-*.json` is
 gitignored and carries gabbai phone numbers; it must never be committed, logged
 or served.
 
-**כלל ישראל is done — the list is eleven, not twelve.** Its times were read off
+**Four of seventeen now carry a verified date; the outreach list is thirteen.**
+Three notice boards have been read — כלל ישראל, היכל חיים and בית חב"ד קניון רמת
+אביב — and a fourth shul shares כלל ישראל's board rather than having its own. **כלל ישראל was the first.** Its times were read off
 the notice board and its printed Shabbat sheet, and it is the first verified
 record in the database.
 
@@ -100,3 +102,22 @@ a time holds the same offset across three different shkias, it is a rule.
 Still open at כלל ישראל, all held rather than guessed: the weekday 18:55 Mincha,
 the Shabbat-afternoon Mincha, motzei Shabbat Arvit, the plag minyan, and the Elul
 selichot at 00:40 (which is also not one of the three services we model).
+
+**One notice board can serve two synagogues.** `SHARED_BOARD` points one record at
+another's, so a single reading updates both. Never resolve this by pasting a copy:
+these are weekly-reprinted times, so a copy agrees on the day it is made and
+diverges the following Sunday — and the side nobody re-read keeps publishing under
+its own `last_verified_at`, looking freshly checked.
+
+**The question that unblocks a tzeit Arvit: "how many minutes after shkia?"** A
+board saying `צאת הכוכבים` is held, because that word means the luach's 8.5° value
+(≈ shkia + 39) *and* the nightfall a shul actually davens at (shkia + 13 to 25).
+Asked once at בית חב"ד קניון רמת אביב, the answer was twenty — publishing the
+luach's reading would have listed it eighteen minutes late. Add this to the outreach
+script beside the rule-or-reprint question.
+
+**Ask whether a service happens at all, not only when.** `no_minyanim_on` is the
+only way to state an absence, and only a person can state one — the GIS can fail to
+mention Shabbat, which is the unknown, but can never say a shul is closed. A mall
+shul read `אין שעות ידועות` for Shabbat, telling readers to go looking for a minyan
+that does not exist.

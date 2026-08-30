@@ -114,3 +114,17 @@ produced confident wrong numbers.
 **The band's fallback ground is dark** (`--band-ground`). A pale one puts the
 white wordmark at 1.4:1 before the photograph decodes. Three artboards had it
 wrong; a fallback nobody can read is not a fallback.
+
+**A signed number inside Hebrew text renders backwards, and that is correct
+Unicode.** `קומה -1` displayed as `1-`: a hyphen-minus is bidi class ES, and with a
+space before and a digit after it becomes a neutral, which takes the paragraph's
+RTL and lands to the right of its own digit. Wrap the sign and digits together in
+`<bdi dir="ltr">` — `@/components/BidiText`. **A bare `<bdi>` does not fix it**:
+that is `dir="auto"`, `-1` has no strong character for auto to detect, so auto falls
+back to RTL and you have the same bug with more markup. This is the "mixed Hebrew,
+English and digits on one line" case `CLAUDE.md` warns about, seen in the wild.
+
+**English shul pages carry a second address line** — the Hebrew, under the
+transliterated one, smaller and at 75% (`.address-native`). One line to say to a
+driver, one to hold up to somebody. Cards get the transliteration alone; they have
+no room. Worth re-checking at 375px, since it pushes the tag row down.

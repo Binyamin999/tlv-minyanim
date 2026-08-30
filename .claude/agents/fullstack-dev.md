@@ -86,3 +86,21 @@ free text for one commit and rendered English inside the Hebrew page.
 **A stale `next start` will serve HTML pointing at a CSS hash the rebuild
 replaced**, and the page renders with no styles at all. If that happens, check
 `lsof -ti:3100` before believing it is a regression.
+
+**Bidi logic lives in `src/lib/bidi.ts`, its markup in
+`src/components/BidiText.tsx`.** Split deliberately: Node's type stripping cannot
+load a `.tsx` file at all, so anything worth testing has to sit outside the JSX.
+`קומה -1` renders as `1-` without it — see the designer notes for why that is
+Unicode behaving correctly.
+
+**`synagogues.no_minyanim_on` distinguishes "there are none" from "we do not
+know".** An empty day block must not print `אין שעות ידועות` when the shul has told
+us it holds nothing — that sends a reader looking for a minyan that does not exist.
+The block is still drawn; only the sentence changes. Empty array means nothing was
+stated, which is still the unknown.
+
+**An array of a custom Postgres enum needs `::text[]` in the SELECT.**
+node-postgres ships parsers for built-in array types only, so a bare `nusach[]` or
+`day_type[]` arrives as the literal string `'{ashkenaz,teimani}'` while TypeScript
+believes it is an array — a clean typecheck and a 500 at render. Both columns in
+`SYNAGOGUE_COLUMNS` are cast for this reason.

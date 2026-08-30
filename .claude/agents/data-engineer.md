@@ -108,3 +108,34 @@ meant. Never copy the synagogue's nusach down onto its rows.
 **`DayType` has `erev_shabbat`, and the parser must never produce it.** The GIS
 shabbat column merges Friday and Saturday, so a row from there stays `shabbat`
 and is held back. Only a source that separates them can set it.
+
+**Every curation table is keyed on the name AS THE SOURCE WRITES IT** — `NAME_HE`,
+`NAME_EN`, `MOVEMENT`, `NUSACHIM_SERVED`, `STREET_EN`, `SHARED_BOARD`,
+`SAME_BUILDING_AS`, and `CURATED` in `slug.ts`. That is what lets a re-import find
+the row again after the name has been corrected. Feeding a *curated* name into any
+of these silently misses — done once, to slug generation, and the shul came out
+`byt-chbd-rmt-byb-g`.
+
+**Synagogues exist that the municipal export has never heard of.** 484 rows is a
+floor, not a census. `added-synagogues.ts` carries them: authored permanent slug
+instead of `gis_source_id`, coordinates required (no geocoding, no guessed point —
+a locationless row is skipped and reported).
+
+**GIS coordinates can be confidently wrong, not just imprecise.** One shul's point
+was 329 m from where it davens — a different building and a four-minute walk to the
+wrong door. `SAME_BUILDING_AS` moves it onto another shul's point *by reference*, so
+a later correction to that point carries; the importer throws if the name does not
+resolve rather than leaving it misplaced. `SHARED_BOARD` does the same for times.
+**Never copy the numbers.** A copy of a weekly-expiring time diverges the moment the
+next board is read, and the stale side keeps its own `last_verified_at`.
+
+**Addresses transliterate, never translate** — same rule as names. `רידינג` is
+Reading, the power station, not "the reading street". `STREET_EN` is keyed on the
+STREET, since the house number needs no translation and אופנהיימר 5 is two
+congregations. Uncurated returns null and the Hebrew shows through, which is true;
+machine-transliterated unpointed Hebrew is nonsense in Latin letters and worse than
+the Hebrew.
+
+**The GIS separates street from number with two spaces** — `נח  20` is a
+fixed-width export artefact, not part of the address. Folded at import so the
+stored value is the one the slug, the curation keys and schema.org all agree on.

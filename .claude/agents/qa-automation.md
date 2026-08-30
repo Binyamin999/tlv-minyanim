@@ -89,3 +89,19 @@ hebcal's 20 fails six tests; switching tzeit to 7.083° fails ten; reverting
 **A stale `next start` on the port serves the previous build's HTML**, whose CSS
 hash no longer exists — the page renders completely unstyled. Check
 `lsof -ti:<port>` before reporting a regression.
+
+**`node --test` cannot load a `.tsx` file, and cannot parse JSX inside a `.ts`
+one.** Type stripping only strips types; it does not transform. So do not reach for
+`react-dom/server` in a unit test — put the decision in a plain `.ts` module that
+returns data, test that, and let the component be the thin part. `src/lib/bidi.ts`
+and `src/components/BidiText.tsx` are the worked example.
+
+**More known-good break probes**, each verified to fail:
+- Turn a shared verified record into a copy (`{ ...record }`) — the identity
+  assertion fails. Sharing must be by reference or weekly times drift apart.
+- Point `SAME_BUILDING_AS` at a name the source does not use — the import throws
+  with the fix in the message, rather than leaving the shul at the wrong address.
+- Put a day in `no_minyanim_on` that the same record lists a minyan on — a record
+  cannot both claim a day is empty and fill it.
+- Claim `no_minyanim_on` for a shul that merely has no rows for that day — absence
+  is stated, never inferred from silence.
