@@ -1,6 +1,7 @@
 export type {
   ClockNormalisation,
   DayType,
+  MinyanLocation,
   MinyanTime,
   ParseContext,
   ParsedMinyan,

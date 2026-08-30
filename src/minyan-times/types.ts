@@ -76,6 +76,20 @@ export type DayType = 'weekday' | 'erev_shabbat' | 'shabbat';
 export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 /**
+ * Where in the building a minyan meets.
+ *
+ * A code rather than free text, for the reason `verified_by` is one: every
+ * page renders in both languages, and a Hebrew sentence stored here would
+ * print inside the English layout. Only values a real notice board has used —
+ * the vocabulary grows when a board demands it, and anything unmapped stays
+ * held rather than being approximated to the nearest available word.
+ *
+ * NULL is not "unknown". For almost every synagogue there is one room, and
+ * saying nothing about it is correct.
+ */
+export type MinyanLocation = 'upstairs' | 'downstairs' | 'sukkah';
+
+/**
  * Monday and Thursday: the two weekdays that carry קריאת התורה, so the service
  * runs longer and many shuls start it earlier. Named because it is the reason
  * this concept exists at all, and it will recur at hundreds of the 484.

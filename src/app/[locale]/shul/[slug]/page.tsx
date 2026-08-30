@@ -329,6 +329,16 @@ function MinyanRow({
             {t.onDays(minyan.daysOfWeek.map((d) => t.weekdaysShort[d]).join(' '))}
           </span>
         ) : null}
+        {/* Which room, when the board named one. Two Arvits an hour apart in
+            one building are two different staircases to a stranger, and the
+            times alone cannot say which. NULL prints nothing, because for a
+            one-room shul there is nothing to say. */}
+        {minyan.location ? (
+          <span className="minyan-where">
+            {minyan.service || minyan.season || minyan.daysOfWeek.length > 0 ? ' · ' : null}
+            {t.locations[minyan.location]}
+          </span>
+        ) : null}
         {/* Only when this minyan is its own group. The house minyan carries no
             nusach here and must not be labelled with the synagogue's — every
             row would then read as a separate congregation, which is the

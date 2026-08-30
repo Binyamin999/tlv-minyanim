@@ -2000,3 +2000,10 @@ body {
 .minyan-days {
   color: color-mix(in srgb, var(--ink) 62%, transparent);
 }
+
+/* Which room a minyan meets in, beside the service name. Same treatment as the
+   weekday qualifier next to it: it narrows the row rather than competing with
+   the time. */
+.minyan-where {
+  color: color-mix(in srgb, var(--ink) 62%, transparent);
+}

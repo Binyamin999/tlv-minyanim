@@ -9,7 +9,8 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { SHARED_BOARD, VERIFIED, verifiedFor } from '../src/lib/verified-times.ts';
+import { getDictionary } from '../src/i18n/dictionaries.ts';
+ import { SHARED_BOARD, VERIFIED, verifiedFor } from '../src/lib/verified-times.ts';
 import { TEL_AVIV, addDays, isoDate, resolveOnDate, zmanimFor } from '../src/zmanim/index.ts';
 import type { JerusalemDate } from '../src/zmanim/index.ts';
 
@@ -295,5 +296,46 @@ describe('a shared notice board', () => {
     for (const from of Object.keys(SHARED_BOARD)) {
       assert.equal(VERIFIED[from], undefined, `${from} both shares a board and has one`);
     }
+  });
+});
+
+/**
+ * Where in the building, as a code rather than a sentence.
+ *
+ * Two Arvits an hour apart in one building are two different staircases to
+ * somebody who has never been. The times alone cannot say which.
+ */
+describe('a stated room', () => {
+  it('is a code, so each language prints its own word', () => {
+    // The `verified_by` lesson, applied before it can be repeated: free text
+    // here renders one language's sentence inside the other's page.
+    const he = getDictionary('he');
+    const en = getDictionary('en');
+    for (const record of Object.values(VERIFIED)) {
+      for (const entry of record.minyanim) {
+        if (!entry.location) continue;
+        assert.ok(he.locations[entry.location], `no Hebrew for ${entry.location}`);
+        assert.ok(en.locations[entry.location], `no English for ${entry.location}`);
+        assert.notEqual(he.locations[entry.location], en.locations[entry.location]);
+      }
+    }
+  });
+
+  it('distinguishes תהילת אביב\'s two evening Arvits', () => {
+    const record = VERIFIED['תהילת אביב'];
+    assert.ok(record);
+    const evening = record.minyanim
+      .filter((m) => m.service === 'arvit' && m.location)
+      .map((m) => `${m.time.kind === 'fixed' ? m.time.time : '?'} ${m.location}`);
+    assert.deepEqual(evening, ['19:35 upstairs', '20:00 downstairs']);
+  });
+
+  it('is absent on almost every row, and that is correct', () => {
+    // NULL is not unknown. Most shuls have one room, and inventing a code for
+    // it would be the same mistake as inventing an offset for בזמן.
+    const all = Object.values(VERIFIED).flatMap((r) => r.minyanim);
+    const stated = all.filter((m) => m.location);
+    assert.equal(stated.length, 3, 'only what boards actually said');
+    assert.ok(all.length > 20 && stated.length < all.length / 4);
   });
 });

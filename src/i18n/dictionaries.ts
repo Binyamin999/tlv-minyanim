@@ -98,6 +98,9 @@ const he = {
   // board writes just the letter. Saturday is שבת, never ז׳.
   weekdaysShort: ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'שבת'] as [string, string, string, string, string, string, string],
   onDays: (days: string) => `ימים ${days}`,
+  // The board's own words. A room is a code precisely so each language can
+  // print its own — see the minyan_location enum.
+  locations: { upstairs: 'למעלה', downstairs: 'למטה', sukkah: 'בסוכה' },
   // Not the same sentence as the one above, and deliberately so: that one says
   // we are missing data, this one says the synagogue told us there is nothing.
   noServicesHeld: 'לא מתקיימות תפילות',
@@ -338,6 +341,7 @@ const en: typeof he = {
   noKnownTimes: 'No times known',
   weekdaysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
   onDays: (days: string) => days,
+  locations: { upstairs: 'upstairs', downstairs: 'downstairs', sukkah: 'in the sukkah' },
   noServicesHeld: 'No services held',
   unconfirmedHeading: 'Needs checking — not confirmed',
   unconfirmedNote: 'The source is unclear and these have not been confirmed. Do not rely on them.',

@@ -45,6 +45,7 @@ import { slugCandidates } from '../src/lib/slug.ts';
 import { parseMinyanTimes } from '../src/minyan-times/index.ts';
 import type {
   DayType,
+  MinyanLocation,
   ParsedMinyan,
   Weekday,
   ParseIssue,
@@ -272,6 +273,8 @@ type ImportMinyan = ParsedMinyan & {
   validUntil?: string | null;
   /** Empty = every day of the day type. The parser never sets this. */
   daysOfWeek?: readonly Weekday[];
+  /** Where in the building. NULL = nothing stated, not unknown. */
+  location?: MinyanLocation | null;
 };
 
 /**
@@ -320,6 +323,9 @@ function verifiedToParsed(verified: VerifiedSynagogue, nameHe: string): ImportMi
       // Which weekdays this one runs on, where the board says. Empty means all
       // of them — the normal case, and not an unknown.
       daysOfWeek: entry.daysOfWeek ?? [],
+      // Null unless the board named a room. For a one-room shul that is the
+      // truth, not a gap — see the enum's comment.
+      location: entry.location ?? null,
     } satisfies ImportMinyan;
   });
 }
@@ -489,12 +495,12 @@ async function writeMinyanim(
          synagogue_id, service, day_type, season, kind,
          fixed_time, anchor, offset_minutes, sign_basis, raw_text,
          raw_segment, raw_field, source_index, clock_normalisation, needs_review,
-         nusach, valid_from, valid_until, days_of_week
+         nusach, valid_from, valid_until, days_of_week, location
        ) VALUES (
          $1, $2::service, $3::day_type, $4::season, $5::minyan_time_kind,
          $6::time, $7::zman, $8, $9::sign_basis, $10,
          $11, $12, $13, $14::jsonb, $15::jsonb,
-         $16::nusach, $17::date, $18::date, $19::smallint[]
+         $16::nusach, $17::date, $18::date, $19::smallint[], $20::minyan_location
        )
        ON CONFLICT (synagogue_id, day_type, source_index) DO UPDATE SET
          service             = EXCLUDED.service,
@@ -513,6 +519,7 @@ async function writeMinyanim(
          valid_from          = EXCLUDED.valid_from,
          valid_until         = EXCLUDED.valid_until,
          days_of_week        = EXCLUDED.days_of_week,
+         location            = EXCLUDED.location,
          updated_at          = now()
        RETURNING id`,
       [
@@ -541,6 +548,7 @@ async function writeMinyanim(
         // restriction — the GIS layer has no way to state one — so this is only
         // ever non-empty for a verified record.
         minyan.daysOfWeek ?? [],
+        minyan.location ?? null,
       ],
     );
     const id = rows[0]?.id;

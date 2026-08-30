@@ -11,6 +11,7 @@
 import { query } from '@/db/client';
 import type {
   DayType,
+  MinyanLocation,
   Weekday,
   MinyanTime,
   ReviewReason,
@@ -66,6 +67,8 @@ export interface Minyan {
    * is the normal case and does NOT mean unknown.
    */
   daysOfWeek: readonly Weekday[];
+  /** Where in the building. NULL = nothing stated, which is not unknown. */
+  location: MinyanLocation | null;
   /** Verbatim slice of the source field. Provenance, not display. */
   rawSegment: string;
   /**
@@ -130,6 +133,7 @@ interface MinyanRow {
   valid_from: Date | string | null;
   valid_until: Date | string | null;
   days_of_week: number[];
+  location: MinyanLocation | null;
 }
 
 const SYNAGOGUE_COLUMNS = `
@@ -214,6 +218,7 @@ function toMinyan(row: MinyanRow): Minyan {
     // forgets the column would otherwise hand the timeline an undefined and
     // 500 at `.includes`. Empty is also the honest value — every day.
     daysOfWeek: (row.days_of_week ?? []) as Weekday[],
+    location: row.location ?? null,
   };
 }
 
@@ -278,7 +283,7 @@ export async function getSynagogueBySlug(slug: string): Promise<SynagogueWithMin
   const minyanRows = await query<MinyanRow>(
     `SELECT id, service, day_type, season, kind, fixed_time, anchor, offset_minutes,
             sign_basis, raw_text, raw_segment, needs_review, is_publishable, nusach,
-            valid_from, valid_until, days_of_week
+            valid_from, valid_until, days_of_week, location
        FROM minyanim
       WHERE synagogue_id = $1
       ORDER BY day_type, source_index`,
@@ -316,7 +321,7 @@ export async function listSynagoguesWithMinyanim(): Promise<SynagogueWithMinyani
   const minyanRows = await query<MinyanRow & { synagogue_id: number }>(
     `SELECT synagogue_id, id, service, day_type, season, kind, fixed_time, anchor,
             offset_minutes, sign_basis, raw_text, raw_segment, needs_review, is_publishable,
-            nusach, valid_from, valid_until, days_of_week
+            nusach, valid_from, valid_until, days_of_week, location
        FROM minyanim
       WHERE is_publishable
       ORDER BY synagogue_id, day_type, source_index`,

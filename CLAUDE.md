@@ -507,6 +507,23 @@ from it stays unknown. היכל חיים has no Shabbat rows at all and claims n
 somebody still has to photograph that sheet. A test refuses a record that both
 claims a day empty and lists a minyan on it.
 
+**Two congregations can share a building AND a schedule.** כלל ישראל and
+בית חב"ד רמת אביב ג' sit at one point with identical times, which looks exactly
+like one shul entered twice. It is not: confirmed with someone who davens in
+the neighbourhood. The data alone cannot tell those two cases apart, so this
+was never a question the schema could answer — do not merge them on the
+evidence of the rows. `SHARED_BOARD` and `SAME_BUILDING_AS` express both facts
+by reference, never as copied values, so one reading of the weekly board
+updates both and neither can drift.
+
+**Where in the building is a code, not prose** — `minyanim.location`, currently
+`upstairs | downstairs | sukkah`. Same reason `verified_by` is a code: every
+page renders in two languages, and a Hebrew sentence stored here prints inside
+the English layout. Only values a real notice board has used; the vocabulary
+grows when one demands it, and anything unmapped stays `held` rather than being
+approximated to the nearest available word. NULL is not unknown — most shuls
+have one room and saying nothing is correct.
+
 **`held` is part of the record.** A sign carries more than we can store, and
 writing down what was seen and deliberately not kept — with the reason — is what
 stops the next reader thinking the sign was shorter than it was. Same instinct

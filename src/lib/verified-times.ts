@@ -33,7 +33,13 @@
  * `parse_issues`: the failure is data.
  */
 import { TORAH_READING_DAYS } from '../minyan-times/index.ts';
-import type { DayType, MinyanTime, Service, Weekday } from '../minyan-times/index.ts';
+import type {
+  DayType,
+  MinyanLocation,
+  MinyanTime,
+  Service,
+  Weekday,
+} from '../minyan-times/index.ts';
 import type { Nusach } from './taxonomy.ts';
 
 export interface VerifiedMinyan {
@@ -75,6 +81,11 @@ export interface VerifiedMinyan {
    * for a time we know.
    */
   daysOfWeek?: readonly Weekday[];
+  /**
+   * Where in the building, when the board says. Omitted means nothing was
+   * stated, which for a one-room shul is the truth rather than a gap.
+   */
+  location?: MinyanLocation;
   /** Why this reading is safe, where that is not obvious from the time itself. */
   note?: string;
 }
@@ -240,14 +251,6 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
     // minyan here — stated by the shul, not inferred from an absence of rows.
     noMinyanimOn: ['erev_shabbat', 'shabbat'],
     held: [
-      {
-        what: 'that the minyan is on level −1 of the mall',
-        why:
-          'Recorded on the synagogue in added-synagogues.ts, but nothing ' +
-          'displays it — the schema has no field for where inside a building a ' +
-          'minyan meets. Second time this has come up; היכל חיים has a minyan ' +
-          'בסוכה with the same problem. Two rows is closer to worth a column.',
-      },
     ],
   },
 
@@ -350,7 +353,8 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
         time: { kind: 'fixed', time: '19:35' },
         validFrom: '2026-08-30',
         validUntil: '2026-09-04',
-        note: 'second Arvit, marked למעלה (upstairs)',
+        location: 'upstairs',
+        note: 'second Arvit',
       },
       {
         service: 'arvit',
@@ -358,19 +362,12 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
         time: { kind: 'fixed', time: '20:00' },
         validFrom: '2026-08-30',
         validUntil: '2026-09-04',
-        note: 'third Arvit, marked למטה (downstairs)',
+        location: 'downstairs',
+        note: 'third Arvit',
       },
     ],
     noMinyanimOn: [],
     held: [
-      {
-        what: 'למעלה / למטה — which room each Arvit meets in',
-        why:
-          'Both are stored as minyanim and neither says where. The schema has no ' +
-          'field for a room, which is now the third time it has come up: the mall ' +
-          "shul's level −1 and היכל חיים's minyan בסוכה are the others. Three rows " +
-          'is past the point where a column would have been cheaper.',
-      },
       {
         what: 'נץ / הודו / פלג as anchors rather than labels',
         why:
@@ -490,7 +487,8 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
         time: { kind: 'fixed', time: '06:50' },
         validFrom: '2026-08-30',
         validUntil: '2026-09-04',
-        note: 'second minyan, בסוכה — see held: there is nowhere to display that',
+        location: 'sukkah',
+        note: 'second minyan',
       },
       {
         service: 'shacharit',
@@ -522,14 +520,6 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
     // Nothing stated about Shabbat either way, so it stays unknown.
     noMinyanimOn: [],
     held: [
-      {
-        what: 'that the 06:50 minyan meets בסוכה',
-        why:
-          'True, useful to a visitor, and unstorable: there is no field for ' +
-          'where within a building a minyan meets. Kept in the row\'s note so it ' +
-          'is not lost, but nothing displays it. A `location_note` on minyanim ' +
-          'would fix it and is not worth a migration for one row yet.',
-      },
       {
         what: 'the GIS layer\'s Shabbat Shacharit, 07:30 and 08:30',
         why:
@@ -694,6 +684,13 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
 /** The verified record for a synagogue, or null if nobody has read its board. */
 /**
  * One notice board, two synagogues.
+ *
+ * SETTLED, not provisional. Two records at one point with identical times look
+ * exactly like one shul entered twice, and the user — who davens in this
+ * neighbourhood — was asked and confirmed they are two different congregations
+ * sharing a building and a schedule. Do not merge them, and do not re-open it
+ * on the evidence of the data alone: that evidence cannot tell the two apart,
+ * which is why it was a question for a person.
  *
  * `בית חב"ד רמת אביב ג'` keeps the same times as `כלל ישראל`, in the same
  * building — reported by the user, and independently corroborated by the
