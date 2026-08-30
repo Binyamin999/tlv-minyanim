@@ -6,6 +6,7 @@ import type { Dictionary } from '@/i18n/dictionaries';
 import type { Locale } from '@/i18n/locales';
 import { walkingDirectionsUrl, wazeUrl } from '@/lib/directions';
 import { foreignAttrs, localisedAddress, localisedName } from '@/lib/synagogue-display';
+import { relativeDayLabel } from '@/lib/resolved-times';
 import { warmthPercent } from '@/lib/sunset-warmth';
 import { displayNusach, type Nusach } from '@/lib/taxonomy';
 import type { TimelineSynagogue, UnconfirmedMinyan, UpcomingMinyan } from '@/zmanim';
@@ -21,6 +22,7 @@ export function ShulCard({
   row,
   nusach,
   warmth,
+  now,
   locale,
   t,
 }: {
@@ -30,9 +32,17 @@ export function ShulCard({
    *  part of placing a time. */
   nusach: Nusach | null;
   warmth: number;
+  /** Passed in rather than read from the clock here, so every row on one
+   *  render agrees about what "today" is. */
+  now: Date;
   locale: Locale;
   t: Dictionary;
 }) {
+  // Null when the time is today's, which is most rows. The label only appears
+  // where it changes the answer — a bare 13:00 on a Friday evening is Sunday's
+  // Mincha, and without this it reads exactly like one starting shortly.
+  const day = relativeDayLabel(row.instant, now, locale, t);
+
   return (
     <CardShell
       synagogue={row.synagogue}
@@ -44,6 +54,7 @@ export function ShulCard({
         <>
           <p className="card-clock">
             <span className="time tabular">{row.clock}</span>
+            {day ? <span className="card-day">{day}</span> : null}
           </p>
           <p className="card-service-pill">{t.services[row.service]}</p>
         </>

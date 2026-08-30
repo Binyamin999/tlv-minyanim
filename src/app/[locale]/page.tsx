@@ -227,13 +227,19 @@ export default async function LocaleHome({
             a visual grid rather than a <table>: every row already says its own
             name, time and nusach, and a header row with no table semantics
             behind it is noise in a screen reader. */}
-        <div className="table-head" aria-hidden="true">
-          <span>{t.columns.time}</span>
-          <span>{t.columns.service}</span>
-          <span>{t.columns.synagogue}</span>
-          <span>{t.columns.nusach}</span>
-          <span>{t.columns.verified}</span>
-        </div>
+        {/* Nothing to head when nothing follows. `?service=arvit` has exactly
+            one match and it is the hero, so the board below is empty — and a
+            header row with no rows under it reads as a page that failed to
+            load rather than as a page with one result. */}
+        {cards.length + unknownCards.length > 0 ? (
+          <div className="table-head" aria-hidden="true">
+            <span>{t.columns.time}</span>
+            <span>{t.columns.service}</span>
+            <span>{t.columns.synagogue}</span>
+            <span>{t.columns.nusach}</span>
+            <span>{t.columns.verified}</span>
+          </div>
+        ) : null}
 
         <div className="cards">
           {cards.map((row) => (
@@ -242,6 +248,7 @@ export default async function LocaleHome({
               row={row}
               nusach={nusachById.get(row.synagogue.id) ?? null}
               warmth={warmthFor(row, now)}
+              now={now}
               locale={locale}
               t={t}
             />

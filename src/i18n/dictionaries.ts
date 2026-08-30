@@ -172,6 +172,8 @@ const he = {
   /** The clock time a rule works out to. The rule stays on screen beside it. */
   resolvesTo: (clock: string) => `= ${clock}`,
   today: 'היום',
+  /** Beside a board row whose time is not today's. See relativeDayLabel. */
+  tomorrow: 'מחר',
   zmanimToday: 'זמני היום בתל אביב',
   /** Every resolved time is computed, not quoted. Say so once, plainly. */
   zmanimSource: 'הזמנים מחושבים לתל אביב-יפו לפי הגר"א, בשעון ישראל',
@@ -356,6 +358,7 @@ const en: typeof he = {
 
   resolvesTo: (clock: string) => `= ${clock}`,
   today: 'today',
+  tomorrow: 'tomorrow',
   zmanimToday: "Today's zmanim in Tel Aviv",
   zmanimSource: 'Computed for Tel Aviv-Yafo, GRA, Israel time',
 

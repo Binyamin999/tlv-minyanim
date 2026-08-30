@@ -79,3 +79,35 @@ export function weekdayName(instant: Date, locale: Locale): string {
     weekday: 'long',
   }).format(instant);
 }
+
+/**
+ * The day a resolved time falls on, or null when it is today.
+ *
+ * Null on purpose for today: a board full of "היום" against every row says
+ * nothing, and the absence is what makes the exceptions visible.
+ *
+ * This exists because a bare clock face is ambiguous on a page with an
+ * eight-day horizon. On a Friday evening the Mincha board legitimately shows
+ * 13:00, 13:30, 14:00 — all of which are SUNDAY, since Shabbat intervenes and
+ * today's have passed. Printed with no day beside them they read exactly like
+ * a minyan starting in ten minutes, on a site whose whole premise is "where
+ * can I daven in the next forty minutes".
+ *
+ * The civil day, not the Hebrew one. The Hebrew date rolls at sunset and
+ * governs which parsha is printed; this governs which morning a person has to
+ * leave the house, which is a different question.
+ */
+export function relativeDayLabel(
+  instant: Date,
+  now: Date,
+  locale: Locale,
+  t: { tomorrow: string },
+): string | null {
+  const dayOf = (d: Date) => jerusalemDayKey(d);
+  if (dayOf(instant) === dayOf(now)) return null;
+
+  const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+  if (dayOf(instant) === dayOf(tomorrow)) return t.tomorrow;
+
+  return weekdayName(instant, locale);
+}

@@ -1225,6 +1225,18 @@ body {
   color: var(--time-now);
 }
 
+/* The day a row's time falls on, shown only when it is not today.
+   Quieter than the clock and deliberately not warm-tinted: this says WHEN,
+   not "hurry". A row two days out must not look urgent. */
+.card-day {
+  display: block;
+  margin-block-start: 0.125rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--ink);
+  opacity: 0.75;
+}
+
 .card-service-pill {
   font-size: 0.65625rem;
   font-weight: 700;
