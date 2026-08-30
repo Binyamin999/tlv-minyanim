@@ -1203,6 +1203,17 @@ body {
 
 /* Keeps the pair together as one run so the flex row that holds them puts the
    whole group opposite the service label, rather than pushing Waze out alone. */
+/* Phone only. The address sits at the reading edge and the directions at the
+   far one — left in Hebrew, right in English — so the two ends of the line do
+   different jobs instead of stacking. On desktop this dissolves (see the
+   breakpoint block) and the board's own columns take over. */
+.hero-place-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
 .hero-directions {
   display: inline-flex;
   align-items: center;
@@ -1649,7 +1660,8 @@ body {
   .hero,
   .hero-head,
   .hero-meta,
-  .hero-where {
+  .hero-where,
+  .hero-place-row {
     display: contents;
   }
 
@@ -1709,10 +1721,17 @@ body {
     font-size: 0.78125rem;
   }
 
-  .hero .walk-link {
+  /* The desktop board places by grid area, not by DOM order, so moving the
+     directions into the address block on mobile must not move them here. The
+     WRAPPER takes the cell that the link used to, and the pair inside it flows
+     as before — column 6, immediately after the address in column 5. */
+  .hero-directions {
     grid-area: 2 / 6 / 3 / 7;
     align-self: center;
     justify-self: start;
+  }
+
+  .hero .walk-link {
     min-block-size: 1.5rem;
   }
 

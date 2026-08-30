@@ -62,8 +62,50 @@ export function HeroCard({
     >
       <div className="hero-head">
         <p className="hero-service">{t.services[row.service]}</p>
-        {/* Walking first and never displaced: most journeys to a minyan are on
-            foot. Waze beside it for the rarer cross-town trip. */}
+      </div>
+
+      {/* The digits are their own bidi run, but the LINE is the page's — a
+          `direction: ltr` block would drag the whole clock to the wrong edge
+          of an RTL card. Isolate the run, not the paragraph. */}
+      <p className="hero-clock">
+        <span className="time tabular">{row.clock}</span>
+      </p>
+
+      <div className="hero-meta">
+        <span className="hero-pill tabular">{t.inMinutes(row.minutesFromNow)}</span>
+        {row.minyan.time.kind === 'relative' ? <span className="hero-rule">{rule.text}</span> : null}
+      </div>
+
+      <div className="hero-where">
+        <h2 className="hero-name">
+          <Link href={`/${locale}/shul/${row.synagogue.slug}`} {...foreignAttrs(name)}>
+            {name.text}
+          </Link>
+        </h2>
+        {/* Address and directions share a line, the address at the reading
+            edge and the directions at the far one. `display: contents` on
+            desktop so the board's grid still places each of them in its own
+            column — the wrapper exists for the phone only. */}
+        <div className="hero-place-row">
+          {address ? (
+            // `dir` goes on the RUN, not on the paragraph. On the English page
+            // a Hebrew address is an RTL island inside an LTR line; putting the
+            // attribute on the <p> would also flush the whole line to the far
+            // edge, so the name sits left and its own address sits right.
+            <p className="hero-address">
+              <span {...foreignAttrs(address)}>{address.text}</span>
+            </p>
+          ) : (
+            <span />
+          )}
+        {/* With the address, because that is what you navigate TO — and
+            because every card below this one does the same. They used to sit
+            in the head, opposite the service label, which offered a reader
+            directions before telling them which synagogue or when.
+
+            Walking first and never displaced: most journeys to a minyan are on
+            foot, often on erev Shabbat. Waze is the quiet second, for the rarer
+            cross-town trip. Order carries the recommendation. */}
         <span className="hero-directions">
           <a
             className="walk-link"
@@ -88,35 +130,7 @@ export function HeroCard({
             <span className="visually-hidden"> {t.directionsTo(name.text)}</span>
           </a>
         </span>
-      </div>
-
-      {/* The digits are their own bidi run, but the LINE is the page's — a
-          `direction: ltr` block would drag the whole clock to the wrong edge
-          of an RTL card. Isolate the run, not the paragraph. */}
-      <p className="hero-clock">
-        <span className="time tabular">{row.clock}</span>
-      </p>
-
-      <div className="hero-meta">
-        <span className="hero-pill tabular">{t.inMinutes(row.minutesFromNow)}</span>
-        {row.minyan.time.kind === 'relative' ? <span className="hero-rule">{rule.text}</span> : null}
-      </div>
-
-      <div className="hero-where">
-        <h2 className="hero-name">
-          <Link href={`/${locale}/shul/${row.synagogue.slug}`} {...foreignAttrs(name)}>
-            {name.text}
-          </Link>
-        </h2>
-        {address ? (
-          // `dir` goes on the RUN, not on the paragraph. On the English page a
-          // Hebrew address is an RTL island inside an LTR line; putting the
-          // attribute on the <p> would also flush the whole line to the far
-          // edge, so the name sits left and its own address sits right.
-          <p className="hero-address">
-            <span {...foreignAttrs(address)}>{address.text}</span>
-          </p>
-        ) : null}
+        </div>
         {nusachim.length > 0 ? (
           <p className="hero-nusach">{nusachim.map((n) => t.nusachim[n]).join(' · ')}</p>
         ) : null}
