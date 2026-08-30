@@ -40,7 +40,7 @@ import type {
   Service,
   Weekday,
 } from '../minyan-times/index.ts';
-import type { Nusach } from './taxonomy.ts';
+import type { MinyanStyle, Nusach } from './taxonomy.ts';
 
 export interface VerifiedMinyan {
   service: Service;
@@ -86,6 +86,14 @@ export interface VerifiedMinyan {
    * stated, which for a one-room shul is the truth rather than a gap.
    */
   location?: MinyanLocation;
+  /**
+   * What the board calls this minyan — נץ, הודו, פלג.
+   *
+   * A LABEL, not an anchor. Setting `netz` does not license storing the time
+   * as netz-relative, and the time beside it stays a clock face with its own
+   * window. See MinyanStyle.
+   */
+  style?: MinyanStyle;
   /** Why this reading is safe, where that is not obvious from the time itself. */
   note?: string;
 }
@@ -297,7 +305,8 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
         time: { kind: 'fixed', time: '05:40' },
         validFrom: '2026-08-30',
         validUntil: '2026-09-04',
-        note: 'first minyan, marked נץ — netz − 34 this week, not stored as a rule',
+        style: 'netz',
+        note: 'first minyan; netz − 34 this week, which is not evidence of a rule',
       },
       {
         service: 'shacharit',
@@ -305,7 +314,8 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
         time: { kind: 'fixed', time: '07:13' },
         validFrom: '2026-08-30',
         validUntil: '2026-09-04',
-        note: 'second minyan, marked הודו',
+        style: 'hodu',
+        note: 'second minyan',
       },
       {
         service: 'shacharit',
@@ -313,7 +323,8 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
         time: { kind: 'fixed', time: '08:15' },
         validFrom: '2026-08-30',
         validUntil: '2026-09-04',
-        note: 'third minyan, marked הודו',
+        style: 'hodu',
+        note: 'third minyan',
       },
       {
         service: 'mincha',
@@ -345,7 +356,8 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
         time: { kind: 'fixed', time: '18:10' },
         validFrom: '2026-08-30',
         validUntil: '2026-09-04',
-        note: 'first Arvit, marked פלג — plag + 23 this week, not a round offset',
+        style: 'plag',
+        note: 'first Arvit; plag + 23 this week, which is not a round offset',
       },
       {
         service: 'arvit',
@@ -479,7 +491,8 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
         // as `netz − 24`: a netz minyan's offset is what makes the Amidah land
         // at sunrise, and one week's arithmetic is not evidence of the rule.
         // The window is what keeps it honest until somebody reads the next board.
-        note: 'first minyan, marked נץ, in the synagogue',
+        style: 'netz',
+        note: 'first minyan, in the synagogue',
       },
       {
         service: 'shacharit',

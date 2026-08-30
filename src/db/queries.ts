@@ -20,7 +20,7 @@ import type {
   SignBasis,
   Zman,
 } from '@/minyan-times';
-import type { Movement, Nusach, SynagogueStatus } from '@/lib/taxonomy';
+import type { MinyanStyle, Movement, Nusach, SynagogueStatus } from '@/lib/taxonomy';
 
 export type { Movement, Nusach, SynagogueStatus } from '@/lib/taxonomy';
 
@@ -69,6 +69,8 @@ export interface Minyan {
   daysOfWeek: readonly Weekday[];
   /** Where in the building. NULL = nothing stated, which is not unknown. */
   location: MinyanLocation | null;
+  /** The board's label — netz, hodu, plag. NEVER read this as an anchor. */
+  style: MinyanStyle | null;
   /** Verbatim slice of the source field. Provenance, not display. */
   rawSegment: string;
   /**
@@ -134,6 +136,7 @@ interface MinyanRow {
   valid_until: Date | string | null;
   days_of_week: number[];
   location: MinyanLocation | null;
+  style: MinyanStyle | null;
 }
 
 const SYNAGOGUE_COLUMNS = `
@@ -219,6 +222,7 @@ function toMinyan(row: MinyanRow): Minyan {
     // 500 at `.includes`. Empty is also the honest value — every day.
     daysOfWeek: (row.days_of_week ?? []) as Weekday[],
     location: row.location ?? null,
+    style: row.style ?? null,
   };
 }
 
@@ -283,7 +287,7 @@ export async function getSynagogueBySlug(slug: string): Promise<SynagogueWithMin
   const minyanRows = await query<MinyanRow>(
     `SELECT id, service, day_type, season, kind, fixed_time, anchor, offset_minutes,
             sign_basis, raw_text, raw_segment, needs_review, is_publishable, nusach,
-            valid_from, valid_until, days_of_week, location
+            valid_from, valid_until, days_of_week, location, style
        FROM minyanim
       WHERE synagogue_id = $1
       ORDER BY day_type, source_index`,
@@ -321,7 +325,7 @@ export async function listSynagoguesWithMinyanim(): Promise<SynagogueWithMinyani
   const minyanRows = await query<MinyanRow & { synagogue_id: number }>(
     `SELECT synagogue_id, id, service, day_type, season, kind, fixed_time, anchor,
             offset_minutes, sign_basis, raw_text, raw_segment, needs_review, is_publishable,
-            nusach, valid_from, valid_until, days_of_week, location
+            nusach, valid_from, valid_until, days_of_week, location, style
        FROM minyanim
       WHERE is_publishable
       ORDER BY synagogue_id, day_type, source_index`,

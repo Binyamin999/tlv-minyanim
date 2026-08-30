@@ -329,13 +329,26 @@ function MinyanRow({
             {t.onDays(minyan.daysOfWeek.map((d) => t.weekdaysShort[d]).join(' '))}
           </span>
         ) : null}
+        {/* What the board calls this minyan. It sits before the room because
+            it says what KIND of minyan this is, which is what a reader picks
+            by; the room only matters once they have picked. Says nothing about
+            how the time is computed — 05:40 is still a clock face with a
+            window, not netz − 34. */}
+        {minyan.style ? (
+          <span className="minyan-style">
+            {minyan.service || minyan.season || minyan.daysOfWeek.length > 0 ? ' · ' : null}
+            {t.styles[minyan.style]}
+          </span>
+        ) : null}
         {/* Which room, when the board named one. Two Arvits an hour apart in
             one building are two different staircases to a stranger, and the
             times alone cannot say which. NULL prints nothing, because for a
             one-room shul there is nothing to say. */}
         {minyan.location ? (
           <span className="minyan-where">
-            {minyan.service || minyan.season || minyan.daysOfWeek.length > 0 ? ' · ' : null}
+            {minyan.service || minyan.season || minyan.daysOfWeek.length > 0 || minyan.style
+              ? ' · '
+              : null}
             {t.locations[minyan.location]}
           </span>
         ) : null}

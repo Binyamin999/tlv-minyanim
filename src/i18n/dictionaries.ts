@@ -101,6 +101,14 @@ const he = {
   // The board's own words. A room is a code precisely so each language can
   // print its own — see the minyan_location enum.
   locations: { upstairs: 'למעלה', downstairs: 'למטה', sukkah: 'בסוכה' },
+  // The board's own shorthand, which is what a Hebrew reader is looking for.
+  styles: {
+    netz: 'נץ',
+    hodu: 'הודו',
+    plag: 'פלג',
+    carlebach: 'קרליבך',
+    hashkama: 'השכמה',
+  },
   // Not the same sentence as the one above, and deliberately so: that one says
   // we are missing data, this one says the synagogue told us there is nothing.
   noServicesHeld: 'לא מתקיימות תפילות',
@@ -342,6 +350,16 @@ const en: typeof he = {
   weekdaysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
   onDays: (days: string) => days,
   locations: { upstairs: 'upstairs', downstairs: 'downstairs', sukkah: 'in the sukkah' },
+  // Spelled out, because a visitor who cannot read the board cannot be
+  // expected to know the shorthand either. The Hebrew term is kept alongside
+  // so it can be matched against a sign.
+  styles: {
+    netz: 'sunrise (netz)',
+    hodu: 'from Hodu',
+    plag: 'after plag',
+    carlebach: 'Carlebach',
+    hashkama: 'hashkama',
+  },
   noServicesHeld: 'No services held',
   unconfirmedHeading: 'Needs checking — not confirmed',
   unconfirmedNote: 'The source is unclear and these have not been confirmed. Do not rely on them.',

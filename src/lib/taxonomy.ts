@@ -63,3 +63,23 @@ export function displayNusach(nusach: Nusach | null): Nusach | null {
 export type Movement = 'chabad' | 'breslev';
 
 export type SynagogueStatus = 'active' | 'holidays_only' | 'seasonal' | 'dormant' | 'closed';
+
+/**
+ * What kind of minyan this is, as its own notice board labels it.
+ *
+ * Lives on `minyanim`, not on `synagogues`: היכל חיים runs three Shacharit
+ * minyanim and exactly one is נץ, so a column on the building has no true
+ * value to hold. Migration 0010.
+ *
+ * A LABEL, NEVER AN ANCHOR. `netz` says this is a sunrise minyan; it does not
+ * say the stored time is netz-relative, and nothing may read it that way. The
+ * offset that makes the Amidah land at sunrise is not derivable from one
+ * week's printing — תהילת אביב's 05:40 is netz − 34 today and something else
+ * in December. Same distinction as "Mincha Gedola 14:00": the name on the
+ * board is not the arithmetic.
+ *
+ * `hodu` marks a minyan that begins at הודו rather than at the start of
+ * pesukei d'zimra, which is a real choice for someone who has davened the
+ * earlier part already. `plag` marks an Arvit after plag hamincha.
+ */
+export type MinyanStyle = 'carlebach' | 'hashkama' | 'netz' | 'hodu' | 'plag';

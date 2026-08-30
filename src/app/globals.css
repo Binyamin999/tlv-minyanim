@@ -2007,3 +2007,9 @@ body {
 .minyan-where {
   color: color-mix(in srgb, var(--ink) 62%, transparent);
 }
+
+/* The board's label for a minyan — נץ, הודו, פלג. Same quiet treatment as the
+   room and weekday qualifiers beside it. */
+.minyan-style {
+  color: color-mix(in srgb, var(--ink) 62%, transparent);
+}

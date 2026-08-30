@@ -339,3 +339,64 @@ describe('a stated room', () => {
     assert.ok(all.length > 20 && stated.length < all.length / 4);
   });
 });
+
+/**
+ * The board's label for a minyan — נץ, הודו, פלג.
+ *
+ * The whole risk here is that a label gets read as arithmetic. `netz` says
+ * "this is a sunrise minyan"; it does not say the stored time is
+ * netz-relative, and the day someone "tidies" a netz-labelled 05:40 into
+ * `netz − 34` is the day the site starts listing a December minyan an hour
+ * before sunrise.
+ */
+describe('a minyan style', () => {
+  it('never turns a clock face into an anchored time', () => {
+    // The guard that matters. תהילת אביב's 05:40 is netz − 34 this week and
+    // something else in December, which is why it is stored as a windowed
+    // clock face with a label beside it rather than as a rule.
+    for (const [name, record] of Object.entries(VERIFIED)) {
+      for (const entry of record.minyanim) {
+        if (!entry.style) continue;
+        assert.equal(
+          entry.time.kind,
+          'fixed',
+          `${name}: a ${entry.style} label must not make the time relative`,
+        );
+      }
+    }
+  });
+
+  it('leaves every netz minyan windowed, because sunrise moves', () => {
+    // A netz-labelled clock face cannot hold all year: netz runs from about
+    // 05:35 in June to 06:37 in December, so any fixed time tracking it is
+    // vouched for only as long as the board that printed it.
+    for (const [name, record] of Object.entries(VERIFIED)) {
+      for (const entry of record.minyanim) {
+        if (entry.style !== 'netz') continue;
+        assert.ok(
+          entry.validFrom && entry.validUntil,
+          `${name}: a netz minyan stored as a clock face needs a window`,
+        );
+      }
+    }
+  });
+
+  it('is localised in both languages, like every other code', () => {
+    const he = getDictionary('he');
+    const en = getDictionary('en');
+    for (const record of Object.values(VERIFIED)) {
+      for (const entry of record.minyanim) {
+        if (!entry.style) continue;
+        assert.ok(he.styles[entry.style], `no Hebrew for ${entry.style}`);
+        assert.ok(en.styles[entry.style], `no English for ${entry.style}`);
+      }
+    }
+  });
+
+  it('marks both sunrise minyanim in the data', () => {
+    const netz = Object.entries(VERIFIED).flatMap(([name, r]) =>
+      r.minyanim.filter((m) => m.style === 'netz').map((m) => `${name} ${m.time.kind === 'fixed' ? m.time.time : '?'}`),
+    );
+    assert.deepEqual(netz.sort(), ['היכל חיים 05:50', 'תהילת אביב 05:40']);
+  });
+});

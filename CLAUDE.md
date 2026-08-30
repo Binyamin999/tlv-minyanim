@@ -117,7 +117,7 @@ Store `nusach` as an enum, plus separate optional `movement` and `style` tags.
 nusach:   ashkenaz | sefard | edot_hamizrach | teimani | teimani_baladi | teimani_shami
           | moroccan | tunisian | iraqi | persian | salonikan | general
 movement: chabad | breslev | null
-style:    carlebach | hashkama | netz | null
+style:    carlebach | hashkama | netz | hodu | plag | null
 ```
 
 **A synagogue serves a SET of rites, not one.** `synagogues.nusachim` is an
@@ -515,6 +515,25 @@ was never a question the schema could answer — do not merge them on the
 evidence of the rows. `SHARED_BOARD` and `SAME_BUILDING_AS` express both facts
 by reference, never as copied values, so one reading of the weekly board
 updates both and neither can drift.
+
+**`style` belongs on the MINYAN, and is a label — never an anchor.** The enum
+was always called `minyan_style` and sat on `synagogues.style`, NULL on all
+seventeen, because it could not be anything else: היכל חיים runs three Shacharit
+minyanim and exactly one is נץ. Migration 0010 moves it, the same fix nusach got
+in 0003.
+
+Marking a minyan `netz` says it is a sunrise minyan. It does **not** say the
+stored time is netz-relative, and nothing may read it that way — תהילת אביב's
+05:40 is `netz − 34` today and something else in December, so it stays a clock
+face with a validity window and a label beside it. This is the "Mincha Gedola
+14:00" distinction again: the name on the board is not the arithmetic. There is
+a test asserting that no styled minyan is stored as `relative`, and another
+requiring every `netz` clock face to carry a window, because sunrise moves an
+hour across the year.
+
+`hodu` and `plag` were added because boards use them — a minyan beginning at
+הודו rather than at the start of pesukei d'zimra, and an Arvit after plag. Only
+what a board actually wrote, same rule as the location codes.
 
 **Where in the building is a code, not prose** — `minyanim.location`, currently
 `upstairs | downstairs | sukkah`. Same reason `verified_by` is a code: every
