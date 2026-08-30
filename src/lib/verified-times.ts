@@ -117,6 +117,103 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
    * What is still held is held for a DIFFERENT reason now — not "cannot say
    * which minyan" but "cannot say whether it is a rule".
    */
+  /**
+   * היכל חיים, אופנהיימר 5. Read from the weekday board for the week of
+   * 2026-08-30.
+   *
+   * The whole weekday block is this week's printing and carries its window.
+   * That the reading is right is corroborated by the times themselves: Mincha
+   * at 17:40 falls BEFORE plag (17:47 that day) and Arvit at 18:05 falls after
+   * it, which is the arrangement an early Arvit requires. Times that hang
+   * together that way were almost certainly transcribed correctly.
+   *
+   * WHAT THIS REPLACES, AND WHY WHOLESALE IS RIGHT HERE. The GIS layer claims
+   * weekday Shacharit at 06:15 and 07:30. The board says 05:50, 06:50 and
+   * 07:25 — not one of them matches. A source demonstrably wrong about this
+   * shul's weekdays has not earned belief about its Shabbat either, so its
+   * Shabbat rows go too rather than being kept as though they were a different
+   * kind of fact. They are recorded below instead.
+   */
+  'היכל חיים': {
+    verifiedAt: '2026-08-30',
+    verifiedBy: 'notice_board',
+    minyanim: [
+      {
+        service: 'shacharit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '05:50' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        // The board marks this one נץ. Stored as the clock face it prints, not
+        // as `netz − 24`: a netz minyan's offset is what makes the Amidah land
+        // at sunrise, and one week's arithmetic is not evidence of the rule.
+        // The window is what keeps it honest until somebody reads the next board.
+        note: 'first minyan, marked נץ, in the synagogue',
+      },
+      {
+        service: 'shacharit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '06:50' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'second minyan, בסוכה — see held: there is nowhere to display that',
+      },
+      {
+        service: 'shacharit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '07:25' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'third minyan',
+      },
+      {
+        service: 'mincha',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '17:40' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        // shkia − 87 this week and shkia + 60 in December. The window is not
+        // optional on this one.
+        note: 'the board marks it למנצח; before plag, which the early Arvit requires',
+      },
+      {
+        service: 'arvit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '18:05' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'follows Mincha; after plag, which is what makes an early Arvit valid',
+      },
+    ],
+    held: [
+      {
+        what: 'that the 06:50 minyan meets בסוכה',
+        why:
+          'True, useful to a visitor, and unstorable: there is no field for ' +
+          'where within a building a minyan meets. Kept in the row\'s note so it ' +
+          'is not lost, but nothing displays it. A `location_note` on minyanim ' +
+          'would fix it and is not worth a migration for one row yet.',
+      },
+      {
+        what: 'the GIS layer\'s Shabbat Shacharit, 07:30 and 08:30',
+        why:
+          'Dropped with the rest of the municipal record for this shul. It had ' +
+          'the weekdays wrong in every particular — 06:15 and 07:30 against an ' +
+          'actual 05:50, 06:50 and 07:25 — so its Shabbat times are not a ' +
+          'better class of evidence, they are the same evidence. Recorded here ' +
+          'so the loss is deliberate and recoverable, and so the next person ' +
+          'knows to read the Shabbat sheet rather than assume we never had one.',
+      },
+      {
+        what: 'whether any of this is a rule',
+        why:
+          'One board cannot say. The נץ minyan plainly tracks sunrise in ' +
+          'spirit; whether the shul recomputes it or reprints a season at a ' +
+          'time is unknown. Three consecutive weeks would settle it.',
+      },
+    ],
+  },
+
   'לכלל ישראל': {
     verifiedAt: '2026-08-28',
     verifiedBy: 'notice_board',
