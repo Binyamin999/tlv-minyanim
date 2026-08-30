@@ -102,7 +102,7 @@ export default async function LocaleHome({
   });
 
   // Nusach is not part of placing a time, so the timeline does not carry it.
-  const nusachById = new Map(synagogues.map((shul) => [shul.id, shul.nusach]));
+  const nusachimById = new Map(synagogues.map((shul) => [shul.id, shul.nusachim]));
   // `general` is a chip nobody wants to press. It is what the municipality
   // writes when a shul does not describe itself as any particular nusach, so
   // filtering to it answers "show me the ones we could not classify" — a fact
@@ -111,8 +111,11 @@ export default async function LocaleHome({
   // filter row. `all` still includes those shuls, so nothing becomes
   // unreachable — לכלל ישראל in particular, which is the one synagogue in
   // Ramat Aviv publishing real offsets.
-  const availableNusachim = NUSACHIM.filter(
-    (option) => option !== 'general' && synagogues.some((shul) => shul.nusach === option),
+  // A chip for every rite somebody in the data actually serves. `general` can
+  // no longer appear: a synagogue we cannot classify has an empty set, which
+  // is the same statement without needing a value to make it.
+  const availableNusachim = NUSACHIM.filter((option) =>
+    synagogues.some((shul) => shul.nusachim.includes(option)),
   );
 
   const requestedNusach = firstParam(query.nusach);
@@ -127,7 +130,11 @@ export default async function LocaleHome({
     ? requestedService
     : defaultService(timeline.upcoming);
 
-  const matchesNusach = (id: number) => nusach === null || nusachById.get(id) === nusach;
+  // A shul serving three rites matches all three chips, which is the point of
+  // the set: filtering to אשכנז must find כלל ישראל, not just the shuls whose
+  // single stated rite happens to be that one.
+  const matchesNusach = (id: number) =>
+    nusach === null || (nusachimById.get(id) ?? []).includes(nusach);
 
   const upcoming = timeline.upcoming.filter(
     (row) => matchesServiceFilter(row, service) && matchesNusach(row.synagogue.id),
@@ -189,7 +196,7 @@ export default async function LocaleHome({
           // Shacharit does not get warmer because the sun is going down.
           <HeroCard
             row={hero}
-            nusach={nusachById.get(hero.synagogue.id) ?? null}
+            nusachim={nusachimById.get(hero.synagogue.id) ?? []}
             warmth={heroWarmth}
             locale={locale}
             t={t}
@@ -246,7 +253,7 @@ export default async function LocaleHome({
             <ShulCard
               key={`${row.synagogue.id}-${row.instant.getTime()}`}
               row={row}
-              nusach={nusachById.get(row.synagogue.id) ?? null}
+              nusachim={nusachimById.get(row.synagogue.id) ?? []}
               warmth={warmthFor(row, now)}
               now={now}
               locale={locale}
@@ -259,7 +266,7 @@ export default async function LocaleHome({
             <UnknownShulCard
               key={`${row.synagogue.id}-${row.service}-${row.phase}`}
               row={row}
-              nusach={nusachById.get(row.synagogue.id) ?? null}
+              nusachim={nusachimById.get(row.synagogue.id) ?? []}
               locale={locale}
               t={t}
             />

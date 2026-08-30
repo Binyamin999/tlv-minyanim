@@ -120,6 +120,13 @@ movement: chabad | breslev | null
 style:    carlebach | hashkama | netz | null
 ```
 
+**A synagogue serves a SET of rites, not one.** `synagogues.nusachim` is an
+array; כלל ישראל serves `ashkenaz`, `edot_hamizrach` and `teimani`. An empty
+array means we cannot name one, which is what `general` used to say — so
+`general` no longer appears on a synagogue at all, and filtering to אשכנז now
+finds a shul that serves it alongside two others rather than only shuls whose
+single stated rite it happens to be.
+
 **`general` is stored but never displayed.** It is what the municipality
 writes when a shul does not describe itself as any particular nusach, so a
 `כללי` tag says "unclassified" while looking exactly like `אשכנז` — a fact about

@@ -8,7 +8,7 @@ import { walkingDirectionsUrl, wazeUrl } from '@/lib/directions';
 import { foreignAttrs, localisedAddress, localisedName } from '@/lib/synagogue-display';
 import { relativeDayLabel } from '@/lib/resolved-times';
 import { warmthPercent } from '@/lib/sunset-warmth';
-import { displayNusach, type Nusach } from '@/lib/taxonomy';
+import type { Nusach } from '@/lib/taxonomy';
 import type { TimelineSynagogue, UnconfirmedMinyan, UpcomingMinyan } from '@/zmanim';
 
 /**
@@ -20,7 +20,7 @@ import type { TimelineSynagogue, UnconfirmedMinyan, UpcomingMinyan } from '@/zma
  */
 export function ShulCard({
   row,
-  nusach,
+  nusachim,
   warmth,
   now,
   locale,
@@ -29,8 +29,8 @@ export function ShulCard({
   row: UpcomingMinyan;
   /** Passed in, not read off the row: the timeline's synagogue shape is
    *  deliberately the minimum it needs to place a time, and a nusach is not
-   *  part of placing a time. */
-  nusach: Nusach | null;
+   *  part of placing a time. A set, because a building can serve several. */
+  nusachim: readonly Nusach[];
   warmth: number;
   /** Passed in rather than read from the clock here, so every row on one
    *  render agrees about what "today" is. */
@@ -46,7 +46,7 @@ export function ShulCard({
   return (
     <CardShell
       synagogue={row.synagogue}
-      nusach={nusach}
+      nusachim={nusachim}
       warmth={warmth}
       locale={locale}
       t={t}
@@ -85,19 +85,19 @@ export function ShulCard({
  */
 export function UnknownShulCard({
   row,
-  nusach,
+  nusachim,
   locale,
   t,
 }: {
   row: UnconfirmedMinyan;
-  nusach: Nusach | null;
+  nusachim: readonly Nusach[];
   locale: Locale;
   t: Dictionary;
 }) {
   return (
     <CardShell
       synagogue={row.synagogue}
-      nusach={nusach}
+      nusachim={nusachim}
       warmth={0}
       locale={locale}
       t={t}
@@ -116,7 +116,7 @@ export function UnknownShulCard({
 
 function CardShell({
   synagogue,
-  nusach,
+  nusachim,
   warmth,
   locale,
   t,
@@ -124,7 +124,7 @@ function CardShell({
   footerEnd,
 }: {
   synagogue: TimelineSynagogue;
-  nusach: Nusach | null;
+  nusachim: readonly Nusach[];
   warmth: number;
   locale: Locale;
   t: Dictionary;
@@ -185,11 +185,14 @@ function CardShell({
       </div>
 
       <div className="card-foot">
-        {(() => {
-          // `general` is stored but never shown — see displayNusach.
-          const shown = displayNusach(nusach);
-          return shown ? <p className="card-nusach">{t.nusachim[shown]}</p> : <span />;
-        })()}
+        {/* One tag per rite the building serves. Usually one; כלל ישראל has
+            three. An empty set renders a spacer, not a blank tag — the footer
+            is a two-column row and the stamp belongs at its end. */}
+        {nusachim.length > 0 ? (
+          <p className="card-nusach">{nusachim.map((n) => t.nusachim[n]).join(' · ')}</p>
+        ) : (
+          <span />
+        )}
         {footerEnd}
       </div>
     </article>

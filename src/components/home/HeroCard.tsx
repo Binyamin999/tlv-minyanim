@@ -8,7 +8,7 @@ import { walkingDirectionsUrl, wazeUrl } from '@/lib/directions';
 import { displayMinyanTime } from '@/lib/minyan-display';
 import { foreignAttrs, localisedAddress, localisedName } from '@/lib/synagogue-display';
 import { warmthPercent } from '@/lib/sunset-warmth';
-import { displayNusach, type Nusach } from '@/lib/taxonomy';
+import type { Nusach } from '@/lib/taxonomy';
 import type { UpcomingMinyan } from '@/zmanim';
 
 /**
@@ -28,7 +28,7 @@ import type { UpcomingMinyan } from '@/zmanim';
  */
 export function HeroCard({
   row,
-  nusach,
+  nusachim,
   warmth,
   locale,
   t,
@@ -44,7 +44,7 @@ export function HeroCard({
    * Passed in rather than read off `row` for the same reason as ShulCard: a
    * nusach is not part of placing a time, so the timeline does not carry one.
    */
-  nusach: Nusach | null;
+  nusachim: readonly Nusach[];
   warmth: number;
   locale: Locale;
   t: Dictionary;
@@ -117,10 +117,9 @@ export function HeroCard({
             <span {...foreignAttrs(address)}>{address.text}</span>
           </p>
         ) : null}
-        {(() => {
-          const shown = displayNusach(nusach);
-          return shown ? <p className="hero-nusach">{t.nusachim[shown]}</p> : null;
-        })()}
+        {nusachim.length > 0 ? (
+          <p className="hero-nusach">{nusachim.map((n) => t.nusachim[n]).join(' · ')}</p>
+        ) : null}
         {/* A time without its staleness is a claim we cannot back. */}
         <VerifiedStamp
           compact

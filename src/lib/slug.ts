@@ -49,7 +49,7 @@ const CURATED: Record<string, string> = {
   המרכזי: 'hamerkazi-ramat-aviv',
   "המרכזי רמת אביב ג'": 'hamerkazi-ramat-aviv-gimel',
   'הרמב"ם': 'harambam',
-  'לכלל ישראל': 'lichlal-yisrael',
+  'לכלל ישראל': 'klal-yisrael',
   'מנין צעירים בני עקיבא': 'minyan-tzeirim-bnei-akiva',
   'משכן אחים': 'mishkan-achim',
   'משען נאות אביבים': 'mishan-neot-avivim',

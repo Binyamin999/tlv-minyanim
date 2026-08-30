@@ -30,7 +30,12 @@ import { dirname, resolve } from 'node:path';
 import type { PoolClient } from 'pg';
 
 import { closePool, withTransaction } from '../src/db/client.ts';
-import { curatedMovement, curatedNameEn } from '../src/lib/curation.ts';
+import {
+  curatedMovement,
+  curatedNameEn,
+  curatedNameHe,
+  curatedNusachim,
+} from '../src/lib/curation.ts';
 import { verifiedFor, type VerifiedSynagogue } from '../src/lib/verified-times.ts';
 import type { Nusach } from '../src/lib/taxonomy.ts';
 import { slugCandidates } from '../src/lib/slug.ts';
@@ -278,10 +283,19 @@ async function upsertSynagogue(
   // A slug, once published, is permanent: never recompute one that exists.
   const slug = existing.rows[0]?.slug ?? (await pickSlug(client, seed));
 
-  const nusach = seed.nusach_raw ? (NUSACH[seed.nusach_raw] ?? null) : null;
-  if (seed.nusach_raw && nusach === null) {
+  const sourceNusach = seed.nusach_raw ? (NUSACH[seed.nusach_raw] ?? null) : null;
+  if (seed.nusach_raw && sourceNusach === null) {
     summary.unmappedNusach.push({ name: seed.name_he, raw: seed.nusach_raw });
   }
+  // A synagogue serves a SET of rites. The source gives one, which is why a
+  // shul running several came through as `כללי`; where we know better, the
+  // curated list wins. Empty means we cannot name one.
+  const nusachim = curatedNusachim(seed.name_he, sourceNusach as never);
+
+  // The municipality's name, corrected where the synagogue calls itself
+  // something else. Keyed on the source spelling, so a re-import still finds
+  // this row.
+  const nameHe = curatedNameHe(seed.name_he);
 
   // Movement comes from the seed's own column if it ever gains one, and
   // otherwise from the hand-curated table. Never from nusach — the source tags
@@ -311,18 +325,18 @@ async function upsertSynagogue(
   const { rows } = await client.query<{ id: number }>(
     `INSERT INTO synagogues (
        gis_source_id, slug, name_he, name_en, address_he, address_en,
-       location, nusach, movement, style, status, last_verified_at, verified_by
+       location, nusachim, movement, style, status, last_verified_at, verified_by
      ) VALUES (
        $1, $2, $3, $12, $4, NULL,
        ST_SetSRID(ST_MakePoint($5, $6), 4326)::geography,
-       $7::nusach, $8::movement, NULL, $9::synagogue_status, $10::timestamptz, $11
+       $7::nusach[], $8::movement, NULL, $9::synagogue_status, $10::timestamptz, $11
      )
      ON CONFLICT (gis_source_id) DO UPDATE SET
        name_he          = EXCLUDED.name_he,
        name_en          = EXCLUDED.name_en,
        address_he       = EXCLUDED.address_he,
        location         = EXCLUDED.location,
-       nusach           = EXCLUDED.nusach,
+       nusachim         = EXCLUDED.nusachim,
        movement         = EXCLUDED.movement,
        status           = EXCLUDED.status,
        last_verified_at = EXCLUDED.last_verified_at,
@@ -332,11 +346,11 @@ async function upsertSynagogue(
     [
       seed.source_id,
       slug,
-      seed.name_he,
+      nameHe,
       seed.address_he,
       seed.lng, // ST_MakePoint is (x, y) = (lng, lat). Getting this backwards
       seed.lat, // puts every shul in the Indian Ocean and no test catches it.
-      nusach,
+      nusachim,
       movement,
       status,
       lastVerifiedAt,

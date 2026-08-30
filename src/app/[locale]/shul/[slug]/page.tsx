@@ -76,7 +76,7 @@ export default async function ShulPage({
 
   const name = localisedName(synagogue, locale);
   const address = localisedAddress(synagogue, locale);
-  const shownNusach = displayNusach(synagogue.nusach);
+  const shownNusachim = synagogue.nusachim;
 
   const confirmed = synagogue.minyanim.filter((minyan) => minyan.isPublishable);
   // A non-empty needs_review is a hard gate. These are kept and shown — losing
@@ -128,9 +128,16 @@ export default async function ShulPage({
             about our data rather than about this congregation. Both must also
             be absent from the GUARD, or a shul with nothing else to tag renders
             an empty row. An empty tag row is not rendered at all. */}
-        {shownNusach || synagogue.movement || synagogue.status !== 'active' ? (
+        {shownNusachim.length > 0 || synagogue.movement || synagogue.status !== 'active' ? (
           <p className="tags">
-            {shownNusach ? <span className="tag">{t.nusachim[shownNusach]}</span> : null}
+            {/* One tag per rite. A building serving three shows three; one that
+                we cannot classify shows none, which is the same silence the old
+                suppressed `general` produced and for the same reason. */}
+            {shownNusachim.map((n) => (
+              <span className="tag" key={n}>
+                {t.nusachim[n]}
+              </span>
+            ))}
             {/* movement is hand-enriched only — never inferred from nusach. */}
             {synagogue.movement ? (
               <span className="tag">{t.movements[synagogue.movement]}</span>

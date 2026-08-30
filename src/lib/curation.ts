@@ -50,7 +50,21 @@
  * A shul absent from `MOVEMENT` has no movement, not an unknown one — this is
  * a curated list, so silence here means "looked at, nothing to record".
  */
-import type { Movement } from './taxonomy.ts';
+import type { Movement, Nusach } from './taxonomy.ts';
+
+/**
+ * Hebrew name as the source writes it -> what the synagogue actually calls
+ * itself.
+ *
+ * The municipality writes `לכלל ישראל` — "to Klal Yisrael" — which is the
+ * name with a preposition stuck to the front, almost certainly the tail of a
+ * phrase like `בית הכנסת לכלל ישראל` that was captured whole. The shul is
+ * `כלל ישראל`. The source key stays as the source writes it, because that is
+ * how a re-import finds this row.
+ */
+export const NAME_HE: Record<string, string> = {
+  'לכלל ישראל': 'כלל ישראל',
+};
 
 /** Hebrew name as the source writes it -> the name in Latin script. */
 export const NAME_EN: Record<string, string> = {
@@ -61,7 +75,7 @@ export const NAME_EN: Record<string, string> = {
   המרכזי: 'HaMerkazi',
   "המרכזי רמת אביב ג'": 'HaMerkazi Ramat Aviv Gimel',
   'הרמב"ם': 'HaRambam',
-  'לכלל ישראל': 'Lichlal Yisrael',
+  'לכלל ישראל': 'Klal Yisrael',
   'מנין צעירים בני עקיבא': "Minyan Tze'irim Bnei Akiva",
   'משכן אחים': 'Mishkan Achim',
   'משען נאות אביבים': 'Mishan Neot Avivim',
@@ -70,6 +84,25 @@ export const NAME_EN: Record<string, string> = {
   'שפרן - ביה"ס אלומות': 'Shafran — Alumot School',
   'תהילת אביב': 'Tehilat Aviv',
   'תומכי תמימים - בית חב"ד': 'Tomchei Tmimim — Chabad House',
+};
+
+/**
+ * Hebrew name -> every rite the synagogue serves, where the source could not
+ * say.
+ *
+ * The municipality writes one nusach per building, so a shul serving several
+ * comes through as `כללי` — which meant "more than one" and was read as
+ * "unclassified". Where a sign or a person tells us which ones, they go here.
+ *
+ * Order matters: the first is the rite the building is most readily identified
+ * with. This is not a ranking of the congregations.
+ */
+export const NUSACHIM_SERVED: Record<string, readonly Nusach[]> = {
+  // The printed sheet heads its two columns `מניין אשכנזי-ספרדי` and
+  // `מניין תימני`. In Israeli usage that first `ספרדי` is עדות המזרח rather
+  // than the chassidic nusach sefard, so one minyan serves two rites and the
+  // Teimani minyan is the third. Confirmed by the user, who davens there.
+  'לכלל ישראל': ['ashkenaz', 'edot_hamizrach', 'teimani'],
 };
 
 /**
@@ -86,6 +119,24 @@ export const MOVEMENT: Record<string, Movement> = {
 /** Fold whitespace the way `slug.ts` does, so one key works for both files. */
 function key(nameHe: string): string {
   return nameHe.replace(/\s+/g, ' ').trim();
+}
+
+/**
+ * Every rite this synagogue serves.
+ *
+ * Falls back to the single value the source gave, as a one-element set —
+ * except `general`, which becomes empty, because it never named a rite.
+ */
+export function curatedNusachim(nameHe: string, sourceNusach: Nusach | null): readonly Nusach[] {
+  const curated = NUSACHIM_SERVED[key(nameHe)];
+  if (curated) return curated;
+  if (sourceNusach === null || sourceNusach === 'general') return [];
+  return [sourceNusach];
+}
+
+/** The synagogue's own Hebrew name, correcting the source where it is wrong. */
+export function curatedNameHe(nameHe: string): string {
+  return NAME_HE[key(nameHe)] ?? nameHe;
 }
 
 /** The Latin-script name, or null when this shul has not been curated yet. */

@@ -32,7 +32,8 @@ export interface Synagogue {
   addressEn: string | null;
   lat: number;
   lng: number;
-  nusach: Nusach | null;
+  /** Every rite this synagogue serves. Empty = we cannot name one. */
+  nusachim: readonly Nusach[];
   movement: Movement | null;
   status: SynagogueStatus;
   /** NULL = never verified, and the UI says exactly that. */
@@ -78,7 +79,7 @@ interface SynagogueRow {
   address_en: string | null;
   lat: number;
   lng: number;
-  nusach: Nusach | null;
+  nusachim: Nusach[];
   movement: Movement | null;
   status: SynagogueStatus;
   last_verified_at: Date | null;
@@ -108,7 +109,12 @@ const SYNAGOGUE_COLUMNS = `
   id, slug, name_he, name_en, address_he, address_en,
   ST_Y(location::geometry) AS lat,
   ST_X(location::geometry) AS lng,
-  nusach, movement, status, last_verified_at, verified_by`;
+  -- The ::text[] cast is load-bearing. node-postgres ships parsers for the
+  -- built-in array types but not for an array of a CUSTOM ENUM, so a bare
+  -- nusach[] arrives as the raw literal string '{ashkenaz,edot_hamizrach}'
+  -- while TypeScript believes it is an array. .map then throws at render time
+  -- on a clean typecheck. text[] hits a parser that exists.
+  nusachim::text[] AS nusachim, movement, status, last_verified_at, verified_by`;
 
 function toSynagogue(row: SynagogueRow): Synagogue {
   return {
@@ -120,7 +126,7 @@ function toSynagogue(row: SynagogueRow): Synagogue {
     addressEn: row.address_en,
     lat: Number(row.lat),
     lng: Number(row.lng),
-    nusach: row.nusach,
+    nusachim: row.nusachim ?? [],
     movement: row.movement,
     status: row.status,
     lastVerifiedAt: row.last_verified_at,
