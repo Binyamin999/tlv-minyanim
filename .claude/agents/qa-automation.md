@@ -105,3 +105,32 @@ and `src/components/BidiText.tsx` are the worked example.
   cannot both claim a day is empty and fill it.
 - Claim `no_minyanim_on` for a shul that merely has no rows for that day — absence
   is stated, never inferred from silence.
+
+**A real browser with a real location: `scripts/browse.mjs`.** Playwright, with
+geolocation granted at the browser-context level and a position set behind it —
+so the page's own `navigator.geolocation` resolves for real, through the real
+code path, with permission already decided. Overriding
+`getCurrentPosition` from the console is a stub that replaces the API instead of
+exercising it; this does not.
+
+```bash
+node scripts/browse.mjs --at klal --shot /tmp/a.png   # standing at כלל ישראל
+node scripts/browse.mjs --at dizengoff --soon 5       # 4 km away, minyan in 5 min
+node scripts/browse.mjs --at klal --deny              # permission actually blocked
+node scripts/browse.mjs --at klal --accuracy 600      # a vague fix
+node scripts/browse.mjs --at klal --mode dark --width 375
+```
+
+Places: `klal`, `heichal`, `mall`, `university`, `dizengoff`. It prints what the
+page really says — distances, verdicts, opacity, console errors, storage keys,
+horizontal overflow — and writes a PNG with `--shot`. It never modifies the site.
+
+**`--mode`, never `prefers-color-scheme`.** This site takes dark from real shkia
+and light from real netz, so the OS setting changes nothing; `--mode` sets the
+override cookie, which is the only genuine control. A `colorScheme` context
+option silently produced identical screenshots before this was understood.
+
+**Read rendered HTML, never raw HTML.** `curl | grep` matches the serialised RSC
+payload as well as the page, so a label passed as a prop looks like a rendered
+element. Strip `<script>` blocks first, or read the DOM. That mistake has been
+made twice here, once on an address and once on this feature's own button.

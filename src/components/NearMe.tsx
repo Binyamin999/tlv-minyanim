@@ -56,13 +56,26 @@ type State =
 export function NearMe({ labels }: { labels: NearMeLabels }) {
   const [state, setState] = useState<State>({ status: 'idle' });
 
-  // Rendered only where it can work. A button that always fails is worse than
-  // no button, and this is one of the few places a capability check is honest
-  // rather than sniffing.
-  const supported = typeof navigator !== 'undefined' && 'geolocation' in navigator;
-  if (!supported) return null;
-
+  /*
+   * NO CAPABILITY CHECK BEFORE RENDER, and that is a fix rather than an
+   * oversight.
+   *
+   * This read `if (!('geolocation' in navigator)) return null`, which looks
+   * careful and produced a hydration mismatch on every homepage load — React
+   * error #418, visible only in a real browser's console. Node 24 has a
+   * `navigator` global but no `geolocation` on it, so the server rendered
+   * nothing while the client rendered a button, and the two trees disagreed.
+   *
+   * The button is therefore always rendered, on the server and on the client,
+   * and support is checked at the moment it is used. A browser without
+   * geolocation gets the same honest failure note as a fix that times out,
+   * which is a far better trade than a whole page failing to hydrate.
+   */
   const locate = () => {
+    if (!('geolocation' in navigator)) {
+      setState({ status: 'failed' });
+      return;
+    }
     setState({ status: 'locating' });
     navigator.geolocation.getCurrentPosition(
       (position) => {
