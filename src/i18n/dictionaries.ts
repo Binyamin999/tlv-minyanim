@@ -123,6 +123,10 @@ const he = {
     metres: 'מ׳',
     kilometres: 'ק״מ',
     tooFar: 'לא תספיקו להגיע',
+    // Spoken, not shown. The board silently reorders under a screen-reader
+    // user's cursor, which is the part that needs announcing — the distances
+    // themselves are read out when they reach each card.
+    sorted: 'בתי כנסת, מסודרים לפי מרחק ממך',
   },
   // The board's own words. A room is a code precisely so each language can
   // print its own — see the minyan_location enum.
@@ -385,6 +389,7 @@ const en: typeof he = {
     metres: 'm',
     kilometres: 'km',
     tooFar: "You won't get there in time",
+    sorted: 'synagogues, sorted by distance from you',
   },
   locations: { upstairs: 'upstairs', downstairs: 'downstairs', sukkah: 'in the sukkah' },
   // Spelled out, because a visitor who cannot read the board cannot be

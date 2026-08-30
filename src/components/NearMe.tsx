@@ -97,6 +97,30 @@ export function NearMe({ labels }: { labels: NearMeLabels }) {
     );
   };
 
+  /*
+   * What a screen reader hears. Everything this feature does is visual —
+   * numbers appear inside cards and the board silently reorders — so without
+   * this a blind user taps the button and is told nothing at all, while the
+   * page rearranges under their cursor.
+   *
+   * The reorder is the part that most needs saying: the distances themselves
+   * get read out on reaching each card, but a list that changed order while
+   * you were reading it is disorienting and invisible.
+   */
+  const announcement =
+    state.status === 'locating'
+      ? labels.locating
+      : state.status === 'denied'
+        ? labels.denied
+        : state.status === 'failed'
+          ? labels.failed
+          : state.status === 'done'
+            ? // `count` earns its place here. It was carried in state and read
+              // by nothing, which the QA pass called out as a comment
+              // overpromising — this is the branch that comment described.
+              `${state.count} ${labels.sorted}${state.vague ? `. ${labels.vague}` : ''}`
+            : '';
+
   return (
     <span className="near-me">
       <button className="near-me-button" onClick={locate} disabled={state.status === 'locating'}>
@@ -107,6 +131,13 @@ export function NearMe({ labels }: { labels: NearMeLabels }) {
       {state.status === 'done' && state.vague ? (
         <span className="near-me-note">{labels.vague}</span>
       ) : null}
+      {/* `polite`, never `assertive`: this interrupts nothing, and a person
+          part-way through hearing a synagogue's name should not be cut off.
+          Always in the DOM rather than mounted on demand — a live region
+          added at the same moment as its text is frequently not announced. */}
+      <span className="visually-hidden" role="status" aria-live="polite">
+        {announcement}
+      </span>
     </span>
   );
 }
