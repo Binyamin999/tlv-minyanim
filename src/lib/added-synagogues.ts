@@ -51,13 +51,23 @@ export const ADDED: readonly AddedSynagogue[] = [
     slug: 'chabad-ramat-aviv-mall',
     nameHe: 'בית חב"ד קניון רמת אביב',
     nameEn: 'Chabad Ramat Aviv Mall',
-    addressHe: 'קניון רמת אביב, קומה -1',
-    // TODO: supplied by the user. Until then this row is skipped and the
-    // import reports it by name — see importAdded(). Do not fill these in
-    // from memory of where the mall is; a walking link is exact or it is
-    // worse than nothing.
-    lat: null,
-    lng: null,
+    addressHe: 'קניון רמת אביב, איינשטיין 40, קומה -1',
+    /*
+     * The mall, from Wikipedia in both languages — 32°06′44″N 34°47′45″E,
+     * decimal 32.11222 / 34.79583, at Einstein Street 40. Looked up rather
+     * than recalled, and checked before being believed: a competing figure
+     * from an aggregator (32.1073 / 34.7908) sits 1,028 m from the centre of
+     * the sixteen Ramat Aviv synagogues while this one sits 311 m from it,
+     * which is where a mall in the middle of the neighbourhood belongs.
+     *
+     * Arcsecond precision is about 30 m, which is the building rather than
+     * its door. That is the honest limit here: this is the MALL's point, and
+     * the minyan is on level −1 of it. Walking directions will get a reader
+     * to the right building and no further, which for a shopping centre is
+     * what any coordinate could do.
+     */
+    lat: 32.11222,
+    lng: 34.79583,
     // Chabad daven nusach Ari. That is NOT recorded here, because inferring
     // nusach from movement is the same forbidden step as inferring movement
     // from nusach, only in the other direction. Empty until somebody says.
