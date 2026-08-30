@@ -1285,10 +1285,27 @@ body {
 }
 
 /* Not a link. There is nowhere honest to send anyone yet. */
+/* "יודעים את השעה? עדכנו" on an honest-unknown row.
+
+   Deliberately NOT the CTA register any more. It was bold in `--cta-ink`,
+   which is the colour this project reserves for actions, sitting beside a real
+   walking link — so it read as tappable on most rows of the default view, and
+   it is not: there is nowhere honest to send anyone until the gabbai portal
+   exists, and a dead link would be a worse lie than a line of text.
+
+   So it now looks like what it replaces. This sits in the same footer slot as
+   the verified stamp — a card shows one or the other, never both — and takes
+   the same quiet treatment, because it is the same kind of thing: a note about
+   what we know, not an invitation to do something.
+
+   Note this is the ACTION beside the honest-unknown row, which CLAUDE.md warns
+   is the element a contrast sweep will actually be pointing at. Quieting it is
+   safe in that respect and improves the ratio — `--ink-quiet` measures higher
+   than the terracotta did. Do not quieten the unknown VALUE itself. */
 .card-cta {
   font-size: 0.625rem;
-  font-weight: 700;
-  color: var(--cta-ink);
+  font-weight: 600;
+  color: var(--ink-quiet);
   text-align: end;
 }
 

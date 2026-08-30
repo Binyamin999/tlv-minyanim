@@ -240,7 +240,7 @@ carries two, and which one you reach for depends on what the colour is *doing*:
 ```css
 --tlv-sea:      #0E93AE;  /* DECORATION only — gradients, map glow, bare strokes */
 --tlv-sea-ink:  #0A6C82;  /* anything where cyan is doing the job of text */
---tlv-terra-ink:#AD5634;  /* the darker terracotta, for the "update the time" CTA */
+--tlv-terra-ink:#AD5634;  /* the darker terracotta — status tags, not the unknown row */
 ```
 
 Non-text needs only 3:1, so `--tlv-sea` is correct in a gradient and wrong on a
@@ -269,6 +269,13 @@ a pixel and read it back.**
 75% = 7.9:1). If a contrast sweep ever seems to point at it, check what is
 actually failing — most likely the *action* next to it. Do not "fix" the unknown
 state by making it louder; its quietness is the design saying we don't know.
+
+**And the action beside it is quiet too, now.** `יודעים את השעה? עדכנו` was bold
+in the CTA colour next to a real walking link, so it read as tappable on most
+rows of the default view — and it is not a link, because there is nowhere honest
+to send anyone until the gabbai portal exists. It takes the same treatment as
+the verified stamp it replaces in that slot: a note about what we know, not an
+invitation. The wording still reads as an imperative and is worth revisiting.
 
 Re-measure with `scripts/contrast-audit.js` in a browser, never by hand from the
 source — real contrast depends on what is painted behind the label.
