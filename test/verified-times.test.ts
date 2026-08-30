@@ -178,3 +178,75 @@ describe('לכלל ישראל — the claims each stored time rests on', () => {
     assert.equal(fmt(z.tzeit), '19:47', 'צאת השבת on the sheet');
   });
 });
+
+/**
+ * "There are none" is not "we do not know".
+ *
+ * `noMinyanimOn` is the only way this codebase can assert an absence, and an
+ * assertion is worth exactly as much as the check that it is not contradicted
+ * elsewhere in the same record. A shul that says it holds nothing on Shabbat
+ * and also carries a Shabbat minyan is not a display bug — it is two claims,
+ * one of which is false, and the page would print whichever it reached first.
+ */
+describe('stated absence', () => {
+  it('never contradicts a minyan in the same record', () => {
+    for (const [name, record] of Object.entries(VERIFIED)) {
+      for (const day of record.noMinyanimOn) {
+        const clash = record.minyanim.filter((m) => m.dayType === day);
+        assert.deepEqual(
+          clash.map((m) => `${m.service} ${JSON.stringify(m.time)}`),
+          [],
+          `${name} states no minyanim on ${day} yet lists ${clash.length}`,
+        );
+      }
+    }
+  });
+
+  it('is stated, never inferred from having no rows', () => {
+    // היכל חיים has no Shabbat rows at all — its GIS Shabbat times were
+    // dropped as untrustworthy — and that must NOT read as "no Shabbat
+    // services". It is the plain unknown, and somebody still has to go and
+    // photograph the Shabbat sheet.
+    const heichal = VERIFIED['היכל חיים'];
+    assert.ok(heichal, 'היכל חיים is in the verified file');
+    assert.equal(
+      heichal.minyanim.some((m) => m.dayType === 'shabbat'),
+      false,
+      'no Shabbat rows',
+    );
+    assert.deepEqual(heichal.noMinyanimOn, [], 'yet nothing is claimed about Shabbat');
+  });
+
+  it('records the mall shul as closed on both Shabbat days', () => {
+    // The mall closes, so erev Shabbat AND Shabbat are both empty. Listing one
+    // and not the other would leave Friday night reading as unknown.
+    const chabad = VERIFIED['בית חב"ד קניון רמת אביב'];
+    assert.ok(chabad);
+    assert.deepEqual([...chabad.noMinyanimOn].sort(), ['erev_shabbat', 'shabbat']);
+  });
+});
+
+/**
+ * The tzeit ambiguity closing the way it was designed to.
+ *
+ * The board said צאת הכוכבים, which names two times twenty-five minutes apart;
+ * the guard held the minyan back rather than pick one, and the shul supplied
+ * the rule. Asserting `shkia + 20` here is asserting that the answer came from
+ * the shul and not from the luach — resolving it against 8.5° would put this
+ * minyan around shkia + 39.
+ */
+describe('the mall shul Arvit', () => {
+  it('is a shkia rule, not a tzeit one', () => {
+    const chabad = VERIFIED['בית חב"ד קניון רמת אביב'];
+    assert.ok(chabad);
+    const arvit = chabad.minyanim.find((m) => m.service === 'arvit');
+    assert.ok(arvit, 'Arvit is no longer held');
+    assert.deepEqual(arvit.time, { kind: 'relative', anchor: 'shkia', offsetMinutes: 20 });
+  });
+
+  it('carries no validity window, because a rule does not expire', () => {
+    const arvit = VERIFIED['בית חב"ד קניון רמת אביב']!.minyanim.find((m) => m.service === 'arvit')!;
+    assert.equal(arvit.validFrom, undefined);
+    assert.equal(arvit.validUntil, undefined);
+  });
+});

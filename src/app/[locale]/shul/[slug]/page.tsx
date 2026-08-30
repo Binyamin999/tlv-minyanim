@@ -150,12 +150,18 @@ export default async function ShulPage({
 
         {DAY_TYPES.map((dayType) => {
           const rows = confirmed.filter((minyan) => minyan.dayType === dayType).sort(byService);
+          // An empty block has two possible meanings and they are not
+          // interchangeable. `אין שעות ידועות` says we are missing data and
+          // sends a reader looking; where the synagogue has told us it holds
+          // nothing that day, saying that would be false. The block is still
+          // drawn — omitting it entirely reads as a page with a hole in it.
+          const statedEmpty = synagogue.noMinyanimOn.includes(dayType);
           return (
             <section className="day-block" key={dayType}>
               <h2 className="section-heading">{t.dayTypes[dayType]}</h2>
 
               {rows.length === 0 ? (
-                <p className="quiet">{t.noKnownTimes}</p>
+                <p className="quiet">{statedEmpty ? t.noServicesHeld : t.noKnownTimes}</p>
               ) : (
                 <ul className="minyanim">
                   {rows.map((minyan) => (

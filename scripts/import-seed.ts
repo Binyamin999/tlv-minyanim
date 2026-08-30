@@ -207,11 +207,13 @@ async function upsertAdded(
   const { rows } = await client.query<{ id: number }>(
     `INSERT INTO synagogues (
        gis_source_id, slug, name_he, name_en, address_he, address_en,
-       location, nusachim, movement, style, status, last_verified_at, verified_by
+       location, nusachim, movement, style, status, last_verified_at, verified_by,
+       no_minyanim_on
      ) VALUES (
        NULL, $1, $2, $3, $4, NULL,
        ST_SetSRID(ST_MakePoint($5, $6), 4326)::geography,
-       $7::nusach[], $8::movement, NULL, $9::synagogue_status, $10::timestamptz, $11
+       $7::nusach[], $8::movement, NULL, $9::synagogue_status, $10::timestamptz, $11,
+       $12::day_type[]
      )
      ON CONFLICT (slug) DO UPDATE SET
        name_he          = EXCLUDED.name_he,
@@ -223,6 +225,7 @@ async function upsertAdded(
        status           = EXCLUDED.status,
        last_verified_at = EXCLUDED.last_verified_at,
        verified_by      = EXCLUDED.verified_by,
+       no_minyanim_on   = EXCLUDED.no_minyanim_on,
        updated_at       = now()
      RETURNING id`,
     [
@@ -237,6 +240,10 @@ async function upsertAdded(
       added.status,
       verified ? verified.verifiedAt : null,
       verified ? verified.verifiedBy : null,
+      // Only a person can state an absence, so this can only come from a
+      // verified record. Nothing verified means nothing stated, which is not
+      // the same as "it davens every day" — it is the honest unknown.
+      verified ? verified.noMinyanimOn : [],
     ],
   );
   return rows[0]!.id;
@@ -388,11 +395,13 @@ async function upsertSynagogue(
   const { rows } = await client.query<{ id: number }>(
     `INSERT INTO synagogues (
        gis_source_id, slug, name_he, name_en, address_he, address_en,
-       location, nusachim, movement, style, status, last_verified_at, verified_by
+       location, nusachim, movement, style, status, last_verified_at, verified_by,
+       no_minyanim_on
      ) VALUES (
        $1, $2, $3, $12, $4, NULL,
        ST_SetSRID(ST_MakePoint($5, $6), 4326)::geography,
-       $7::nusach[], $8::movement, NULL, $9::synagogue_status, $10::timestamptz, $11
+       $7::nusach[], $8::movement, NULL, $9::synagogue_status, $10::timestamptz, $11,
+       $13::day_type[]
      )
      ON CONFLICT (gis_source_id) DO UPDATE SET
        name_he          = EXCLUDED.name_he,
@@ -404,6 +413,7 @@ async function upsertSynagogue(
        status           = EXCLUDED.status,
        last_verified_at = EXCLUDED.last_verified_at,
        verified_by      = EXCLUDED.verified_by,
+       no_minyanim_on   = EXCLUDED.no_minyanim_on,
        updated_at       = now()
      RETURNING id`,
     [
@@ -419,6 +429,10 @@ async function upsertSynagogue(
       lastVerifiedAt,
       verifiedBy,
       nameEn,
+      // Absence is stated, never parsed. The GIS layer cannot say a shul holds
+      // nothing on Shabbat — it can only fail to mention Shabbat, which is the
+      // unknown. So this is empty unless a person put a day in it.
+      verified ? verified.noMinyanimOn : [],
     ],
   );
 

@@ -86,6 +86,29 @@ export interface VerifiedSynagogue {
   /** Becomes `verified_by`. See VerificationSource. */
   verifiedBy: VerificationSource;
   minyanim: readonly VerifiedMinyan[];
+  /**
+   * Days on which this synagogue holds NO services at all.
+   *
+   * "We do not know" and "there are none" are different statements, and until
+   * this field existed the site could only make the first. בית חב"ד קניון רמת
+   * אביב is inside a shopping centre that closes for Shabbat and holds nothing
+   * on Friday night or Saturday; its page said `אין שעות ידועות` — "no known
+   * times" — which tells a reader we are missing data about a minyan that
+   * exists, and sends them looking for it.
+   *
+   * This is the same distinction the whole codebase turns on, one level up:
+   * `בזמן` is an unknown time for a service that happens, and this is a
+   * service that does not happen. Conflating them is the honest-unknown rule
+   * used dishonestly.
+   *
+   * It lives HERE rather than on the synagogue record because absence can only
+   * ever be stated, never parsed. A missing row in the GIS layer means the
+   * municipality did not write one down; only a person who read the board — or
+   * asked — can say that Friday night is empty. Anything not listed here stays
+   * unknown, which is why the default is the empty array and not "every day
+   * except the ones with rows".
+   */
+  noMinyanimOn: readonly DayType[];
   held: readonly HeldTime[];
 }
 
@@ -146,11 +169,18 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
    * one clock convention is possible and reading it is not guessing — the
    * shift is recorded in clockNormalisation either way.
    *
-   * Arvit is at צאת הכוכבים and is HELD. That anchor names two different
-   * times: the luach's 8.5° value, about 19:45 tonight, and the nightfall a
-   * shul actually davens at, shkia + 13 to 25 — so 19:20 to 19:32. Publishing
-   * the first would list this minyan up to twenty-five minutes late. One
-   * question at the shul turns it into a rule.
+   * Arvit was held at צאת הכוכבים and is now a rule: shkia + 20, stated by
+   * the shul. That is the ambiguity closing exactly the way it was meant to.
+   * The anchor named two different times — the luach's stringent 8.5° value,
+   * about 19:45 tonight, and the nightfall a shul actually davens at — and
+   * publishing the first would have listed this minyan eighteen minutes late.
+   * Asking cost one question; guessing would have cost the reader a minyan.
+   *
+   * No window on it. A rule does not expire, because sunset moves with it.
+   *
+   * NOTHING ON SHABBAT. The mall closes, so there is no Friday night and no
+   * Saturday minyan here at all — stated, not inferred from having no rows.
+   * See `noMinyanimOn`.
    */
   'בית חב"ד קניון רמת אביב': {
     verifiedAt: '2026-08-30',
@@ -180,18 +210,21 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
         validUntil: '2026-09-04',
         note: 'the board writes 3:30; Mincha at 03:30 does not exist',
       },
-    ],
-    held: [
       {
-        what: 'Arvit at צאת הכוכבים',
-        why:
-          'The anchor names two different times. On a luach צאת הכוכבים is the ' +
-          'stringent 8.5° value — 19:45 tonight — while a shul saying "at tzeit" ' +
-          'usually means shkia + 13 to 25, so 19:20 to 19:32. Resolving the ' +
-          'shul\'s word against the luach\'s definition would list this minyan up ' +
-          'to twenty-five minutes late, which is the failure this project exists ' +
-          'to refuse. Ask how many minutes after shkia and it becomes a rule.',
+        service: 'arvit',
+        dayType: 'weekday',
+        // Stated by the shul as twenty minutes after shkia, which is what the
+        // board's צאת הכוכבים meant — the davening nightfall, not the luach's
+        // 8.5°. No window: a rule is correct in December as well as August,
+        // which is the whole reason a rule outranks a clock face.
+        time: { kind: 'relative', anchor: 'shkia', offsetMinutes: 20 },
+        note: 'stated as 20 minutes after shkia, resolving the board\'s צאת הכוכבים',
       },
+    ],
+    // The mall closes for Shabbat, so there is no erev-Shabbat and no Shabbat
+    // minyan here — stated by the shul, not inferred from an absence of rows.
+    noMinyanimOn: ['erev_shabbat', 'shabbat'],
+    held: [
       {
         what: 'that the minyan is on level −1 of the mall',
         why:
@@ -254,6 +287,8 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
         note: 'follows Mincha; after plag, which is what makes an early Arvit valid',
       },
     ],
+    // Nothing stated about Shabbat either way, so it stays unknown.
+    noMinyanimOn: [],
     held: [
       {
         what: 'that the 06:50 minyan meets בסוכה',
@@ -377,6 +412,8 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
         note: 'Kabbalat Shabbat, at shkia',
       },
     ],
+    // Nothing stated about Shabbat either way, so it stays unknown.
+    noMinyanimOn: [],
     held: [
       {
         what: 'a weekday time that outlives its week',

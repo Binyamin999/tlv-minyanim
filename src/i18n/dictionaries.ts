@@ -94,6 +94,9 @@ const he = {
   } satisfies Record<SynagogueStatus, string>,
   /** No time at all for a day. Honest blank, not an empty table. */
   noKnownTimes: 'אין שעות ידועות',
+  // Not the same sentence as the one above, and deliberately so: that one says
+  // we are missing data, this one says the synagogue told us there is nothing.
+  noServicesHeld: 'לא מתקיימות תפילות',
   /** Rows with a pending review reason. Never shown as confirmed. */
   unconfirmedHeading: 'טעון בדיקה — לא מאושר',
   unconfirmedNote: 'המקור לא ברור, והשעות האלה לא אושרו. אל תסתמכו עליהן.',
@@ -329,6 +332,7 @@ const en: typeof he = {
     closed: 'Closed',
   },
   noKnownTimes: 'No times known',
+  noServicesHeld: 'No services held',
   unconfirmedHeading: 'Needs checking — not confirmed',
   unconfirmedNote: 'The source is unclear and these have not been confirmed. Do not rely on them.',
   reviewReasons: {

@@ -400,8 +400,11 @@ failure this project exists to prevent.
 back.** The anchor is kept, never published. This applies even when an offset
 is stated: `20 דק' אחרי צאת הכוכבים` still does not say *which* nightfall it is
 measured from. `shkia` and `netz` are unaffected — those anchors mean one thing
-each. No minyan in the Ramat Aviv 16 uses tzeit, so the guard is ready rather
-than firing; Kfar Shalem will almost certainly trip it.
+each. The guard has fired, and closing it took one question. בית חב"ד קניון רמת
+אביב's board says Arvit at צאת הכוכבים; held rather than published, the shul
+then said twenty minutes after shkia. Resolving its own word against the
+luach's 8.5° would have listed it at 19:45 against a real 19:27 — eighteen
+minutes late, on the first real minyan the guard ever saw.
 
 **Never map a bare `בזמן` on an Arvit line onto any tzeit value** — that is
 guessing an offset, and the flag above must not tempt anyone into treating
@@ -488,6 +491,21 @@ reads as honestly unknown (`validity_expired`), because 18:45 in December is
 never expires because sunset moves with it. Never give a window to a relative
 time, and never omit one from a clock face that cannot hold all year: there is
 a test for each direction.
+
+**"There are none" is not "we do not know".** `no_minyanim_on` is the only way
+to state an absence, and a day listed there is a positive claim. בית חב"ד קניון
+רמת אביב is inside a mall that closes for Shabbat and holds nothing on Friday
+night or Saturday; its page said `אין שעות ידועות`, which tells a reader we are
+missing data about a minyan that exists and sends them looking for it. Same
+distinction as `בזמן` one level up: that is an unknown time for a service that
+happens, this is a service that does not.
+
+Absence can only ever be **stated, never parsed** — the GIS layer cannot say a
+shul is closed on Shabbat, only fail to mention Shabbat, which is the unknown.
+So the field lives on the verified record, defaults empty, and a day missing
+from it stays unknown. היכל חיים has no Shabbat rows at all and claims nothing:
+somebody still has to photograph that sheet. A test refuses a record that both
+claims a day empty and lists a minyan on it.
 
 **`held` is part of the record.** A sign carries more than we can store, and
 writing down what was seen and deliberately not kept — with the reason — is what

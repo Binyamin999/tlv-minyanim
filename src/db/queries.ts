@@ -39,6 +39,14 @@ export interface Synagogue {
   /** NULL = never verified, and the UI says exactly that. */
   lastVerifiedAt: Date | null;
   verifiedBy: string | null;
+  /**
+   * Days this synagogue states it holds NO services on.
+   *
+   * A day in here is a positive claim of absence and the page says so. A day
+   * merely missing from this array is the ordinary unknown — the two are not
+   * the same and the UI must not render them the same way.
+   */
+  noMinyanimOn: readonly DayType[];
 }
 
 export interface Minyan {
@@ -93,6 +101,7 @@ interface SynagogueRow {
   status: SynagogueStatus;
   last_verified_at: Date | null;
   verified_by: string | null;
+  no_minyanim_on: DayType[];
 }
 
 interface MinyanRow {
@@ -125,7 +134,11 @@ const SYNAGOGUE_COLUMNS = `
   -- nusach[] arrives as the raw literal string '{ashkenaz,edot_hamizrach}'
   -- while TypeScript believes it is an array. .map then throws at render time
   -- on a clean typecheck. text[] hits a parser that exists.
-  nusachim::text[] AS nusachim, movement, status, last_verified_at, verified_by`;
+  nusachim::text[] AS nusachim, movement, status, last_verified_at, verified_by,
+  -- ::text[] for the same reason as nusachim above: node-postgres has no
+  -- parser for an array of a custom enum, so a bare day_type[] arrives as the
+  -- literal string '{shabbat}' and .includes() then matches single letters.
+  no_minyanim_on::text[] AS no_minyanim_on`;
 
 function toSynagogue(row: SynagogueRow): Synagogue {
   return {
@@ -142,6 +155,7 @@ function toSynagogue(row: SynagogueRow): Synagogue {
     status: row.status,
     lastVerifiedAt: row.last_verified_at,
     verifiedBy: row.verified_by,
+    noMinyanimOn: row.no_minyanim_on ?? [],
   };
 }
 
