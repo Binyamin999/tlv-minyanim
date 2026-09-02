@@ -94,6 +94,11 @@ confirmed the candle-lighting minhag, corrected a Mincha that was twelve minutes
 early, and exposed a day-placement bug that put an erev-Shabbat minyan on the
 wrong day. Nothing derivable from a desk found any of them.
 
+**The gabbai question list lives in `docs/gabbai-questions.md`** — eight
+questions, each tied to something currently held, guessed at or expiring, with
+the Hebrew to actually say. Read it before drafting any outreach, and add to it
+rather than inventing a parallel list. The two below are the ones it opens with.
+
 **Two questions are worth more than any feature.** Ask a gabbai: *does your
 Mincha follow a rule, or do you reprint the sheet each week?* And where a sheet
 exists, **three consecutive weeks of it settles rule-vs-fixed empirically** — if
@@ -108,6 +113,12 @@ another's, so a single reading updates both. Never resolve this by pasting a cop
 these are weekly-reprinted times, so a copy agrees on the day it is made and
 diverges the following Sunday — and the side nobody re-read keeps publishing under
 its own `last_verified_at`, looking freshly checked.
+
+**And the newest one: which luach.** `צאת הכוכבים` differs by nearly an hour
+between luachot — 8.5° is about shkia + 39 here, a 13.5-minute reckoning is
+shkia + 13, Rabbeinu Tam is shkia + 72 — so knowing which one a shul follows
+turns a held minyan into a rule. Never infer it from movement; a Chabad house
+does not necessarily use a Chabad luach.
 
 **The question that unblocks a tzeit Arvit: "how many minutes after shkia?"** A
 board saying `צאת הכוכבים` is held, because that word means the luach's 8.5° value
