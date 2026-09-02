@@ -14,7 +14,8 @@
     "test": "node --test \"test/**/*.test.ts\"",
     "typecheck": "tsc --noEmit -p tsconfig.parser.json && tsc --noEmit -p tsconfig.json",
     "coverage": "node scripts/coverage-report.ts",
-    "import:seed": "node --env-file-if-exists=.env.local scripts/import-seed.ts"
+    "import:seed": "node --env-file-if-exists=.env.local scripts/import-seed.ts",
+    "migrate": "node --env-file-if-exists=.env.local scripts/migrate.mjs"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
