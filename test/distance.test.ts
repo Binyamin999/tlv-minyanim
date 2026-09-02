@@ -11,6 +11,7 @@ import { describe, it } from 'node:test';
 
 import {
   ACCURACY_LIMIT_METRES,
+  anythingWithinReach,
   formatMetres,
   metresBetween,
   reachability,
@@ -112,5 +113,44 @@ describe('formatMetres', () => {
     // accuracy of a good urban fix, so it is the smallest honest figure.
     assert.deepEqual(formatMetres(0), { value: 50, unit: 'm' });
     assert.deepEqual(formatMetres(12), { value: 50, unit: 'm' });
+  });
+});
+
+/**
+ * The coverage ceiling.
+ *
+ * Beyond it the honest answer is that we know of nothing near you. Without it
+ * the board answered a visitor in Dizengoff Center with fifteen rows marked
+ * `reachable`, walks of 76 to 116 minutes, and a live directions link on each
+ * — technically true, since those minyanim really are hours away, and an
+ * answer nobody standing there should be given.
+ */
+describe('anythingWithinReach', () => {
+  it('is true when something is a short walk away', () => {
+    assert.equal(anythingWithinReach([300, 5000, 9000]), true);
+  });
+
+  it('is false when even the nearest is beyond half an hour on foot', () => {
+    // Dizengoff Center to the nearest of the seventeen: about 4 km.
+    assert.equal(anythingWithinReach([4000, 4200, 6200]), false);
+  });
+
+  it('judges the nearest, not the average', () => {
+    // One close shul is enough to make the feature useful, however far the
+    // rest of the city is.
+    assert.equal(anythingWithinReach([200, 40000]), true);
+  });
+
+  it('is false for an empty board, never true by default', () => {
+    // A filter that matches nothing must not report coverage it does not have.
+    assert.equal(anythingWithinReach([]), false);
+  });
+
+  it('lets the whole covered neighbourhood through', () => {
+    // The seventeen span 2.1 km, so anyone standing among them has one much
+    // closer than the ceiling and never sees the message. If this ever fails,
+    // the ceiling has been tightened to the point of hiding real coverage.
+    assert.equal(anythingWithinReach([2100]), false, '2.1 km is beyond a 30-minute walk');
+    assert.equal(anythingWithinReach([1500]), true, 'but the far end of one neighbourhood is not');
   });
 });

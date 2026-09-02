@@ -134,6 +134,10 @@ const he = {
     // user's cursor, which is the part that needs announcing — the distances
     // themselves are read out when they reach each card.
     sorted: 'בתי כנסת, מסודרים לפי מרחק ממך',
+    // Nothing we know about is near. Said plainly, once, instead of offering a
+    // sorted list of ninety-minute walks. Names the reason — the coverage is
+    // ours, not the reader's fault — without promising when that changes.
+    outOfRange: 'אין בית כנסת ידוע קרוב אליך — בינתיים יש לנו רק את רמת אביב',
   },
   // The board's own words. A room is a code precisely so each language can
   // print its own — see the minyan_location enum.
@@ -401,6 +405,7 @@ const en: typeof he = {
     kilometres: 'km',
     tooFar: "You won't get there in time",
     sorted: 'synagogues, sorted by distance from you',
+    outOfRange: "No synagogue we know of is near you — so far we only cover Ramat Aviv",
   },
   locations: { upstairs: 'upstairs', downstairs: 'downstairs', sukkah: 'in the sukkah' },
   // Spelled out, because a visitor who cannot read the board cannot be

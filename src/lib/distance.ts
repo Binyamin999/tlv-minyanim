@@ -74,6 +74,35 @@ export function walkingMinutes(straightLineMetres: number): number {
  */
 export const ACCURACY_LIMIT_METRES = 250;
 
+/**
+ * The furthest a shul can be and still be worth offering, on foot.
+ *
+ * Beyond this the honest answer is that we know of nothing near you — not a
+ * dutifully sorted list of ninety-minute walks with live directions links.
+ *
+ * Thirty minutes is the outer edge of "I could get there". It is also well
+ * inside the covered area: the seventeen synagogues span 2.1 km, so anyone
+ * standing among them has one much closer than this and never sees the
+ * message. It fires when somebody is genuinely outside the coverage — from
+ * Dizengoff Center the nearest is 76 minutes — which today is most of the
+ * city, and will stay true for someone outside all four neighbourhoods long
+ * after Kfar Shalem lands.
+ */
+export const COVERAGE_LIMIT_WALK_MINUTES = 30;
+
+/**
+ * Is anything we know about near enough to be worth showing?
+ *
+ * Takes the whole result set, because the question is about coverage rather
+ * than about any one shul. `false` means say so and change nothing else — the
+ * board stays in time order, undecorated, exactly as a visitor who never
+ * tapped would see it.
+ */
+export function anythingWithinReach(straightLineMetres: readonly number[]): boolean {
+  if (straightLineMetres.length === 0) return false;
+  return walkingMinutes(Math.min(...straightLineMetres)) <= COVERAGE_LIMIT_WALK_MINUTES;
+}
+
 export type Reachability = 'reachable' | 'too_far' | 'unknown';
 
 /**

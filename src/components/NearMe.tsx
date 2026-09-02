@@ -7,6 +7,7 @@ import type { Dictionary } from '@/i18n/dictionaries';
 /** Only the plain strings. See the `nearMe` group in dictionaries.ts. */
 type NearMeLabels = Dictionary['nearMe'];
 import {
+  anythingWithinReach,
   formatMetres,
   metresBetween,
   reachability,
@@ -52,6 +53,7 @@ type State =
   | { status: 'done'; count: number; vague: boolean }
   | { status: 'denied' }
   | { status: 'insecure' }
+  | { status: 'out_of_range' }
   | { status: 'failed' };
 
 export function NearMe({ labels }: { labels: NearMeLabels }) {
@@ -106,6 +108,15 @@ export function NearMe({ labels }: { labels: NearMeLabels }) {
         };
         const accuracy = position.coords.accuracy;
         const count = decorate(here, accuracy, labels);
+        // `null` means nothing we know about is within walking distance. The
+        // board is left exactly as the server sent it — in time order, no
+        // distances, no sort — because a list of ninety-minute walks with live
+        // directions links spends the feature's credibility on an answer
+        // nobody standing there should be given.
+        if (count === null) {
+          setState({ status: 'out_of_range' });
+          return;
+        }
         setState({ status: 'done', count, vague: accuracy > 250 });
       },
       (error) => {
@@ -137,6 +148,8 @@ export function NearMe({ labels }: { labels: NearMeLabels }) {
           ? labels.failed
           : state.status === 'insecure'
             ? labels.insecure
+            : state.status === 'out_of_range'
+              ? labels.outOfRange
           : state.status === 'done'
             ? // `count` earns its place here. It was carried in state and read
               // by nothing, which the QA pass called out as a comment
@@ -153,6 +166,9 @@ export function NearMe({ labels }: { labels: NearMeLabels }) {
       {state.status === 'failed' ? <span className="near-me-note">{labels.failed}</span> : null}
       {state.status === 'insecure' ? (
         <span className="near-me-note">{labels.insecure}</span>
+      ) : null}
+      {state.status === 'out_of_range' ? (
+        <span className="near-me-note">{labels.outOfRange}</span>
       ) : null}
       {state.status === 'done' && state.vague ? (
         <span className="near-me-note">{labels.vague}</span>
@@ -179,8 +195,19 @@ function decorate(
   here: { lat: number; lng: number },
   accuracyMetres: number,
   labels: NearMeLabels,
-): number {
+): number | null {
   const cards = [...document.querySelectorAll<HTMLElement>('[data-lat][data-lng]')];
+
+  // Measure before writing anything. If nothing is near, the board must be
+  // left untouched rather than decorated and then un-decorated — a page that
+  // fills with distances and empties again is worse than one that never
+  // claimed anything.
+  const distances = cards
+    .map((el) => ({ el, lat: Number(el.dataset.lat), lng: Number(el.dataset.lng) }))
+    .filter((c) => Number.isFinite(c.lat) && Number.isFinite(c.lng))
+    .map((c) => metresBetween(here, { lat: c.lat, lng: c.lng }));
+  if (!anythingWithinReach(distances)) return null;
+
   const measured: Array<{ el: HTMLElement; metres: number }> = [];
 
   for (const el of cards) {
