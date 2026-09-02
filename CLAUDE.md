@@ -492,8 +492,13 @@ never expires because sunset moves with it. Never give a window to a relative
 time, and never omit one from a clock face that cannot hold all year: there is
 a test for each direction.
 
-**"There are none" is not "we do not know".** `no_minyanim_on` is the only way
-to state an absence, and a day listed there is a positive claim. בית חב"ד קניון
+**"There are none" is not "we do not know".** `synagogue_absences` is the only
+way to state an absence, and a row there is a positive claim. Each row is a day
+plus an OPTIONAL service: no service means nothing happens that day, a service
+means that one is not held while others on the same day may be. נוה קודש davens
+Shacharit every weekday and holds no Mincha or Arvit at all, which the original
+day-wide column could not say — the page showed a lone Shacharit row and left a
+reader unable to tell a Mincha we were missing from one that does not happen. בית חב"ד קניון
 רמת אביב is inside a mall that closes for Shabbat and holds nothing on Friday
 night or Saturday; its page said `אין שעות ידועות`, which tells a reader we are
 missing data about a minyan that exists and sends them looking for it. Same

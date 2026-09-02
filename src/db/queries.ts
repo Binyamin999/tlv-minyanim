@@ -42,13 +42,13 @@ export interface Synagogue {
   lastVerifiedAt: Date | null;
   verifiedBy: string | null;
   /**
-   * Days this synagogue states it holds NO services on.
+   * What this synagogue states it does NOT hold.
    *
-   * A day in here is a positive claim of absence and the page says so. A day
-   * merely missing from this array is the ordinary unknown — the two are not
-   * the same and the UI must not render them the same way.
+   * Each entry is a positive claim of absence and the page says so; anything
+   * merely missing from the list is the ordinary unknown, and the UI must not
+   * render the two the same way. A `service` of null means the whole day.
    */
-  noMinyanimOn: readonly DayType[];
+  noMinyanim: readonly { dayType: DayType; service: Service | null }[];
 }
 
 export interface Minyan {
@@ -112,7 +112,7 @@ interface SynagogueRow {
   status: SynagogueStatus;
   last_verified_at: Date | null;
   verified_by: string | null;
-  no_minyanim_on: DayType[];
+  no_minyanim: { dayType: DayType; service: Service | null }[];
 }
 
 interface MinyanRow {
@@ -149,10 +149,15 @@ const SYNAGOGUE_COLUMNS = `
   -- while TypeScript believes it is an array. .map then throws at render time
   -- on a clean typecheck. text[] hits a parser that exists.
   nusachim::text[] AS nusachim, movement, status, last_verified_at, verified_by,
-  -- ::text[] for the same reason as nusachim above: node-postgres has no
-  -- parser for an array of a custom enum, so a bare day_type[] arrives as the
-  -- literal string '{shabbat}' and .includes() then matches single letters.
-  no_minyanim_on::text[] AS no_minyanim_on`;
+  -- Stated absences, aggregated here rather than fetched in a second round
+  -- trip: there are a handful per synagogue at most. ::text on each enum for
+  -- the same reason as nusachim above — node-postgres has no parser for a
+  -- custom enum inside a composite, so both sides are read out as text.
+  COALESCE(
+    (SELECT jsonb_agg(jsonb_build_object('dayType', a.day_type::text, 'service', a.service::text))
+       FROM synagogue_absences a WHERE a.synagogue_id = synagogues.id),
+    '[]'::jsonb
+  ) AS no_minyanim`;
 
 function toSynagogue(row: SynagogueRow): Synagogue {
   return {
@@ -169,7 +174,9 @@ function toSynagogue(row: SynagogueRow): Synagogue {
     status: row.status,
     lastVerifiedAt: row.last_verified_at,
     verifiedBy: row.verified_by,
-    noMinyanimOn: row.no_minyanim_on ?? [],
+    // `?? []` for the same reason asIsoDate tolerates undefined: a SELECT that
+    // forgets the column would otherwise hand the page an undefined and 500.
+    noMinyanim: row.no_minyanim ?? [],
   };
 }
 

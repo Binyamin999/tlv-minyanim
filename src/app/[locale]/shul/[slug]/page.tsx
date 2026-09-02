@@ -168,12 +168,22 @@ export default async function ShulPage({
           // sends a reader looking; where the synagogue has told us it holds
           // nothing that day, saying that would be false. The block is still
           // drawn — omitting it entirely reads as a page with a hole in it.
-          const statedEmpty = synagogue.noMinyanimOn.includes(dayType);
+          const statedEmpty = synagogue.noMinyanim.some(
+            (a) => a.dayType === dayType && a.service === null,
+          );
+          // Services this shul says it does not hold on this day, while it
+          // does hold others. נוה קודש davens Shacharit every weekday and no
+          // Mincha or Arvit at all — without these rows the block shows one
+          // Shacharit and leaves a reader unable to tell a Mincha we are
+          // missing from one that does not happen.
+          const absentServices = SERVICE_ORDER.filter((service) =>
+            synagogue.noMinyanim.some((a) => a.dayType === dayType && a.service === service),
+          );
           return (
             <section className="day-block" key={dayType}>
               <h2 className="section-heading">{t.dayTypes[dayType]}</h2>
 
-              {rows.length === 0 ? (
+              {rows.length === 0 && absentServices.length === 0 ? (
                 <p className="quiet">{statedEmpty ? t.noServicesHeld : t.noKnownTimes}</p>
               ) : (
                 <ul className="minyanim">
@@ -185,6 +195,16 @@ export default async function ShulPage({
                       locale={locale}
                       resolved={resolved.get(minyan.id)}
                     />
+                  ))}
+                  {/* Stated absences last, after the times that do happen. A
+                      row rather than a footnote, so somebody scanning the
+                      column for מנחה finds an answer where they are looking
+                      instead of finding nothing. */}
+                  {absentServices.map((service) => (
+                    <li className="minyan minyan-absent" key={`absent-${service}`}>
+                      <span className="service">{t.services[service]}</span>
+                      <span className="value unknown">{t.serviceNotHeld}</span>
+                    </li>
                   ))}
                 </ul>
               )}

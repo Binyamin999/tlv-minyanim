@@ -114,6 +114,17 @@ export interface HeldTime {
  */
 export type VerificationSource = 'notice_board' | 'gabbai' | 'phone' | 'shul_website';
 
+/**
+ * A service a synagogue states it does not hold.
+ *
+ * `service` omitted means the whole day. Never "unknown which service" — a row
+ * of this shape is always a positive claim.
+ */
+export interface StatedAbsence {
+  dayType: DayType;
+  service?: Service;
+}
+
 export interface VerifiedSynagogue {
   /** ISO date the notice board was read. Becomes `last_verified_at`. */
   verifiedAt: string;
@@ -121,7 +132,7 @@ export interface VerifiedSynagogue {
   verifiedBy: VerificationSource;
   minyanim: readonly VerifiedMinyan[];
   /**
-   * Days on which this synagogue holds NO services at all.
+   * What this synagogue states it does NOT hold.
    *
    * "We do not know" and "there are none" are different statements, and until
    * this field existed the site could only make the first. בית חב"ד קניון רמת
@@ -135,6 +146,12 @@ export interface VerifiedSynagogue {
    * service that does not happen. Conflating them is the honest-unknown rule
    * used dishonestly.
    *
+   * An entry with no `service` means nothing at all happens that day. With a
+   * service, that ONE service is not held while others on the same day may be:
+   * נוה קודש davens Shacharit every weekday and holds no Mincha or Arvit,
+   * which the day-wide form could not say — the page showed a lone Shacharit
+   * row and left a reader unable to tell a missing Mincha from an absent one.
+   *
    * It lives HERE rather than on the synagogue record because absence can only
    * ever be stated, never parsed. A missing row in the GIS layer means the
    * municipality did not write one down; only a person who read the board — or
@@ -142,7 +159,7 @@ export interface VerifiedSynagogue {
    * unknown, which is why the default is the empty array and not "every day
    * except the ones with rows".
    */
-  noMinyanimOn: readonly DayType[];
+  noMinyanim: readonly StatedAbsence[];
   held: readonly HeldTime[];
 }
 
@@ -214,7 +231,7 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
    *
    * NOTHING ON SHABBAT. The mall closes, so there is no Friday night and no
    * Saturday minyan here at all — stated, not inferred from having no rows.
-   * See `noMinyanimOn`.
+   * See `noMinyanim`.
    */
   'בית חב"ד קניון רמת אביב': {
     verifiedAt: '2026-08-30',
@@ -257,7 +274,8 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
     ],
     // The mall closes for Shabbat, so there is no erev-Shabbat and no Shabbat
     // minyan here — stated by the shul, not inferred from an absence of rows.
-    noMinyanimOn: ['erev_shabbat', 'shabbat'],
+    // No service named: nothing at all happens on either day.
+    noMinyanim: [{ dayType: 'erev_shabbat' }, { dayType: 'shabbat' }],
     held: [
     ],
   },
@@ -378,7 +396,7 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
         note: 'third Arvit',
       },
     ],
-    noMinyanimOn: [],
+    noMinyanim: [],
     held: [
       {
         what: 'נץ / הודו / פלג as anchors rather than labels',
@@ -457,7 +475,7 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
         note: 'three minutes before shkia on 2026-04-15, so never year-round',
       },
     ],
-    noMinyanimOn: [],
+    noMinyanim: [],
     held: [
       {
         what: 'ללא חזרת הש״ץ on the 13:55 Mincha',
@@ -577,7 +595,7 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
         note: 'second Arvit, late',
       },
     ],
-    noMinyanimOn: [],
+    noMinyanim: [],
     held: [
       {
         what: "the GIS layer's Shabbat Shacharit at 10:00",
@@ -596,6 +614,73 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
           'clock face; three consecutive boards would. The windows hold the line ' +
           'until then, and 19:34 could not be tzeit-anchored in any case — that ' +
           'anchor names two different times and is held on sight.',
+      },
+    ],
+  },
+
+  /**
+   * נוה קודש, אופנהיימר 5 — the second congregation at that door, alongside
+   * היכל חיים. Weekday board for the week of 2026-08-30.
+   *
+   * SHACHARIT AND NOTHING ELSE. The shul states it holds no Mincha and no
+   * Arvit at all, which is the first absence narrower than a whole day and
+   * the reason migration 0011 exists. Before it, the page showed a single
+   * Shacharit row and a reader could not tell a Mincha we were missing from
+   * one that does not happen.
+   *
+   * Scoped to WEEKDAYS deliberately. The user said the shul has Shabbat
+   * minyanim and would send them separately, so Shabbat is not claimed empty
+   * here — an "at all" that swallowed Shabbat would contradict the same
+   * sentence that reported it. If Mincha is absent on Shabbat too, that is a
+   * separate statement and it can be added when the Shabbat sheet arrives.
+   *
+   * Monday and Thursday start ten minutes earlier for קריאת התורה — the same
+   * shape as צימבליסטה, and the second shul to need `daysOfWeek`. Between
+   * them the two rows cover every weekday exactly once.
+   *
+   * Both clock faces hold all year, and both carry a window anyway: one board
+   * vouches for one week.
+   *
+   * This replaces a GIS Shacharit of 06:45, which matches neither reading.
+   */
+  'נוה קודש': {
+    verifiedAt: '2026-08-31',
+    verifiedBy: 'notice_board',
+    minyanim: [
+      {
+        service: 'shacharit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '06:30' },
+        daysOfWeek: [0, 2, 3],
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'Sunday, Tuesday, Wednesday — the days without קריאת התורה',
+      },
+      {
+        service: 'shacharit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '06:20' },
+        daysOfWeek: TORAH_READING_DAYS,
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'Monday and Thursday — ten minutes earlier for קריאת התורה',
+      },
+    ],
+    // Stated by the shul: mornings only, on weekdays. Nothing is claimed about
+    // Shabbat, which is still to come.
+    noMinyanim: [
+      { dayType: 'weekday', service: 'mincha' },
+      { dayType: 'weekday', service: 'arvit' },
+    ],
+    held: [
+      {
+        what: "the GIS layer's Shabbat rows — Shacharit 07:50 and Mincha בזמן",
+        why:
+          'A verified record replaces the parsed one wholesale, and the source ' +
+          'was wrong about the weekday Shacharit it did report (06:45, against ' +
+          'a board reading 06:30 and 06:20). The shul does hold Shabbat ' +
+          'minyanim — the user said so — so Shabbat is honestly unknown rather ' +
+          'than empty, until that sheet arrives.',
       },
     ],
   },
@@ -653,8 +738,8 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
         note: 'follows Mincha; after plag, which is what makes an early Arvit valid',
       },
     ],
-    // Nothing stated about Shabbat either way, so it stays unknown.
-    noMinyanimOn: [],
+    // Nothing stated either way, so everything unlisted stays unknown.
+    noMinyanim: [],
     held: [
       {
         what: 'the GIS layer\'s Shabbat Shacharit, 07:30 and 08:30',
@@ -770,8 +855,8 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
         note: 'Kabbalat Shabbat, at shkia',
       },
     ],
-    // Nothing stated about Shabbat either way, so it stays unknown.
-    noMinyanimOn: [],
+    // Nothing stated either way, so everything unlisted stays unknown.
+    noMinyanim: [],
     held: [
       {
         what: 'a weekday time that outlives its week',

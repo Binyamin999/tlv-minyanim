@@ -211,13 +211,11 @@ async function upsertAdded(
   const { rows } = await client.query<{ id: number }>(
     `INSERT INTO synagogues (
        gis_source_id, slug, name_he, name_en, address_he, address_en,
-       location, nusachim, movement, style, status, last_verified_at, verified_by,
-       no_minyanim_on
+       location, nusachim, movement, style, status, last_verified_at, verified_by
      ) VALUES (
-       NULL, $1, $2, $3, $4, $13,
+       NULL, $1, $2, $3, $4, $12,
        ST_SetSRID(ST_MakePoint($5, $6), 4326)::geography,
-       $7::nusach[], $8::movement, NULL, $9::synagogue_status, $10::timestamptz, $11,
-       $12::day_type[]
+       $7::nusach[], $8::movement, NULL, $9::synagogue_status, $10::timestamptz, $11
      )
      ON CONFLICT (slug) DO UPDATE SET
        name_he          = EXCLUDED.name_he,
@@ -230,7 +228,6 @@ async function upsertAdded(
        status           = EXCLUDED.status,
        last_verified_at = EXCLUDED.last_verified_at,
        verified_by      = EXCLUDED.verified_by,
-       no_minyanim_on   = EXCLUDED.no_minyanim_on,
        updated_at       = now()
      RETURNING id`,
     [
@@ -245,14 +242,37 @@ async function upsertAdded(
       added.status,
       verified ? verified.verifiedAt : null,
       verified ? verified.verifiedBy : null,
-      // Only a person can state an absence, so this can only come from a
-      // verified record. Nothing verified means nothing stated, which is not
-      // the same as "it davens every day" — it is the honest unknown.
-      verified ? verified.noMinyanimOn : [],
       curatedAddressEn(added.addressHe),
     ],
   );
   return rows[0]!.id;
+}
+
+/**
+ * Replace a synagogue's stated absences.
+ *
+ * Wholesale, like its times: a record half from the current sheet and half
+ * from an older one cannot be reasoned about. Deleting first also means a
+ * claim that is withdrawn actually disappears, rather than lingering because
+ * nothing upserted over it.
+ *
+ * Only ever called with a verified record. The parser has no way to state an
+ * absence and must never reach this table — the GIS layer can fail to mention
+ * Shabbat, which is the unknown, but cannot say a shul is closed.
+ */
+async function replaceAbsences(
+  client: PoolClient,
+  synagogueId: number,
+  verified: VerifiedSynagogue | null,
+): Promise<void> {
+  await client.query('DELETE FROM synagogue_absences WHERE synagogue_id = $1', [synagogueId]);
+  for (const absence of verified?.noMinyanim ?? []) {
+    await client.query(
+      `INSERT INTO synagogue_absences (synagogue_id, day_type, service)
+       VALUES ($1, $2::day_type, $3::service)`,
+      [synagogueId, absence.dayType, absence.service ?? null],
+    );
+  }
 }
 
 /* ------------------------------------------------------------------ */
@@ -423,13 +443,11 @@ async function upsertSynagogue(
   const { rows } = await client.query<{ id: number }>(
     `INSERT INTO synagogues (
        gis_source_id, slug, name_he, name_en, address_he, address_en,
-       location, nusachim, movement, style, status, last_verified_at, verified_by,
-       no_minyanim_on
+       location, nusachim, movement, style, status, last_verified_at, verified_by
      ) VALUES (
-       $1, $2, $3, $12, $4, $14,
+       $1, $2, $3, $12, $4, $13,
        ST_SetSRID(ST_MakePoint($5, $6), 4326)::geography,
-       $7::nusach[], $8::movement, NULL, $9::synagogue_status, $10::timestamptz, $11,
-       $13::day_type[]
+       $7::nusach[], $8::movement, NULL, $9::synagogue_status, $10::timestamptz, $11
      )
      ON CONFLICT (gis_source_id) DO UPDATE SET
        name_he          = EXCLUDED.name_he,
@@ -442,7 +460,6 @@ async function upsertSynagogue(
        status           = EXCLUDED.status,
        last_verified_at = EXCLUDED.last_verified_at,
        verified_by      = EXCLUDED.verified_by,
-       no_minyanim_on   = EXCLUDED.no_minyanim_on,
        updated_at       = now()
      RETURNING id`,
     [
@@ -458,10 +475,6 @@ async function upsertSynagogue(
       lastVerifiedAt,
       verifiedBy,
       nameEn,
-      // Absence is stated, never parsed. The GIS layer cannot say a shul holds
-      // nothing on Shabbat — it can only fail to mention Shabbat, which is the
-      // unknown. So this is empty unless a person put a day in it.
-      verified ? verified.noMinyanimOn : [],
       curatedAddressEn(addressHe),
     ],
   );
@@ -743,6 +756,7 @@ async function main(): Promise<void> {
       if (verified) summary.verified += 1;
 
       const synagogueId = await upsertSynagogue(client, seed, status, summary, verified);
+      await replaceAbsences(client, synagogueId, verified);
       await writeMinyanim(client, synagogueId, finalMinyanim);
       await writeShiurim(client, synagogueId, shiurim);
       await writeIssues(client, synagogueId, issues);
@@ -773,6 +787,7 @@ async function main(): Promise<void> {
         continue;
       }
       const id = await upsertAdded(client, added);
+      await replaceAbsences(client, id, verifiedFor(added.nameHe));
       const verified = verifiedFor(added.nameHe);
       const rows = verified ? verifiedToParsed(verified, added.nameHe) : [];
       await writeMinyanim(client, id, rows);

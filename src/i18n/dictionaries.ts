@@ -149,6 +149,9 @@ const he = {
   // Not the same sentence as the one above, and deliberately so: that one says
   // we are missing data, this one says the synagogue told us there is nothing.
   noServicesHeld: 'לא מתקיימות תפילות',
+  // One service, on a day the shul does hold others. Distinct from
+  // noKnownTimes above, which is the honest unknown.
+  serviceNotHeld: 'לא מתקיים',
   /** Rows with a pending review reason. Never shown as confirmed. */
   unconfirmedHeading: 'טעון בדיקה — לא מאושר',
   unconfirmedNote: 'המקור לא ברור, והשעות האלה לא אושרו. אל תסתמכו עליהן.',
@@ -411,6 +414,7 @@ const en: typeof he = {
     hashkama: 'hashkama',
   },
   noServicesHeld: 'No services held',
+  serviceNotHeld: 'Not held',
   unconfirmedHeading: 'Needs checking — not confirmed',
   unconfirmedNote: 'The source is unclear and these have not been confirmed. Do not rely on them.',
   reviewReasons: {

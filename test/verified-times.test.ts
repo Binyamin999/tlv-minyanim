@@ -189,7 +189,7 @@ describe('לכלל ישראל — the claims each stored time rests on', () => {
 /**
  * "There are none" is not "we do not know".
  *
- * `noMinyanimOn` is the only way this codebase can assert an absence, and an
+ * `noMinyanim` is the only way this codebase can assert an absence, and an
  * assertion is worth exactly as much as the check that it is not contradicted
  * elsewhere in the same record. A shul that says it holds nothing on Shabbat
  * and also carries a Shabbat minyan is not a display bug — it is two claims,
@@ -198,12 +198,19 @@ describe('לכלל ישראל — the claims each stored time rests on', () => {
 describe('stated absence', () => {
   it('never contradicts a minyan in the same record', () => {
     for (const [name, record] of Object.entries(VERIFIED)) {
-      for (const day of record.noMinyanimOn) {
-        const clash = record.minyanim.filter((m) => m.dayType === day);
+      for (const absence of record.noMinyanim) {
+        // A service-scoped absence clashes only with that service; a day-wide
+        // one clashes with anything at all on that day.
+        const clash = record.minyanim.filter(
+          (m) =>
+            m.dayType === absence.dayType &&
+            (absence.service === undefined || m.service === absence.service),
+        );
         assert.deepEqual(
           clash.map((m) => `${m.service} ${JSON.stringify(m.time)}`),
           [],
-          `${name} states no minyanim on ${day} yet lists ${clash.length}`,
+          `${name} states no ${absence.service ?? 'minyanim'} on ${absence.dayType} ` +
+            `yet lists ${clash.length}`,
         );
       }
     }
@@ -221,7 +228,7 @@ describe('stated absence', () => {
       false,
       'no Shabbat rows',
     );
-    assert.deepEqual(heichal.noMinyanimOn, [], 'yet nothing is claimed about Shabbat');
+    assert.deepEqual(heichal.noMinyanim, [], 'yet nothing is claimed about Shabbat');
   });
 
   it('records the mall shul as closed on both Shabbat days', () => {
@@ -229,7 +236,10 @@ describe('stated absence', () => {
     // and not the other would leave Friday night reading as unknown.
     const chabad = VERIFIED['בית חב"ד קניון רמת אביב'];
     assert.ok(chabad);
-    assert.deepEqual([...chabad.noMinyanimOn].sort(), ['erev_shabbat', 'shabbat']);
+    assert.deepEqual(
+      chabad.noMinyanim.map((a) => `${a.dayType}:${a.service ?? 'all'}`).sort(),
+      ['erev_shabbat:all', 'shabbat:all'],
+    );
   });
 });
 
@@ -398,5 +408,54 @@ describe('a minyan style', () => {
       r.minyanim.filter((m) => m.style === 'netz').map((m) => `${name} ${m.time.kind === 'fixed' ? m.time.time : '?'}`),
     );
     assert.deepEqual(netz.sort(), ['היכל חיים 05:50', 'תהילת אביב 05:40']);
+  });
+});
+
+
+/**
+ * An absence narrower than a whole day.
+ *
+ * נוה קודש davens Shacharit every weekday and holds no Mincha or Arvit. The
+ * day-wide form could not say that, and without it the page showed one
+ * Shacharit row and left a reader unable to tell a Mincha we were missing
+ * from one that does not happen.
+ */
+describe('a service-scoped absence', () => {
+  it('states no weekday Mincha or Arvit at נוה קודש, while keeping Shacharit', () => {
+    const record = VERIFIED['נוה קודש'];
+    assert.ok(record);
+    assert.deepEqual(
+      record.noMinyanim.map((a) => `${a.dayType}:${a.service}`).sort(),
+      ['weekday:arvit', 'weekday:mincha'],
+    );
+    assert.ok(record.minyanim.every((m) => m.service === 'shacharit'));
+  });
+
+  it('claims nothing about Shabbat, which the shul does hold', () => {
+    // "No Mincha at all" was reported in the same breath as "they do have
+    // Shabbat minyanim", so an absence that swallowed Shabbat would
+    // contradict its own source. Scoped to weekdays until that sheet arrives.
+    const record = VERIFIED['נוה קודש']!;
+    assert.equal(
+      record.noMinyanim.some((a) => a.dayType !== 'weekday'),
+      false,
+      'nothing may be claimed about Shabbat here',
+    );
+  });
+
+  it('never states an absence for a service it also lists', () => {
+    // The general form of the contradiction check, across every record.
+    for (const [name, record] of Object.entries(VERIFIED)) {
+      for (const absence of record.noMinyanim) {
+        if (!absence.service) continue;
+        assert.equal(
+          record.minyanim.some(
+            (m) => m.dayType === absence.dayType && m.service === absence.service,
+          ),
+          false,
+          `${name}: ${absence.service} on ${absence.dayType} is both absent and listed`,
+        );
+      }
+    }
   });
 });
