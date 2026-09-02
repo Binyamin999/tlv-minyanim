@@ -11,67 +11,13 @@
       "port": 3000
     },
     {
-      "name": "static-preview",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": [
-        "-m",
-        "http.server",
-        "4321",
-        "--bind",
-        "127.0.0.1"
-      ],
-      "port": 4321,
-      "url": "http://localhost:4321"
-    },
-    {
-      "name": "near-reach-artboards",
+      "name": "design-artboards",
       "runtimeExecutable": "bash",
       "runtimeArgs": [
         "-c",
-        "python3 scripts/render-artboards.py NearReachCurrent.dc.html NearReachQuiet.dc.html NearReachLoud.dc.html NearReachMoved.dc.html && python3 -m http.server 4322 --bind 127.0.0.1"
+        "python3 scripts/render-artboards.py *.dc.html && node scripts/serve-design.mjs 4321"
       ],
-      "port": 4322,
-      "url": "http://localhost:4322"
-    },
-    {
-      "name": "near-reach-a",
-      "runtimeExecutable": "bash",
-      "runtimeArgs": [
-        "-c",
-        "python3 scripts/render-artboards.py NearReachCurrent.dc.html && python3 -m http.server 4323 --bind 127.0.0.1"
-      ],
-      "port": 4323,
-      "url": "http://localhost:4323"
-    },
-    {
-      "name": "near-reach-b",
-      "runtimeExecutable": "bash",
-      "runtimeArgs": [
-        "-c",
-        "python3 scripts/render-artboards.py NearReachQuiet.dc.html && python3 -m http.server 4324 --bind 127.0.0.1"
-      ],
-      "port": 4324,
-      "url": "http://localhost:4324"
-    },
-    {
-      "name": "near-reach-c",
-      "runtimeExecutable": "bash",
-      "runtimeArgs": [
-        "-c",
-        "python3 scripts/render-artboards.py NearReachLoud.dc.html && python3 -m http.server 4325 --bind 127.0.0.1"
-      ],
-      "port": 4325,
-      "url": "http://localhost:4325"
-    },
-    {
-      "name": "near-reach-d",
-      "runtimeExecutable": "bash",
-      "runtimeArgs": [
-        "-c",
-        "python3 scripts/render-artboards.py NearReachMoved.dc.html && python3 -m http.server 4326 --bind 127.0.0.1"
-      ],
-      "port": 4326,
-      "url": "http://localhost:4326"
+      "port": 4321
     }
   ]
 }
