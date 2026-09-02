@@ -685,6 +685,137 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
     ],
   },
 
+  /**
+   * אוהל יוסף יצחק, בשוויס זינגר 1 — a Chabad house. Weekday board for the
+   * week of 2026-08-30.
+   *
+   * NINE TIMES IDENTICAL TO תהילת אביב'S, AND THAT IS NOT A MISTAKE. It looks
+   * exactly like one: two unrelated congregations 734 m apart, one עדות
+   * המזרח and one Chabad, both starting a minyan at 07:13. It was queried on
+   * exactly those grounds and confirmed — so it is written down here, because
+   * the next person to notice will reach for the same conclusion and should
+   * find the answer rather than repeat the question.
+   *
+   * NOT a `SHARED_BOARD`, deliberately. That mechanism means ONE physical
+   * board serving two shuls in one building — כלל ישראל and בית חב"ד רמת אביב
+   * ג' at nought metres — where a single reading genuinely vouches for both.
+   * These are two buildings with two boards that happen to agree this week.
+   * Sharing the record would mean next week's reading of תהילת אביב silently
+   * rewriting a shul nobody had been to, which is fabrication with extra
+   * steps. Two records, and the windows below are what makes copying safe:
+   * whichever is not re-read simply expires and goes honestly unknown.
+   *
+   * ONLY THE LABELS THE BOARD GAVE. תהילת אביב's 05:40 is marked נץ, its
+   * 18:10 פלג, and its two late Arvits למעלה and למטה. None of that was said
+   * about this shul, so none of it is recorded here — identical times do not
+   * license identical labels, and the labels are what a reader picks by.
+   *
+   * Five of the nine cannot hold all year, the same five as at תהילת אביב:
+   * mincha 13:15 falls before mincha gedola on 2026-03-27, 17:45 and 18:50
+   * are after shkia from November, arvit 18:10 is before shkia on 2026-03-27
+   * and 19:35 on 2026-05-21. The whole block is windowed regardless.
+   */
+  'אוהל יוסף יצחק': {
+    verifiedAt: '2026-08-31',
+    verifiedBy: 'notice_board',
+    minyanim: [
+      {
+        service: 'shacharit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '05:40' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'first minyan',
+      },
+      {
+        service: 'shacharit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '07:13' },
+        style: 'hodu',
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'second minyan',
+      },
+      {
+        service: 'shacharit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '08:15' },
+        style: 'hodu',
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'third minyan',
+      },
+      {
+        service: 'mincha',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '13:15' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'first Mincha; before mincha gedola on 2026-03-27, so never year-round',
+      },
+      {
+        service: 'mincha',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '17:45' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'second Mincha',
+      },
+      {
+        service: 'mincha',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '18:50' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'third Mincha; shkia − 16 this week and after sunset from November',
+      },
+      {
+        service: 'arvit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '18:10' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'first Arvit',
+      },
+      {
+        service: 'arvit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '19:35' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'second Arvit',
+      },
+      {
+        service: 'arvit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '20:00' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'third Arvit',
+      },
+    ],
+    noMinyanim: [],
+    held: [
+      {
+        what: "the GIS layer's Shabbat Shacharit at 05:45",
+        why:
+          'A verified record replaces the parsed one wholesale, and the source ' +
+          'listed nothing at all for this shul on weekdays while the board ' +
+          'carries nine. Shabbat is coming separately, so it stays honestly ' +
+          'unknown rather than being claimed empty.',
+      },
+      {
+        what: "whether תהילת אביב's labels apply here too",
+        why:
+          'The times match line for line, and תהילת אביב marks its 05:40 נץ, ' +
+          'its 18:10 פלג and its late Arvits למעלה and למטה. This board was not ' +
+          'reported as saying any of that. Matching times are not evidence of ' +
+          'matching labels, and a label is what a reader chooses a minyan by — ' +
+          'so they are held rather than assumed. One question at the shul settles it.',
+      },
+    ],
+  },
+
   'היכל חיים': {
     verifiedAt: '2026-08-30',
     verifiedBy: 'notice_board',
