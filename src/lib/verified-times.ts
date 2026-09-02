@@ -477,6 +477,129 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
     ],
   },
 
+  /**
+   * תומכי תמימים - בית חב"ד, ברודצקי 19. Weekday board for the week of
+   * 2026-08-30. Eight minyanim — three Shacharit, three Mincha, two Arvit.
+   *
+   * The late shape is what a Chabad house looks like: Shacharit running to
+   * 09:30 and an Arvit at 21:00, both far outside the range the other
+   * sixteen shuls in this neighbourhood keep.
+   *
+   * WHAT THIS REPLACES. The GIS layer claims weekday Shacharit at 06:30,
+   * 07:30, 09:00 and 10:00 and Mincha at 14:05 and 15:15. Only 07:30 survives
+   * the board, and nothing else matches — the municipality was wrong about
+   * this shul's location by 950 m and is wrong about its times too. Its
+   * Shabbat row goes with the rest rather than being kept as if it were a
+   * better class of fact; see held.
+   *
+   * TWO OF EIGHT CANNOT HOLD ALL YEAR, and the sweep found both rather than
+   * an eye:
+   *   mincha 18:58 is after shkia from November — shkia − 8 this week
+   *   arvit  19:34 is before shkia on 2026-05-19, by ONE MINUTE
+   * That second one is the case for sweeping 365 days instead of checking a
+   * few dates: it is wrong on a single day of the year, in May, and would
+   * have sat in the table looking permanently reasonable.
+   *
+   * The rest would survive unwindowed and do not get to, for the reason כלל
+   * ישראל's 14:00 does not: one board vouches for one week, and claiming more
+   * durability for some of its lines than the source claims is inventing it.
+   */
+  'תומכי תמימים - בית חב"ד': {
+    verifiedAt: '2026-08-31',
+    verifiedBy: 'notice_board',
+    minyanim: [
+      {
+        service: 'shacharit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '07:30' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'first minyan',
+      },
+      {
+        service: 'shacharit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '08:30' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'second minyan',
+      },
+      {
+        service: 'shacharit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '09:30' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'third minyan',
+      },
+      {
+        service: 'mincha',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '13:45' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'first Mincha',
+      },
+      {
+        service: 'mincha',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '14:30' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'second Mincha',
+      },
+      {
+        service: 'mincha',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '18:58' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'third Mincha; shkia − 8 this week and after sunset from November',
+      },
+      {
+        service: 'arvit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '19:34' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        // tzeit − 9 today, which is NOT why it is stored this way and must not
+        // become an anchor: tzeit names two different times, so a tzeit-relative
+        // row is held by the ambiguous_tzeit guard whether or not the offset is
+        // stated. Nine minutes is not a round offset either. It is a clock face.
+        note: 'first Arvit; follows the third Mincha',
+      },
+      {
+        service: 'arvit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '21:00' },
+        validFrom: '2026-08-30',
+        validUntil: '2026-09-04',
+        note: 'second Arvit, late',
+      },
+    ],
+    noMinyanimOn: [],
+    held: [
+      {
+        what: "the GIS layer's Shabbat Shacharit at 10:00",
+        why:
+          'A source demonstrably wrong about this shul\'s address by 950 m and ' +
+          'about six of its eight weekday times has not earned belief about its ' +
+          'Shabbat. Dropped with the rest rather than kept as though it were a ' +
+          'different class of fact. Shabbat now reads as honestly unknown until ' +
+          'somebody photographs that sheet — the same position היכל חיים is in.',
+      },
+      {
+        what: 'whether 18:58 and 19:34 are rules',
+        why:
+          'They sit shkia − 8 and tzeit − 9 this week, and neither is a round ' +
+          'offset a shul would choose. One printing cannot tell a rule from a ' +
+          'clock face; three consecutive boards would. The windows hold the line ' +
+          'until then, and 19:34 could not be tzeit-anchored in any case — that ' +
+          'anchor names two different times and is held on sight.',
+      },
+    ],
+  },
+
   'היכל חיים': {
     verifiedAt: '2026-08-30',
     verifiedBy: 'notice_board',
