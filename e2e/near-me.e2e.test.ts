@@ -196,6 +196,21 @@ describe('near-me: reachability arithmetic through the real component', () => {
       { locale: 'he-IL', permissions: ['geolocation'], geolocation: { ...HERE, accuracy: 15 } },
       async (page) => {
         await page.goto(`${BASE_URL}/he`);
+        // A NEARBY card as well, and it is not scenery.
+        //
+        // The coverage ceiling asks whether ANYTHING is within half an hour on
+        // foot before decorating at all, so a board whose only card is 3.3 km
+        // away now correctly decorates nothing and says "we know of nothing
+        // near you". That is the point of the ceiling — but it is not the case
+        // under test here, and a lone distant card is not a situation a real
+        // visitor meets. Someone sees `too_far` on a far shul while a nearer
+        // one exists, which is exactly this shape.
+        await addSyntheticCard(page, {
+          testId: 'anchor-near',
+          lat: HERE.latitude + 0.001, // ~110 m, comfortably inside coverage
+          lng: HERE.longitude,
+          at: iso(180),
+        });
         // ~3.3 km north: walking time (¬63 min) far exceeds the 5-minute budget.
         await addSyntheticCard(page, {
           testId: 'far-too-far',
@@ -434,6 +449,21 @@ describe('near-me: a second tap fully re-decorates, leaving nothing stale', () =
       { locale: 'he-IL', permissions: ['geolocation'], geolocation: { ...HERE, accuracy: 15 } },
       async (page, context) => {
         await page.goto(`${BASE_URL}/he`);
+        // A NEARBY card as well, and it is not scenery.
+        //
+        // The coverage ceiling asks whether ANYTHING is within half an hour on
+        // foot before decorating at all, so a board whose only card is 3.3 km
+        // away now correctly decorates nothing and says "we know of nothing
+        // near you". That is the point of the ceiling — but it is not the case
+        // under test here, and a lone distant card is not a situation a real
+        // visitor meets. Someone sees `too_far` on a far shul while a nearer
+        // one exists, which is exactly this shape.
+        await addSyntheticCard(page, {
+          testId: 'anchor-near',
+          lat: HERE.latitude + 0.001, // ~110 m, comfortably inside coverage
+          lng: HERE.longitude,
+          at: iso(180),
+        });
         await addSyntheticCard(page, {
           testId: 'rerun',
           lat: HERE.latitude + 0.03, // ~3.3 km — too far for a 5-minute budget
@@ -645,5 +675,63 @@ describe('near-me: known-good break probes', () => {
     assert.equal(naiveSort[0].id, 'nearest-untimed'); // the bug, reproduced
     // ...which is exactly what the "never promotes an untimed card" test
     // above asserts the shipped code does NOT do.
+  });
+});
+
+describe('near-me: the coverage ceiling', () => {
+  it('decorates nothing and says so when the nearest shul is 4 km away', async () => {
+    // Dizengoff Center. Before the ceiling this answered with fifteen rows,
+    // every one marked reachable, walks of 76 to 116 minutes, and a live
+    // directions link on each — technically true and useless.
+    await withPage(
+      {
+        locale: 'he-IL',
+        permissions: ['geolocation'],
+        geolocation: { latitude: 32.0753, longitude: 34.7749, accuracy: 15 },
+      },
+      async (page) => {
+        await page.goto(`${BASE_URL}/he`, { waitUntil: 'networkidle' });
+        const orderBefore = await page.evaluate(() =>
+          [...document.querySelectorAll('.cards .card')].map((c) => c.querySelector('.card-name')?.textContent),
+        );
+        await clickLocate(page);
+
+        const note = await page.locator('.near-me-note').textContent();
+        assert.match(note ?? '', /אין בית כנסת ידוע קרוב אליך/);
+
+        const decorated = await page.evaluate(
+          () => [...document.querySelectorAll('.near-slot')].filter((s) => !(s as HTMLElement).hidden).length,
+        );
+        assert.equal(decorated, 0, 'no distance may be written when nothing is near');
+
+        const verdicts = await page.evaluate(() => document.querySelectorAll('[data-reach]').length);
+        assert.equal(verdicts, 0, 'no reachability verdict may be claimed either');
+
+        // The board is left exactly as the server sent it — time order intact.
+        const orderAfter = await page.evaluate(() =>
+          [...document.querySelectorAll('.cards .card')].map((c) => c.querySelector('.card-name')?.textContent),
+        );
+        assert.deepEqual(orderAfter, orderBefore, 'the board must not be re-sorted');
+      },
+    );
+  });
+
+  it('still works normally from inside the covered neighbourhood', async () => {
+    await withPage(
+      {
+        locale: 'he-IL',
+        permissions: ['geolocation'],
+        geolocation: { latitude: 32.12615434145014, longitude: 34.80098522868166, accuracy: 15 },
+      },
+      async (page) => {
+        await page.goto(`${BASE_URL}/he`, { waitUntil: 'networkidle' });
+        await clickLocate(page);
+        assert.equal(await page.locator('.near-me-note').count(), 0, 'no out-of-range note here');
+        const decorated = await page.evaluate(
+          () => [...document.querySelectorAll('.near-slot')].filter((s) => !(s as HTMLElement).hidden).length,
+        );
+        assert.ok(decorated > 10, `expected the board decorated, got ${decorated}`);
+      },
+    );
   });
 });
