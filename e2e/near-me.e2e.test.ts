@@ -210,16 +210,18 @@ describe('near-me: reachability arithmetic through the real component', () => {
         const tooFar = card.locator('.near-too-far');
         assert.notEqual(await tooFar.getAttribute('hidden'), '');
         assert.equal(await tooFar.textContent(), 'לא תספיקו להגיע');
-        // The row RECEDES. Asserting that, not the exact figure: how far it
-        // recedes is a live design decision — 0.62 at first, then 0.72 once the
-        // dimming was found to be diluting the warning inside it — and a test
-        // that pins a design constant fails every time the design improves
-        // while proving nothing extra. What must hold is that an unreachable
-        // row is dimmed and still readable.
-        const opacity = await card.evaluate((el) => getComputedStyle(el).opacity);
-        assert.ok(
-          Number(opacity) < 1 && Number(opacity) > 0.4,
-          `an unreachable row should recede but stay readable; got ${opacity}`,
+        // The row is MARKED, and the clock beside it stays fully legible.
+        //
+        // Not an opacity assertion any more. Dimming was how this looked at
+        // first; treatment B removed it deliberately, because the time is not
+        // wrong — it is simply not for you — and fading a true clock face to
+        // say something about the reader's legs is the wrong trade. What must
+        // hold is that the row says so and that the time remains readable, and
+        // that survives whichever treatment is in force.
+        assert.equal(
+          await card.evaluate((el) => getComputedStyle(el).opacity),
+          '1',
+          'treatment B does not dim the row: the clock face is true, just not for you',
         );
       },
     );
@@ -441,10 +443,12 @@ describe('near-me: a second tap fully re-decorates, leaving nothing stale', () =
         await clickLocate(page);
         const card = page.locator('[data-testid="rerun"]');
         assert.equal(await card.getAttribute('data-reach'), 'too_far');
-        // Dimmed, without pinning how much — see the note in the too_far test.
-        assert.ok(
-          Number(await card.evaluate((el) => getComputedStyle(el).opacity)) < 1,
-          'a card that is too far should be dimmed',
+        // Marked, not dimmed — see the note in the too_far test above.
+        assert.equal(await card.getAttribute('data-reach'), 'too_far');
+        assert.equal(
+          await card.locator('.near-too-far').evaluate((el) => (el as HTMLElement).hidden),
+          false,
+          'an unreachable card must carry a visible warning',
         );
 
         // Walk over to it (simulated) and tap again.

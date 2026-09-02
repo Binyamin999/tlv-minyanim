@@ -2093,21 +2093,30 @@ body {
   color: var(--accent-ink);
 }
 
-/* "You won't get there in time." The only place on the site that contradicts
-   a time it is showing, so it carries the CTA register rather than the quiet
-   one — terracotta by day, amber by night. The row stays, because a bike or a
-   willingness to arrive late is the reader's call and not ours to make by
-   hiding it. */
+/* "You won't get there in time."
+   ---------------------------------------------------------------------------
+   TREATMENT B — chosen from four, by looking at all of them.
+   ---------------------------------------------------------------------------
+   Quiet ink on its own line, and no dimming of the row at all.
+
+   The reasoning, which is the designer's: this is a fact about where the
+   READER is standing, not about our data. The clock face beside it is not
+   wrong — it is simply not for you — so dimming it makes a true time harder to
+   read in order to say something about the reader's legs. And this site's
+   instinct when it has something awkward to say is already to say it quietly:
+   the honest-unknown row is deliberately understated, and the same restraint
+   applies here for a different but equally strong reason.
+
+   It also removes a compounding problem. Dimming the card diluted every colour
+   inside it, the warning included — the one label whose entire job is to be
+   read was the one being faded. That is what took the opacity from 0.62 to
+   0.72 before this decision; B removes the cause rather than tuning it.
+
+   The row is still unmistakably marked: `data-reach="too_far"` is on the card
+   and this line appears where no other row has one. Louder treatments were
+   drawn and kept in reserve — a coloured rail and a warning chip beside the
+   time — for if people turn out to tap through unreachable rows anyway. */
 .near-too-far {
-  color: var(--cta-ink);
-  font-size: 0.75rem;
-}
-
-/* A row you cannot reach recedes without disappearing.
-
-   0.72 rather than 0.62: the dimming compounds with every colour inside the
-   card, and at 0.62 it was pulling the warning itself toward its background —
-   diluting the one label whose whole job is to be read. */
-[data-reach='too_far'] {
-  opacity: 0.72;
+  color: var(--ink-quiet);
+  font-size: 0.71875rem;
 }
