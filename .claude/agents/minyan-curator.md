@@ -132,3 +132,32 @@ only way to state an absence, and only a person can state one — the GIS can fa
 mention Shabbat, which is the unknown, but can never say a shul is closed. A mall
 shul read `אין שעות ידועות` for Shabbat, telling readers to go looking for a minyan
 that does not exist.
+
+**THE SITE EMPTIES EVERY FRIDAY NIGHT, and that is now the main problem.**
+Verified times are clock faces off weekly-reprinted boards, windowed with
+`valid_from`/`valid_until`, so outside their week they stop resolving and the
+shul reads as honestly unknown. Measured on Sunday 2026-09-06: **27 of 78
+publishable minyanim still resolved**, and six of the nine verified shuls showed
+nothing at all. This is the honest-decay design working, and it means the
+product has a weekly half-life.
+
+**Only 5 of 78 times are stored as RULES.** A rule — `shkia + 20` — is stored
+once and correct in December; a clock face is a subscription. That ratio, not
+the shul count, is the number to move.
+
+**Which makes every board reading worth more as a COMPARISON than as data.**
+Sunset moves about 7 minutes a week. A time that moved with it is a rule and
+never needs asking about again; a time that did not is a reprint and will expire
+forever. Take last week's figures to the shul and note the differences rather
+than transcribing afresh.
+
+**`docs/gabbai-questions.md` now leads with which luach.** צאת הכוכבים differs by
+nearly an hour between luachot, which is why every tzeit-anchored minyan is held;
+knowing the luach converts that class to rules. Question two — set from the luach
+each week, or reprint the same sheet — is the bigger prize and answers the ratio
+above in one sentence.
+
+**Absence is now expressible per service, not just per day.** `synagogue_absences`
+takes a day plus an OPTIONAL service, so "davens Shacharit every weekday and holds
+no Mincha or Arvit at all" is sayable. Ask it: a shul that holds nothing is a fact
+worth collecting, and only a person can state one.

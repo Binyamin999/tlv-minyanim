@@ -433,6 +433,37 @@ words, and the switch dates are Israel's, which are not the EU's or the US's.
 hand-roll the astronomy, and never store a resolved time — resolution happens at
 read time so the rule stays correct as sunset moves.
 
+## Deployed
+
+**https://tlv-minyanim.vercel.app** — Vercel, reading Neon Postgres in
+`eu-central-1` (Frankfurt). Every push to `main` redeploys. Frankfurt because
+every page queries per request and it is ~50 ms from Tel Aviv against Ohio's
+~150; a Neon project's region cannot be changed after creation.
+
+Two environment variables: `DATABASE_URL` and `NEXT_PUBLIC_SITE_URL`. Vercel
+gets the **pooled** connection string; migrations and imports use the same
+string with `-pooler` stripped, because pgbouncer misbehaves with schema
+statements. `npm run migrate` applies `db/migrations/*.sql` in order and
+records them, and refuses to start on a server without PostGIS.
+
+**The seed runs from a laptop, never from CI.** `data/seed-*.json` carries 442
+gabbai and rabbi phone numbers. Nothing personal reaches the database — there
+is no phone column — so the numbers are read during import and dropped.
+
+**Vercel forces `private, no-cache, no-store` on dynamic routes** and it cannot
+be overridden from `next.config` or from a response header in middleware. Both
+work under `next start` and are ignored in production, so verify any header
+change against the deployed response. Link-preview crawlers are therefore
+served a small static page by `src/middleware.ts` — search engines deliberately
+excluded, because serving Googlebot something different is cloaking and SEO is
+the whole discovery strategy.
+
+**The share card is a photograph, not a composition.** No clock time may appear
+on it: chat apps cache the image for weeks and a printed time would be wrong
+within the hour and unfixable. Its filename carries a content hash, because
+those caches key on URL and a redesign under the old name is invisible to
+anyone who has already seen it. Under 300 KB or WhatsApp silently skips it.
+
 ## Data sources
 
 | Source | What it gives |

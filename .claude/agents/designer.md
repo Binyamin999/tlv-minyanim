@@ -157,3 +157,32 @@ option silently produced identical screenshots before this was understood.
 payload as well as the page, so a label passed as a prop looks like a rendered
 element. Strip `<script>` blocks first, or read the DOM. That mistake has been
 made twice here, once on an address and once on this feature's own button.
+
+**The Bauhaus premise has now lost SIX times.** Five directions were built on it
+and answered "doesn't remind me of Tel Aviv"; a sixth — a daylight card with a
+quarter-circle standing for a balcony curve — was drawn, recommended, and the
+client's reply was "why does that remind you of Tel Aviv?" Fair, and unanswerable.
+
+**What shipped instead was a photograph of the city**, and that is the pattern:
+when a design has to explain why it evokes this place, it is making an argument
+that has already failed here. The palette itself was rebuilt from photographs
+after the theory lost. Reach for evidence before reaching for a better argument.
+
+**The link-preview card is `scripts/og/card.html`**, rendered by
+`scripts/og/render.mjs` in Chromium — not `next/og`, whose satori layout engine
+does its own bidi and is not Chromium's on a card that is mostly Hebrew.
+Constraints that are not open: 1200x630, JPEG, well under 300 KB (WhatsApp
+silently skips a heavier image and shows a bare link), no clock time may appear
+because chat apps cache the image for weeks, and the two site photographs may
+never be upscaled past 1x — `tlv-night.jpg` is used at 355x630, scaled DOWN.
+
+**`overflow: hidden` belongs on `html` as well as `body`.** With it on `body`
+alone and an absolutely-positioned shape crossing the canvas edge, Chromium drops
+Hebrew glyphs off the right edge while `getBoundingClientRect` insists the text is
+contained. Found while drawing a card; it will recur on any artboard with an
+off-canvas decoration.
+
+**When measuring contrast on a gradient, sample OUTSIDE the glyph run.** A
+sampler that steps a fixed distance into a text element's own box lands on letter
+strokes for short aligned strings and reports the ink as the backdrop — which
+produced a confident false failure on a card that was fine.

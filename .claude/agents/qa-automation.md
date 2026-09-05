@@ -134,3 +134,30 @@ option silently produced identical screenshots before this was understood.
 payload as well as the page, so a label passed as a prop looks like a rendered
 element. Strip `<script>` blocks first, or read the DOM. That mistake has been
 made twice here, once on an address and once on this feature's own button.
+
+**Verify against the DEPLOYED response, never the local one.** The site is live
+at https://tlv-minyanim.vercel.app. A cache-control override was written twice —
+once in `next.config`, once in middleware — and both worked under `next start`
+and were silently ignored by Vercel, which sets its own header on dynamic routes.
+A fix that looks verified locally and does nothing in production is the worst
+shape a fix can have, and only fetching the real URL catches it.
+
+**One symptom, three unrelated causes.** The WhatsApp link preview failed to
+appear for: (1) no Open Graph tags at all, (2) a PNG at 387 KB, over the ~300 KB
+that WhatsApp silently skips, and (3) an image whose filename never changed while
+its contents did, so caches kept serving the old one. Each looked identical from
+outside. When a symptom persists after a plausible fix, suspect a second cause
+rather than a bad fix — and get external evidence before deploying a fourth
+theory.
+
+**`curl | grep` matches the serialised RSC payload as well as the page.** Strip
+`<script>` blocks before asserting anything about server-rendered HTML. This has
+now caught three things: a hidden address, a button that was never rendered, and
+an OG tag count. It is the single most reliable way to be confidently wrong here.
+
+**New surfaces worth covering:** `src/middleware.ts` serves link-preview crawlers
+a static page and search engines the real one — assert Googlebot still receives
+the full site, because serving it something different is cloaking. And
+`test/serve-design.test.ts` guards a real privacy hole: no launch config may use
+`python3 -m http.server`, which serves the repo root including the gitignored
+seed file with 442 phone numbers.

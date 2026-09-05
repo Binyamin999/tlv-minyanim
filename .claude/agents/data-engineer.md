@@ -139,3 +139,29 @@ the Hebrew.
 **The GIS separates street from number with two spaces** — `נח  20` is a
 fixed-width export artefact, not part of the address. Folded at import so the
 stored value is the one the slug, the curation keys and schema.org all agree on.
+
+**Four schema additions since the notes above**, all driven by real boards rather
+than anticipation. `minyanim.days_of_week` — civil weekdays, empty means all;
+Monday and Thursday start earlier for קריאת התורה and two shuls already need it.
+`minyanim.location` — `upstairs | downstairs | sukkah`, a code and not prose, for
+the reason `verified_by` is a code. `minyanim.style` — `netz | hodu | plag |
+carlebach | hashkama`, moved off `synagogues` where it could never be true, and a
+LABEL that must never be read as an anchor. And `synagogue_absences`, a day plus
+an OPTIONAL service, which is the only way to say "there are none" rather than
+"we do not know".
+
+**`npm run migrate` exists.** It applies `db/migrations/*.sql` in order against
+`$DATABASE_URL`, records them in `schema_migrations`, is safe to re-run, and
+refuses to start if the server has no PostGIS. Each file runs exactly as written
+rather than wrapped in a transaction, because several open their own and 0010
+opens two.
+
+**The seed runs from a laptop and never from CI**, and this is not negotiable:
+`data/seed-*.json` carries 442 gabbai and rabbi phone numbers. Nothing personal
+reaches the database — there is no phone column — so the numbers are read during
+import and dropped.
+
+**The municipality has now been wrong about five shuls' times and three shuls'
+coordinates**, one by 950 m. Treat layer 568 as a floor and a starting point, not
+a source: where a board and the GIS disagree, the board wins wholesale, and its
+Shabbat rows go with it rather than being kept as a better class of fact.

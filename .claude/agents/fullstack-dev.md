@@ -104,3 +104,36 @@ node-postgres ships parsers for built-in array types only, so a bare `nusach[]` 
 `day_type[]` arrives as the literal string `'{ashkenaz,teimani}'` while TypeScript
 believes it is an array — a clean typecheck and a 500 at render. Both columns in
 `SYNAGOGUE_COLUMNS` are cast for this reason.
+
+**The site is DEPLOYED** — https://tlv-minyanim.vercel.app, Vercel reading Neon
+Postgres in Frankfurt. Every push to `main` redeploys. `npm run migrate` applies
+migrations against `$DATABASE_URL` and tracks them in `schema_migrations`; the
+seed still runs from a laptop, never CI, because `data/seed-*.json` holds gabbai
+phone numbers. Details in `docs/deploying.md`.
+
+**Vercel forces `private, no-cache, no-store` on dynamic routes and you cannot
+override it** — not from `next.config`'s `headers()`, not from a response header
+set in middleware. Both were tried; both work under `next start` and are silently
+ignored in production, which is the worst way for a fix to fail. Always verify a
+header change against the DEPLOYED response, never the local one.
+
+**Link-preview crawlers get their own response.** `src/middleware.ts` matches
+chat and social unfurlers by user agent and returns ~1.7 KB of static HTML with
+the Open Graph tags — because `no-store` tells a preview crawler not to keep the
+copy it came for. Search engines are deliberately excluded and fall through to
+the real page; serving Googlebot something different is cloaking, and SEO is this
+project's entire discovery strategy. The root redirect lives in middleware too,
+because a `next.config` redirect runs BEFORE middleware and a crawler asking for
+the bare domain got fifteen bytes of `text/plain`.
+
+**The OG card's filename carries a content hash** (`og-he.<hash>.jpg`), generated
+into `src/lib/og-image.ts` by `scripts/og/render.mjs`. Chat apps cache a preview
+image BY URL for weeks; redrawing the card under the same name is invisible to
+everyone who has already seen it. Never hand-write that path in two places.
+
+**Four columns arrived since the schema notes above.** `minyanim.days_of_week`
+(civil weekdays, empty = all — Monday and Thursday start earlier for קריאת התורה),
+`minyanim.location` (`upstairs | downstairs | sukkah`), `minyanim.style`
+(`netz | hodu | plag | carlebach | hashkama`, a LABEL and never an anchor), and
+the `synagogue_absences` table — a day plus an optional service, the only way to
+say "there are none" rather than "we do not know".

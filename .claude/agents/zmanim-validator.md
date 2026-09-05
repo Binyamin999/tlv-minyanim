@@ -85,3 +85,27 @@ Related and still open: that sheet's Shabbat-afternoon Mincha (18:20 / 18:15)
 and motzei Shabbat Arvit (19:37) are not round offsets, and one sheet cannot
 distinguish a rule from a printed clock face. Three consecutive weekly sheets
 would settle it empirically.
+
+**A per-synagogue luach is the next real idea, and it is not built.** Shuls follow
+published luachot — אור החיים, כסא רחמים, חב״ד, the Rabbanut — and the engine
+currently hard-codes ONE convention for all seventeen: GRA, alot 16.1°, tzeit
+8.5°, sea level, candle lighting 22.
+
+**Where it would pay is tzeit.** `צאת הכוכבים` names times nearly an hour apart
+depending on the luach — 8.5° is about shkia + 39 here, a 13.5-minute reckoning is
+shkia + 13, Rabbeinu Tam is shkia + 72 — which is exactly why any tzeit-anchored
+minyan is held on sight. A known luach makes that word computable, turning a held
+minyan into a rule that never expires.
+
+**Where it would NOT help, checked rather than assumed.** A luach says how to
+compute a zman, not how many minutes before it a shul davens, so it cannot rescue
+a reprinted clock face. Tested against כלל ישראל's 18:55 → 18:45: sunset moved 5
+minutes over those four days and the board moved 10, and luachot differ from each
+other by 1–4 minutes. No convention absorbs that gap; it is a reprint.
+
+**Two rules if this is ever built.** A shul's luach must be STATED, never inferred
+— a Chabad house does not necessarily use a Chabad luach, and guessing it from
+movement is the same forbidden step as reading movement off nusach. And each
+convention needs its own ground truth in `docs/zmanim-ground-truth.md` before it
+is used, or we would be printing hebcal defaults under a Tunisian label, which is
+worse than not offering it.
