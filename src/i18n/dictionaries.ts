@@ -33,13 +33,17 @@ const he = {
    * If either of those is ever weakened, this sentence becomes a promise the
    * site cannot keep.
    *
-   * One sentence. It said what the site is and then what it admits — "מה שלא
-   * ידוע, מסומן ככה" — and the client cut the second half. A preview line gets
-   * about a second of attention, and the honesty claim is not what makes
-   * somebody tap. It is still made where it counts, on the page itself.
+   * Four words, twice cut down. It said what the site is, how it computes, and
+   * what it admits; the admission went first, then the how.
+   *
+   * The `how` went because the CARD ITSELF says `מחושבים לפי זמני היום`, and
+   * the two are read together in one preview — image above, this line below.
+   * Saying it in both places spends the reader's one second of attention
+   * twice on the same claim. Anything added here in future should be checked
+   * against `ogCardSubhead` for the same reason.
    */
   ogDescription:
-    'זמני תפילה בתל אביב-יפו, מחושבים לפי זמני היום',
+    'זמני תפילה בתל אביב-יפו',
   /**
    * The line under the headline ON the shared image, and the place it covers.
    *
@@ -352,7 +356,7 @@ const en: typeof he = {
   siteName: 'TLV Minyanim',
   tagline: 'Where you can daven right now',
   ogDescription:
-    "Minyan times in Tel Aviv-Yafo, computed from the day's zmanim",
+    'Minyan times in Tel Aviv-Yafo',
   ogCardSubhead: "Computed from the day's zmanim",
   ogCardWhere: 'Tel Aviv-Yafo',
   languageName: 'English',
