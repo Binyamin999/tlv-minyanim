@@ -2,6 +2,12 @@
 /**
  * Render the link-preview cards.
  *
+ * The card is a photograph of the city beside the headline. Five design
+ * directions were built on Bauhaus theory and all five were told "doesn't
+ * remind me of Tel Aviv"; the palette that replaced them was sampled from
+ * photographs. A card needing an argument for why its geometry evokes a
+ * balcony is making that bet a sixth time. A photograph does not need one.
+ *
  * WHY A REAL BROWSER, AND NOT next/og. Satori — what `ImageResponse` uses —
  * does its own text layout, and its bidi handling is not Chromium's. This card
  * is mostly Hebrew, and a preview image is the first thing anyone sees of the
@@ -42,7 +48,6 @@ const COPY = Object.fromEntries(
         brand: t.siteName,
         tagline: t.tagline,
         sub: t.ogCardSubhead,
-        services: [t.services.shacharit, t.services.mincha, t.services.arvit],
         where: t.ogCardWhere,
       },
     ];
@@ -64,9 +69,8 @@ for (const [locale, copy] of Object.entries(COPY)) {
     document.getElementById('sub').textContent = c.sub;
     document.getElementById('where').textContent = c.where;
     document.getElementById('host').textContent = 'tlv-minyanim.vercel.app';
-    document.getElementById('services').innerHTML = c.services
-      .map((s) => `<span class="pill">${s}</span>`)
-      .join('');
+    // The photograph sits on the outer edge whichever way the text runs.
+    if (c.dir === 'rtl') document.body.style.flexDirection = 'row-reverse';
   }, copy);
   await page.waitForTimeout(400); // let the woff2 faces settle
   /*

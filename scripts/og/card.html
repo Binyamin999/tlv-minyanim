@@ -1,65 +1,50 @@
 <!doctype html>
 <meta charset="utf-8">
 <style>
-  /* The self-hosted faces the site itself uses. Loading them from disk rather
-     than a CDN is what makes the Hebrew render as the real thing. */
-  @font-face { font-family: 'Frank Ruhl Libre'; src: url('../../public/fonts/frank-ruhl-libre-hebrew.woff2') format('woff2'); font-weight: 400 700; }
-  @font-face { font-family: 'Frank Ruhl Libre'; src: url('../../public/fonts/frank-ruhl-libre-latin.woff2') format('woff2'); font-weight: 400 700; unicode-range: U+0000-024F; }
-  @font-face { font-family: 'Assistant'; src: url('../../public/fonts/assistant-hebrew.woff2') format('woff2'); font-weight: 400 700; }
-  @font-face { font-family: 'Assistant'; src: url('../../public/fonts/assistant-latin.woff2') format('woff2'); font-weight: 400 700; unicode-range: U+0000-024F; }
+  /* The site's own self-hosted faces, from disk. Loading them here rather than
+     from a CDN is what makes the Hebrew on the card the same Hebrew as on the
+     page. */
+  @font-face { font-family:'Frank Ruhl Libre'; src:url('../../public/fonts/frank-ruhl-libre-hebrew.woff2') format('woff2'); font-weight:400 700; }
+  @font-face { font-family:'Frank Ruhl Libre'; src:url('../../public/fonts/frank-ruhl-libre-latin.woff2') format('woff2'); font-weight:400 700; unicode-range:U+0000-024F; }
+  @font-face { font-family:'Assistant'; src:url('../../public/fonts/assistant-hebrew.woff2') format('woff2'); font-weight:400 700; }
+  @font-face { font-family:'Assistant'; src:url('../../public/fonts/assistant-latin.woff2') format('woff2'); font-weight:400 700; unicode-range:U+0000-024F; }
 
-  :root {
-    --sea:   #0E93AE;
-    --night: #173A5E;
-    --ink:   #0C1116;
-    --amber: #F0B45C;
-    --sand:  #E0CFB4;
-  }
-  * { margin: 0; box-sizing: border-box; }
+  /* `overflow: hidden` on BOTH html and body, not just body.
+     With it on body alone and an element reaching past the canvas edge,
+     Chromium mis-paints the Hebrew headline — glyphs vanish off the right edge
+     while getBoundingClientRect insists the text box is fully contained. Found
+     while building this card; keep both. */
+  html, body { overflow: hidden; }
+  * { margin:0; box-sizing:border-box; }
+
   body {
-    width: 1200px; height: 630px; overflow: hidden;
-    /* Dusk over the promenade, which is the hour this site is for. */
-    background:
-      radial-gradient(1100px 620px at 84% -12%, rgba(14,147,174,.55), transparent 62%),
-      radial-gradient(760px 520px at 8% 108%, rgba(240,180,92,.20), transparent 60%),
-      linear-gradient(155deg, var(--night) 0%, var(--ink) 78%);
-    color: #fff;
-    font-family: 'Assistant', system-ui, sans-serif;
-    display: flex; flex-direction: column; justify-content: space-between;
-    padding: 74px 84px;
+    width:1200px; height:630px; display:flex;
+    background:#0C1116; color:#fff;
+    font-family:'Assistant', system-ui, sans-serif;
   }
-  .brand {
-    display: flex; align-items: center; gap: 14px;
-    font-size: 27px; font-weight: 700; letter-spacing: .02em;
-    color: rgba(224,207,180,.92);
-  }
-  .dot { width: 13px; height: 13px; border-radius: 50%; background: var(--amber); }
-  h1 {
-    font-family: 'Frank Ruhl Libre', Georgia, serif;
-    font-size: 92px; line-height: 1.06; font-weight: 700; letter-spacing: -.015em;
-    max-width: 15ch;
-  }
-  .sub { margin-top: 22px; font-size: 33px; color: rgba(255,255,255,.80); }
-  /* The three services, named but never given a time: a shared image cannot
-     carry a real one, and an invented one is the single thing this project
-     refuses to do. */
-  .services { display: flex; gap: 13px; }
-  .pill {
-    border: 1px solid rgba(224,207,180,.34); border-radius: 999px;
-    padding: 11px 25px; font-size: 26px; color: rgba(224,207,180,.95);
-  }
-  .foot {
-    display: flex; align-items: center; justify-content: space-between;
-    font-size: 25px; color: rgba(255,255,255,.62);
-  }
-  body[dir='ltr'] h1 { max-width: 17ch; }
+
+  /* A photograph of the city, and that is the whole argument.
+     Five design directions were built on Bauhaus theory and all five were
+     told "doesn't remind me of Tel Aviv"; the palette that replaced them came
+     from photographs. A card that has to explain why its quarter-circle
+     evokes a balcony is making the same bet again. This one does not need the
+     argument.
+     tlv-night.jpg is 416x738 and appears here at 355x630 — scaled DOWN, never
+     up, which is the rule CLAUDE.md sets for both photographs. */
+  .shot { width:355px; height:630px; flex:none; background:url('../../public/tlv-night.jpg') center/cover no-repeat; }
+
+  .body { flex:1; padding:74px 80px; display:flex; flex-direction:column; justify-content:space-between; }
+  .brand { display:flex; align-items:center; gap:13px; font-size:26px; font-weight:700; color:rgba(224,207,180,.92); }
+  .dot { width:12px; height:12px; border-radius:50%; background:#F0B45C; }
+  h1 { font-family:'Frank Ruhl Libre', Georgia, serif; font-size:80px; line-height:1.07; font-weight:700; letter-spacing:-.015em; }
+  .sub { margin-top:20px; font-size:30px; color:rgba(255,255,255,.80); }
+  .foot { display:flex; justify-content:space-between; font-size:24px; color:rgba(255,255,255,.62); }
 </style>
 <body>
-  <div class="brand"><span class="dot"></span><span id="brand"></span></div>
-  <div>
-    <h1 id="tagline"></h1>
-    <p class="sub" id="sub"></p>
+  <div class="shot"></div>
+  <div class="body">
+    <div class="brand"><span class="dot"></span><span id="brand"></span></div>
+    <div><h1 id="tagline"></h1><p class="sub" id="sub"></p></div>
+    <div class="foot"><span id="where"></span><span id="host"></span></div>
   </div>
-  <div class="services" id="services"></div>
-  <div class="foot"><span id="where"></span><span id="host"></span></div>
 </body>
