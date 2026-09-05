@@ -9,6 +9,6 @@
  * Run `node scripts/og/render.mjs` after changing the card or its copy.
  */
 export const OG_IMAGE: Record<'he' | 'en', string> = {
-  he: '/og-he.3039b9df.jpg',
-  en: '/og-en.f846b723.jpg'
+  he: '/og-he.a7f6c1c0.jpg',
+  en: '/og-en.93b1ee9a.jpg'
 } as const;
