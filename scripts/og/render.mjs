@@ -70,7 +70,7 @@ for await (const stale of glob('public/og-*.jpg')) {
 const browser = await chromium.launch();
 for (const [locale, copy] of Object.entries(COPY)) {
   const page = await browser.newPage({
-    viewport: { width: 1200, height: 800 },
+    viewport: { width: 1200, height: 630 },
     deviceScaleFactor: 1,
   });
   await page.goto('file://' + HERE + 'card.html', { waitUntil: 'networkidle' });

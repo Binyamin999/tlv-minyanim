@@ -72,7 +72,7 @@ export async function generateMetadata({
         {
           url: OG_IMAGE[locale],
           width: 1200,
-          height: 800,
+          height: 630,
           type: 'image/jpeg',
           alt: t.tagline,
         },

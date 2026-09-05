@@ -77,7 +77,7 @@ function previewPage(locale: 'he' | 'en', origin: string): string {
 <meta property="og:image:secure_url" content="${image}">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="800">
+<meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="${escape(t.tagline)}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${escape(t.tagline)}">
