@@ -69,9 +69,10 @@ export async function generateMetadata({
       locale: locale === 'he' ? 'he_IL' : 'en_IL',
       images: [
         {
-          url: `/og-${locale}.png`,
+          url: `/og-${locale}.jpg`,
           width: 1200,
           height: 630,
+          type: 'image/jpeg',
           alt: t.tagline,
         },
       ],
@@ -80,7 +81,7 @@ export async function generateMetadata({
       card: 'summary_large_image',
       title: t.tagline,
       description: t.ogDescription,
-      images: [`/og-${locale}.png`],
+      images: [`/og-${locale}.jpg`],
     },
   };
 }

@@ -62,9 +62,19 @@ for (const [locale, copy] of Object.entries(COPY)) {
       .join('');
   }, copy);
   await page.waitForTimeout(400); // let the woff2 faces settle
-  const out = `${HERE}../../public/og-${locale}.png`;
-  await page.screenshot({ path: out });
-  console.log(`  wrote public/og-${locale}.png`);
+  /*
+   * JPEG, not PNG, and the reason is WhatsApp rather than taste.
+   *
+   * WhatsApp skips a preview image it considers too heavy — in practice
+   * somewhere around 300 KB — and shows the link bare instead, which looks
+   * exactly like having no Open Graph tags at all. The PNG of this card was
+   * 387 KB. The card is a gradient behind text, which is the case JPEG was
+   * built for: at quality 90 it is 85 KB, four times under the ceiling, with
+   * no visible softening of the type at the size a preview is ever shown.
+   */
+  const out = `${HERE}../../public/og-${locale}.jpg`;
+  await page.screenshot({ path: out, type: 'jpeg', quality: 90 });
+  console.log(`  wrote public/og-${locale}.jpg`);
   await page.close();
 }
 await browser.close();
