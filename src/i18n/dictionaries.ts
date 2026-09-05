@@ -22,10 +22,23 @@ const he = {
    *
    * Longer than the tagline because WhatsApp and Twitter give it two lines,
    * and it has to say what the site IS to somebody who has never heard of it.
-   * It promises what the site actually does — computes from sunset, and says
-   * so when it does not know — rather than claiming coverage it does not have.
+   *
+   * IT NAMES THE CITY, NOT THE NEIGHBOURHOOD, at the client's decision after I
+   * argued for the narrower claim. The concern was real and is worth leaving
+   * written down: today the data is Ramat Aviv only, so this sentence is the
+   * product's scope rather than its current coverage. What keeps that honest
+   * is elsewhere in the product and has to stay there — the homepage states
+   * the neighbourhood in its own line, and the location feature refuses to
+   * answer at all when nothing it knows about is within half an hour on foot.
+   * If either of those is ever weakened, this sentence becomes a promise the
+   * site cannot keep.
+   *
+   * Two sentences rather than one clause. The previous version used the root
+   * ידוע twice in seven words, which reads as a tongue-twister rather than as
+   * confidence, and led with the caveat before saying what the thing is.
    */
-  ogDescription: 'זמני תפילה ברמת אביב, מחושבים לפי זמני היום — וכשלא ידוע, כתוב שלא ידוע.',
+  ogDescription:
+    'זמני תפילה בתל אביב-יפו, מחושבים לפי זמני היום. מה שלא ידוע, מסומן ככה.',
   /**
    * The line under the headline ON the shared image, and the place it covers.
    *
@@ -338,7 +351,7 @@ const en: typeof he = {
   siteName: 'TLV Minyanim',
   tagline: 'Where you can daven right now',
   ogDescription:
-    'Minyan times in Ramat Aviv, computed from the day\'s zmanim — and when a time is unknown, it says so.',
+    "Minyan times in Tel Aviv-Yafo, computed from the day's zmanim. What we don't know is marked unknown.",
   ogCardSubhead: "Computed from the day's zmanim",
   ogCardWhere: 'Tel Aviv-Yafo',
   languageName: 'English',
