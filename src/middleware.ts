@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
 import { getDictionary } from '@/i18n/dictionaries';
+import { OG_IMAGE } from '@/lib/og-image';
 
 /**
  * Serve link-preview crawlers a small static page of their own.
@@ -58,7 +59,7 @@ function previewPage(locale: 'he' | 'en', origin: string): string {
   const c = HTML[locale];
   const t = getDictionary(locale);
   const url = `${origin}/${locale}`;
-  const image = `${origin}/og-${locale}.jpg`;
+  const image = `${origin}${OG_IMAGE[locale]}`;
   return `<!doctype html>
 <html lang="${c.lang}" dir="${c.dir}">
 <head>

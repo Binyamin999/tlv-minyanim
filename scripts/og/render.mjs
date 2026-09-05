@@ -25,6 +25,9 @@
  *   node scripts/og/render.mjs
  */
 import { chromium } from 'playwright';
+import { createHash } from 'node:crypto';
+import { readFile, rm, writeFile } from 'node:fs/promises';
+import { glob } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 
 import { getDictionary } from '../../src/i18n/dictionaries.ts';
@@ -53,6 +56,16 @@ const COPY = Object.fromEntries(
     ];
   }),
 );
+
+/** Locale to the public path of the card written for it. */
+const written = {};
+
+// Old cards are deleted rather than left behind: they are 100 KB each, nothing
+// references them once the manifest is rewritten, and a stale one lying around
+// is an invitation to point at it by accident.
+for await (const stale of glob('public/og-*.jpg')) {
+  await rm(stale);
+}
 
 const browser = await chromium.launch();
 for (const [locale, copy] of Object.entries(COPY)) {
@@ -83,9 +96,49 @@ for (const [locale, copy] of Object.entries(COPY)) {
    * built for: at quality 90 it is 85 KB, four times under the ceiling, with
    * no visible softening of the type at the size a preview is ever shown.
    */
-  const out = `${HERE}../../public/og-${locale}.jpg`;
-  await page.screenshot({ path: out, type: 'jpeg', quality: 90 });
-  console.log(`  wrote public/og-${locale}.jpg`);
+  /*
+   * The filename carries a hash of the image, and that is not tidiness.
+   *
+   * Chat apps cache a preview image BY URL and hold it for weeks. When this
+   * card was redesigned the bytes changed completely while the name stayed
+   * `og-he.jpg`, so every client that had already fetched it kept showing the
+   * old one — or, worse, kept showing a cached failure from before the tags
+   * worked at all. A fresh page URL does not help, because the image URL
+   * inside it was unchanged.
+   *
+   * Hashing the content means any future change to this card is a new URL to
+   * every cache in the world, automatically, with nothing to remember.
+   */
+  const bytes = await page.screenshot({ type: 'jpeg', quality: 90 });
+  const hash = createHash('sha256').update(bytes).digest('hex').slice(0, 8);
+  const name = `og-${locale}.${hash}.jpg`;
+  await writeFile(`${HERE}../../public/${name}`, bytes);
+  written[locale] = `/${name}`;
+  console.log(`  wrote public/${name}  (${(bytes.length / 1024).toFixed(1)} KB)`);
   await page.close();
 }
 await browser.close();
+
+/*
+ * The manifest the app reads. Generated rather than hand-maintained, so the
+ * hash in the metadata cannot drift from the file on disk — which is the exact
+ * failure this whole mechanism exists to prevent, one level up.
+ */
+await writeFile(
+  `${HERE}../../src/lib/og-image.ts`,
+  `/**
+ * Where each locale's link-preview card lives — GENERATED, do not edit.
+ *
+ * Written by scripts/og/render.mjs. The filename carries a hash of the image
+ * so that redrawing the card is a new URL to every chat app's cache; they hold
+ * a preview image by URL for weeks, and a redesign under the old name is
+ * invisible to anyone who has already seen it.
+ *
+ * Run \`node scripts/og/render.mjs\` after changing the card or its copy.
+ */
+export const OG_IMAGE: Record<'he' | 'en', string> = ${JSON.stringify(written, null, 2)
+    .replace(/"([a-z]{2})":/g, "$1:")
+    .replace(/"/g, "'")} as const;
+`,
+);
+console.log('  wrote src/lib/og-image.ts');

@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 
 import { getDictionary } from '@/i18n/dictionaries';
 import { SITE_URL } from '@/i18n/alternates';
+import { OG_IMAGE } from '@/lib/og-image';
 import { HTML_LANG, LOCALES, dirOf, isLocale, type Locale } from '@/i18n/locales';
 import { MODE_COOKIE, modeAt, readModePreference, resolveMode } from '@/lib/theme';
 
@@ -69,7 +70,7 @@ export async function generateMetadata({
       locale: locale === 'he' ? 'he_IL' : 'en_IL',
       images: [
         {
-          url: `/og-${locale}.jpg`,
+          url: OG_IMAGE[locale],
           width: 1200,
           height: 630,
           type: 'image/jpeg',
@@ -81,7 +82,7 @@ export async function generateMetadata({
       card: 'summary_large_image',
       title: t.tagline,
       description: t.ogDescription,
-      images: [`/og-${locale}.jpg`],
+      images: [OG_IMAGE[locale]],
     },
   };
 }
