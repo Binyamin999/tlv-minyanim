@@ -91,11 +91,27 @@ function previewPage(locale: 'he' | 'en', origin: string): string {
 
 export function middleware(request: NextRequest) {
   const agent = request.headers.get('user-agent') ?? '';
-  if (!PREVIEW_CRAWLERS.test(agent)) return NextResponse.next();
-
-  // The bare domain previews too. It is a 307 to /he for humans, and a crawler
-  // that does not follow redirects was getting fifteen bytes of text/plain.
   const path = request.nextUrl.pathname;
+
+  /*
+   * The root redirect lives here, not in next.config.
+   *
+   * As a config redirect it ran at the edge BEFORE middleware, so a crawler
+   * asking for the bare domain got a 307 and fifteen bytes of text/plain
+   * before this code was ever reached — and people paste a bare domain far
+   * more often than a /he link. Ordering it here means a crawler is answered
+   * first and a human is still sent to /he.
+   *
+   * Still a 307 and deliberately not a 308: a permanent redirect is cached by
+   * the browser essentially forever, and the day this site negotiates
+   * Accept-Language every returning visitor would still be pinned to Hebrew by
+   * their own cache. Cheap to make permanent later, impossible to take back.
+   */
+  if (path === '/' && !PREVIEW_CRAWLERS.test(agent)) {
+    return NextResponse.redirect(new URL('/he', request.url), 307);
+  }
+
+  if (!PREVIEW_CRAWLERS.test(agent)) return NextResponse.next();
   const locale = path.startsWith('/en') ? 'en' : 'he';
   const origin = process.env.NEXT_PUBLIC_SITE_URL ?? request.nextUrl.origin;
 
