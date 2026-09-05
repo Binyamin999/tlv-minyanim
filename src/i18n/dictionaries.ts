@@ -17,6 +17,15 @@ type UnconfirmedReasonCode = UnconfirmedReason['code'];
 const he = {
   siteName: 'מניינים תל אביב',
   tagline: 'איפה אפשר להתפלל עכשיו',
+  /**
+   * The sentence under the title in a shared link.
+   *
+   * Longer than the tagline because WhatsApp and Twitter give it two lines,
+   * and it has to say what the site IS to somebody who has never heard of it.
+   * It promises what the site actually does — computes from sunset, and says
+   * so when it does not know — rather than claiming coverage it does not have.
+   */
+  ogDescription: 'זמני תפילה ברמת אביב, מחושבים לפי זמני היום — וכשלא ידוע, כתוב שלא ידוע.',
   languageName: 'עברית',
   otherLanguageName: 'English',
   services: {
@@ -320,6 +329,8 @@ const he = {
 const en: typeof he = {
   siteName: 'TLV Minyanim',
   tagline: 'Where you can daven right now',
+  ogDescription:
+    'Minyan times in Ramat Aviv, computed from the day\'s zmanim — and when a time is unknown, it says so.',
   languageName: 'English',
   otherLanguageName: 'עברית',
   services: {

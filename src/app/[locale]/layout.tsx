@@ -46,6 +46,42 @@ export async function generateMetadata({
     metadataBase: new URL(SITE_URL),
     title: { default: t.siteName, template: `%s · ${t.siteName}` },
     description: t.tagline,
+    /*
+     * The link preview — which is the first thing anyone sees of this site,
+     * because it is shared in WhatsApp long before it is found in a search.
+     *
+     * THE CARD CARRIES NO TIME, and that is the point rather than an omission.
+     * Chat apps cache a preview image for weeks and refetch it on their own
+     * schedule, so a clock face printed on it would be wrong within the hour
+     * and unfixable from here. A site whose entire claim is that it does not
+     * show times it cannot stand behind must not make an exception for its own
+     * advertisement.
+     *
+     * Rendered per locale by scripts/og/render.mjs, in Chromium rather than
+     * next/og — the copy is mostly Hebrew and satori's bidi is not Chromium's.
+     */
+    openGraph: {
+      type: 'website',
+      siteName: t.siteName,
+      title: t.tagline,
+      description: t.ogDescription,
+      url: `${SITE_URL}/${locale}`,
+      locale: locale === 'he' ? 'he_IL' : 'en_IL',
+      images: [
+        {
+          url: `/og-${locale}.png`,
+          width: 1200,
+          height: 630,
+          alt: t.tagline,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: t.tagline,
+      description: t.ogDescription,
+      images: [`/og-${locale}.png`],
+    },
   };
 }
 
