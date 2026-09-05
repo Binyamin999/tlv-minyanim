@@ -33,12 +33,13 @@ const he = {
    * If either of those is ever weakened, this sentence becomes a promise the
    * site cannot keep.
    *
-   * Two sentences rather than one clause. The previous version used the root
-   * ידוע twice in seven words, which reads as a tongue-twister rather than as
-   * confidence, and led with the caveat before saying what the thing is.
+   * One sentence. It said what the site is and then what it admits — "מה שלא
+   * ידוע, מסומן ככה" — and the client cut the second half. A preview line gets
+   * about a second of attention, and the honesty claim is not what makes
+   * somebody tap. It is still made where it counts, on the page itself.
    */
   ogDescription:
-    'זמני תפילה בתל אביב-יפו, מחושבים לפי זמני היום. מה שלא ידוע, מסומן ככה.',
+    'זמני תפילה בתל אביב-יפו, מחושבים לפי זמני היום',
   /**
    * The line under the headline ON the shared image, and the place it covers.
    *
@@ -351,7 +352,7 @@ const en: typeof he = {
   siteName: 'TLV Minyanim',
   tagline: 'Where you can daven right now',
   ogDescription:
-    "Minyan times in Tel Aviv-Yafo, computed from the day's zmanim. What we don't know is marked unknown.",
+    "Minyan times in Tel Aviv-Yafo, computed from the day's zmanim",
   ogCardSubhead: "Computed from the day's zmanim",
   ogCardWhere: 'Tel Aviv-Yafo',
   languageName: 'English',
