@@ -1,40 +1,114 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
 /**
- * Let a link scraper keep the preview it just built.
+ * Serve link-preview crawlers a small static page of their own.
  *
- * Next.js sends `private, no-cache, no-store` for a dynamically rendered page.
- * The dynamic part is right and non-negotiable — every request recomputes how
- * many minutes until the next minyan, and a stale countdown is the one thing
- * this site cannot ship. But `no-store` says something broader: do not keep a
- * copy of this response at all. A preview crawler exists to keep a copy, and
- * one that honours the header has been told not to do its job.
+ * The homepage is dynamically rendered — it has to be, since every request
+ * recomputes how many minutes until the next minyan — and Vercel therefore
+ * sends `private, no-cache, no-store` on it and will not let that be
+ * overridden, not from next.config's headers() and not from a response header
+ * set here. Both were tried; both work under `next start` and are ignored in
+ * production, which is the worst way for a fix to fail.
  *
- * `public, max-age=0, must-revalidate` keeps the guarantee that matters —
- * nothing is served without checking the origin first, so no human sees a
- * stale time — and only stops forbidding storage. `public` because these pages
- * are identical for everyone: no session, no login, nothing personal.
+ * `no-store` tells a client not to keep a copy of the response. A preview
+ * crawler exists to keep a copy. So rather than fight the header, these
+ * crawlers get a response that never carries it: a few hundred bytes of static
+ * HTML containing exactly the Open Graph tags, built here, touching no
+ * database and rendering nothing.
  *
- * WHY MIDDLEWARE AND NOT `headers()` IN next.config. That was tried first and
- * works under `next start` locally, which is exactly what makes it a trap:
- * Vercel sets the header for dynamic routes after the config's headers are
- * applied, so the change appeared to work locally and did nothing in
- * production. Middleware runs on the response and wins.
+ * ONLY LINK-PREVIEW CRAWLERS, NEVER A SEARCH ENGINE. Googlebot and every other
+ * indexer falls through to the real page untouched. Serving a search crawler
+ * something different from a reader is cloaking, and on a project whose entire
+ * discovery strategy is SEO that would be a self-inflicted wound. The list
+ * below is chat and social unfurlers only.
  *
- * Stated plainly: this is not proven to be what WhatsApp objects to, and it
- * cannot be proven from here. Everything else measured correct — tags at byte
- * 1,500 of the document, absolute URLs, a 58 KB image returning 200 to every
- * crawler user agent tried. This is the last thing in the response that a
- * preview crawler would have any reason to act on.
+ * The content is the same claim the real page makes — same title, description
+ * and image, and a link to the page itself — so nothing here can drift into
+ * saying something the site does not.
  */
+
+/**
+ * Chat and social unfurlers. Deliberately no `Googlebot`, `bingbot`,
+ * `DuckDuckBot`, `YandexBot` or `Applebot`: those must see the real page.
+ */
+const PREVIEW_CRAWLERS =
+  /WhatsApp|facebookexternalhit|facebookcatalog|Twitterbot|TelegramBot|Slackbot|Discordbot|LinkedInBot|SkypeUriPreview|redditbot|Iframely|vkShare|Viber|Line\b|Mastodon|Pleroma|Signal/i;
+
+const COPY = {
+  he: {
+    lang: 'he',
+    dir: 'rtl',
+    site: 'מניינים תל אביב',
+    title: 'איפה אפשר להתפלל עכשיו',
+    description: 'זמני תפילה ברמת אביב, מחושבים לפי זמני היום — וכשלא ידוע, כתוב שלא ידוע.',
+    locale: 'he_IL',
+  },
+  en: {
+    lang: 'en',
+    dir: 'ltr',
+    site: 'TLV Minyanim',
+    title: 'Where you can daven right now',
+    description:
+      "Minyan times in Ramat Aviv, computed from the day's zmanim — and when a time is unknown, it says so.",
+    locale: 'en_IL',
+  },
+} as const;
+
+const escape = (s: string) =>
+  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+function previewPage(locale: 'he' | 'en', origin: string): string {
+  const c = COPY[locale];
+  const url = `${origin}/${locale}`;
+  const image = `${origin}/og-${locale}.jpg`;
+  return `<!doctype html>
+<html lang="${c.lang}" dir="${c.dir}">
+<head>
+<meta charset="utf-8">
+<title>${escape(c.title)}</title>
+<meta name="description" content="${escape(c.description)}">
+<link rel="canonical" href="${url}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="${escape(c.site)}">
+<meta property="og:title" content="${escape(c.title)}">
+<meta property="og:description" content="${escape(c.description)}">
+<meta property="og:url" content="${url}">
+<meta property="og:locale" content="${c.locale}">
+<meta property="og:image" content="${image}">
+<meta property="og:image:secure_url" content="${image}">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="${escape(c.title)}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${escape(c.title)}">
+<meta name="twitter:description" content="${escape(c.description)}">
+<meta name="twitter:image" content="${image}">
+</head>
+<body><a href="${url}">${escape(c.title)}</a></body>
+</html>`;
+}
+
 export function middleware(request: NextRequest) {
-  const response = NextResponse.next();
-  response.headers.set('cache-control', 'public, max-age=0, must-revalidate');
-  return response;
+  const agent = request.headers.get('user-agent') ?? '';
+  if (!PREVIEW_CRAWLERS.test(agent)) return NextResponse.next();
+
+  // The bare domain previews too. It is a 307 to /he for humans, and a crawler
+  // that does not follow redirects was getting fifteen bytes of text/plain.
+  const path = request.nextUrl.pathname;
+  const locale = path.startsWith('/en') ? 'en' : 'he';
+  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? request.nextUrl.origin;
+
+  return new NextResponse(previewPage(locale, origin), {
+    status: 200,
+    headers: {
+      'content-type': 'text/html; charset=utf-8',
+      // Storable, which is the whole point.
+      'cache-control': 'public, max-age=300, s-maxage=300',
+    },
+  });
 }
 
 export const config = {
-  // The two locale trees only. Static assets already carry sensible headers,
-  // and there is nothing to gain from running on every image request.
-  matcher: ['/he/:path*', '/en/:path*', '/he', '/en'],
+  matcher: ['/', '/he/:path*', '/en/:path*', '/he', '/en'],
 };
