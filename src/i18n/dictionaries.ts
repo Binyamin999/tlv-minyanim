@@ -26,6 +26,14 @@ const he = {
    * so when it does not know — rather than claiming coverage it does not have.
    */
   ogDescription: 'זמני תפילה ברמת אביב, מחושבים לפי זמני היום — וכשלא ידוע, כתוב שלא ידוע.',
+  /**
+   * The line under the headline ON the shared image, and the place it covers.
+   *
+   * Distinct from `ogDescription`, which is the text a chat app prints BELOW
+   * the image — the two are read together and must not repeat each other.
+   */
+  ogCardSubhead: 'זמני תפילה מדויקים, לפי השקיעה — לא ניחוש',
+  ogCardWhere: 'רמת אביב · תל אביב-יפו',
   languageName: 'עברית',
   otherLanguageName: 'English',
   services: {
@@ -331,6 +339,8 @@ const en: typeof he = {
   tagline: 'Where you can daven right now',
   ogDescription:
     'Minyan times in Ramat Aviv, computed from the day\'s zmanim — and when a time is unknown, it says so.',
+  ogCardSubhead: 'Prayer times computed from sunset — never guessed',
+  ogCardWhere: 'Ramat Aviv · Tel Aviv-Yafo',
   languageName: 'English',
   otherLanguageName: 'עברית',
   services: {

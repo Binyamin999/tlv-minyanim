@@ -1,5 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
+import { getDictionary } from '@/i18n/dictionaries';
+
 /**
  * Serve link-preview crawlers a small static page of their own.
  *
@@ -34,44 +36,40 @@ import { NextResponse, type NextRequest } from 'next/server';
 const PREVIEW_CRAWLERS =
   /WhatsApp|facebookexternalhit|facebookcatalog|Twitterbot|TelegramBot|Slackbot|Discordbot|LinkedInBot|SkypeUriPreview|redditbot|Iframely|vkShare|Viber|Line\b|Mastodon|Pleroma|Signal/i;
 
-const COPY = {
-  he: {
-    lang: 'he',
-    dir: 'rtl',
-    site: 'מניינים תל אביב',
-    title: 'איפה אפשר להתפלל עכשיו',
-    description: 'זמני תפילה ברמת אביב, מחושבים לפי זמני היום — וכשלא ידוע, כתוב שלא ידוע.',
-    locale: 'he_IL',
-  },
-  en: {
-    lang: 'en',
-    dir: 'ltr',
-    site: 'TLV Minyanim',
-    title: 'Where you can daven right now',
-    description:
-      "Minyan times in Ramat Aviv, computed from the day's zmanim — and when a time is unknown, it says so.",
-    locale: 'en_IL',
-  },
+/**
+ * Everything except the words.
+ *
+ * The copy itself comes from the dictionary, which is the whole point: this
+ * page and the real one make the same claims, and a card that could drift into
+ * saying something the site does not is worse than no card. The strings lived
+ * here in a `COPY` object for exactly one commit, and with three copies of the
+ * headline across middleware, the renderer and the dictionary, drift was a
+ * matter of when.
+ */
+const HTML = {
+  he: { lang: 'he', dir: 'rtl', locale: 'he_IL' },
+  en: { lang: 'en', dir: 'ltr', locale: 'en_IL' },
 } as const;
 
 const escape = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 function previewPage(locale: 'he' | 'en', origin: string): string {
-  const c = COPY[locale];
+  const c = HTML[locale];
+  const t = getDictionary(locale);
   const url = `${origin}/${locale}`;
   const image = `${origin}/og-${locale}.jpg`;
   return `<!doctype html>
 <html lang="${c.lang}" dir="${c.dir}">
 <head>
 <meta charset="utf-8">
-<title>${escape(c.title)}</title>
-<meta name="description" content="${escape(c.description)}">
+<title>${escape(t.tagline)}</title>
+<meta name="description" content="${escape(t.ogDescription)}">
 <link rel="canonical" href="${url}">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="${escape(c.site)}">
-<meta property="og:title" content="${escape(c.title)}">
-<meta property="og:description" content="${escape(c.description)}">
+<meta property="og:site_name" content="${escape(t.siteName)}">
+<meta property="og:title" content="${escape(t.tagline)}">
+<meta property="og:description" content="${escape(t.ogDescription)}">
 <meta property="og:url" content="${url}">
 <meta property="og:locale" content="${c.locale}">
 <meta property="og:image" content="${image}">
@@ -79,13 +77,13 @@ function previewPage(locale: 'he' | 'en', origin: string): string {
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="${escape(c.title)}">
+<meta property="og:image:alt" content="${escape(t.tagline)}">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="${escape(c.title)}">
-<meta name="twitter:description" content="${escape(c.description)}">
+<meta name="twitter:title" content="${escape(t.tagline)}">
+<meta name="twitter:description" content="${escape(t.ogDescription)}">
 <meta name="twitter:image" content="${image}">
 </head>
-<body><a href="${url}">${escape(c.title)}</a></body>
+<body><a href="${url}">${escape(t.tagline)}</a></body>
 </html>`;
 }
 

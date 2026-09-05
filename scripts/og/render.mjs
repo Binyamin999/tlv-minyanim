@@ -21,26 +21,33 @@
 import { chromium } from 'playwright';
 import { fileURLToPath } from 'node:url';
 
+import { getDictionary } from '../../src/i18n/dictionaries.ts';
+
 const HERE = fileURLToPath(new URL('.', import.meta.url));
 
-const COPY = {
-  he: {
-    dir: 'rtl',
-    brand: 'מניינים תל אביב',
-    tagline: 'איפה אפשר להתפלל עכשיו',
-    sub: 'זמני תפילה מדויקים, לפי השקיעה — לא ניחוש',
-    services: ['שחרית', 'מנחה', 'ערבית'],
-    where: 'רמת אביב · תל אביב-יפו',
-  },
-  en: {
-    dir: 'ltr',
-    brand: 'TLV Minyanim',
-    tagline: 'Where you can daven right now',
-    sub: 'Prayer times computed from sunset — never guessed',
-    services: ['Shacharit', 'Mincha', 'Arvit'],
-    where: 'Ramat Aviv · Tel Aviv-Yafo',
-  },
-};
+/**
+ * The words come from the dictionary, not from here.
+ *
+ * They were duplicated in this file, in the middleware and in the dictionary —
+ * three copies of one headline, which is three chances for the card to promise
+ * something the site does not say. Only the layout facts live here.
+ */
+const COPY = Object.fromEntries(
+  (['he', 'en']).map((locale) => {
+    const t = getDictionary(locale);
+    return [
+      locale,
+      {
+        dir: locale === 'he' ? 'rtl' : 'ltr',
+        brand: t.siteName,
+        tagline: t.tagline,
+        sub: t.ogCardSubhead,
+        services: [t.services.shacharit, t.services.mincha, t.services.arvit],
+        where: t.ogCardWhere,
+      },
+    ];
+  }),
+);
 
 const browser = await chromium.launch();
 for (const [locale, copy] of Object.entries(COPY)) {
