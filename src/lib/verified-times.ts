@@ -744,131 +744,92 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
 
   /**
    * אוהל יוסף יצחק, בשוויס זינגר 1 — a Chabad house. Weekday board for the
-   * week of 2026-08-30.
+   * week of 2026-09-06.
    *
-   * NINE TIMES IDENTICAL TO תהילת אביב'S, AND THAT IS NOT A MISTAKE. It looks
-   * exactly like one: two unrelated congregations 734 m apart, one עדות
-   * המזרח and one Chabad, both starting a minyan at 07:13. It was queried on
-   * exactly those grounds and confirmed — so it is written down here, because
-   * the next person to notice will reach for the same conclusion and should
-   * find the answer rather than repeat the question.
+   * NINE MINYANIM BECAME THREE, AND NONE OF THE NINE TIMES SURVIVED. Last
+   * week this board read 05:40 / 07:13 / 08:15 Shacharit, 13:15 / 17:45 /
+   * 18:50 Mincha and 18:10 / 19:35 / 20:00 Arvit. This week it is one of
+   * each: 08:45, 18:45, and an Arvit that follows Mincha without a time.
    *
-   * NOT a `SHARED_BOARD`, deliberately. That mechanism means ONE physical
-   * board serving two shuls in one building — כלל ישראל and בית חב"ד רמת אביב
-   * ג' at nought metres — where a single reading genuinely vouches for both.
-   * These are two buildings with two boards that happen to agree this week.
-   * Sharing the record would mean next week's reading of תהילת אביב silently
-   * rewriting a shul nobody had been to, which is fabrication with extra
-   * steps. Two records, and the windows below are what makes copying safe:
-   * whichever is not re-read simply expires and goes honestly unknown.
+   * WHICH ALSO ENDS THE COINCIDENCE. Last week every one of those nine times
+   * was identical to תהילת אביב's, 734 m away — queried on exactly those
+   * grounds, and confirmed as real rather than a copying slip. תהילת אביב's
+   * board has not moved this week and this one has changed completely, so the
+   * two are now nothing alike. That is the strongest evidence yet that they
+   * were genuinely two boards rather than one record entered twice: a copying
+   * mistake would still be identical today.
    *
-   * ONLY THE LABELS THE BOARD GAVE. תהילת אביב's 05:40 is marked נץ, its
-   * 18:10 פלג, and its two late Arvits למעלה and למטה. None of that was said
-   * about this shul, so none of it is recorded here — identical times do not
-   * license identical labels, and the labels are what a reader picks by.
+   * A CHANGE THIS LARGE IS ALSO WHAT A PARTIAL READING LOOKS LIKE, and the
+   * difference is not visible from here. Stored as reported, because the
+   * reader is the evidence, and because three times is strictly more than the
+   * nothing this shul shows today with its whole block expired. Flagged in
+   * held so the next reader checks rather than assumes.
    *
-   * Five of the nine cannot hold all year, the same five as at תהילת אביב:
-   * mincha 13:15 falls before mincha gedola on 2026-03-27, 17:45 and 18:50
-   * are after shkia from November, arvit 18:10 is before shkia on 2026-03-27
-   * and 19:35 on 2026-05-21. The whole block is windowed regardless.
+   * NO LABELS THIS TIME. Last week's 07:13 and 08:15 were marked הודו; nothing
+   * was said about 08:45, so nothing is recorded. Labels are what a reader
+   * picks by and they are not inherited from a previous week any more than
+   * times are.
    */
   'אוהל יוסף יצחק': {
-    verifiedAt: '2026-08-31',
+    verifiedAt: '2026-09-06',
     verifiedBy: 'notice_board',
     minyanim: [
       {
         service: 'shacharit',
         dayType: 'weekday',
-        time: { kind: 'fixed', time: '05:40' },
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
-        note: 'first minyan',
-      },
-      {
-        service: 'shacharit',
-        dayType: 'weekday',
-        time: { kind: 'fixed', time: '07:13' },
-        style: 'hodu',
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
-        note: 'second minyan',
-      },
-      {
-        service: 'shacharit',
-        dayType: 'weekday',
-        time: { kind: 'fixed', time: '08:15' },
-        style: 'hodu',
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
-        note: 'third minyan',
+        time: { kind: 'fixed', time: '08:45' },
+        validFrom: '2026-09-06',
+        validUntil: '2026-09-11',
+        // Late, but comfortably inside the morning: sof zman tefila is 10:32
+        // this week. It would not be safe unwindowed — the deadline falls to
+        // 09:33 on 2026-10-25 — and the board it came from vouches for a week
+        // in any case.
+        note: 'the only Shacharit on this week\'s board',
       },
       {
         service: 'mincha',
         dayType: 'weekday',
-        time: { kind: 'fixed', time: '13:15' },
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
-        note: 'first Mincha; before mincha gedola on 2026-03-27, so never year-round',
-      },
-      {
-        service: 'mincha',
-        dayType: 'weekday',
-        time: { kind: 'fixed', time: '17:45' },
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
-        note: 'second Mincha',
-      },
-      {
-        service: 'mincha',
-        dayType: 'weekday',
-        time: { kind: 'fixed', time: '18:50' },
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
-        note: 'third Mincha; shkia − 16 this week and after sunset from November',
+        time: { kind: 'fixed', time: '18:45' },
+        validFrom: '2026-09-06',
+        validUntil: '2026-09-11',
+        note: 'shkia − 13 today; last week\'s evening Mincha was 18:50, shkia − 16',
       },
       {
         service: 'arvit',
         dayType: 'weekday',
-        time: { kind: 'fixed', time: '18:10' },
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
-        note: 'first Arvit',
-      },
-      {
-        service: 'arvit',
-        dayType: 'weekday',
-        time: { kind: 'fixed', time: '19:35' },
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
-        note: 'second Arvit',
-      },
-      {
-        service: 'arvit',
-        dayType: 'weekday',
-        time: { kind: 'fixed', time: '20:00' },
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
-        note: 'third Arvit',
+        time: { kind: 'unknown', rawText: 'מיד אחרי מנחה' },
+        validFrom: '2026-09-06',
+        validUntil: '2026-09-11',
+        // Same shape as היכל חיים's: the service is stated, the time is not.
+        // Deriving one from an 18:45 Mincha would be inventing an offset, and
+        // last week's 19:35 belongs to a board that no longer exists.
+        note: 'stated as immediately after Mincha, with no clock face',
       },
     ],
+    // Nothing stated either way, so everything unlisted stays unknown.
     noMinyanim: [],
     held: [
       {
-        what: "the GIS layer's Shabbat Shacharit at 05:45",
+        what: 'whether this week\'s board really has three lines and not nine',
         why:
-          'A verified record replaces the parsed one wholesale, and the source ' +
-          'listed nothing at all for this shul on weekdays while the board ' +
-          'carries nine. Shabbat is coming separately, so it stays honestly ' +
-          'unknown rather than being claimed empty.',
+          'Every time changed and six minyanim disappeared in one week, which ' +
+          'is a larger move than any other board in this file has made. It is ' +
+          'what a genuinely rewritten Chabad-house schedule looks like — and ' +
+          'equally what reading only part of a board looks like. Stored as ' +
+          'reported rather than second-guessed, because the reader is the ' +
+          'evidence and three times beat the nothing this shul showed with its ' +
+          'previous block expired. One glance at the sign separates the cases, ' +
+          'and if six are missing they are missing for a week rather than ' +
+          'forever.',
       },
       {
-        what: "whether תהילת אביב's labels apply here too",
+        what: 'last week\'s nine times, and the הודו labels on two of them',
         why:
-          'The times match line for line, and תהילת אביב marks its 05:40 נץ, ' +
-          'its 18:10 פלג and its late Arvits למעלה and למטה. This board was not ' +
-          'reported as saying any of that. Matching times are not evidence of ' +
-          'matching labels, and a label is what a reader chooses a minyan by — ' +
-          'so they are held rather than assumed. One question at the shul settles it.',
+          'Dropped, because a verified record replaces the previous one whole. ' +
+          'Kept here because the disappearance is itself a finding: those nine ' +
+          'matched תהילת אביב exactly and this week matches nothing, which ' +
+          'retires the suspicion that the two shuls were ever one record ' +
+          'duplicated.',
       },
     ],
   },
@@ -1084,68 +1045,87 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
    * which minyan" but "cannot say whether it is a rule".
    */
   'לכלל ישראל': {
-    verifiedAt: '2026-08-28',
+    verifiedAt: '2026-09-06',
     verifiedBy: 'notice_board',
     minyanim: [
       /* ------------------------------------------------------------------
-         THIS WEEK'S WEEKDAY BOARD — 2026-08-30 to 2026-09-04.
+         THIS WEEK'S WEEKDAY BOARD — 2026-09-06 to 2026-09-11, and the THIRD
+         consecutive reading of it. Three was the number named as enough to
+         tell a rule from a reprint, and it has now arrived. It says reprint,
+         but it took all three to say so and the last one is the interesting
+         one.
 
-         The whole weekday block is reprinted weekly and every line of it
-         moved: Shacharit 6:15 -> 6:20, evening Mincha 18:55 -> 18:45, and an
-         Arvit appeared that the previous reading did not have. So all four
-         carry a window and expire with it.
+         Measured at each board's own Sunday, so the comparison is like for
+         like — the offset drifts about a minute a day WITHIN a week too,
+         which is why an earlier note here read shkia − 17 for a Wednesday and
+         shkia − 21 is the same 18:55 seen on its Sunday:
 
-         Not a rule in disguise: the evening Mincha was shkia − 17 one week and
-         shkia − 22 the next, so there is no offset to extract. Outside the
-         window these rows stop resolving and the shul reads as honestly
-         unknown, which is what it will be until the next board is read.
+           23 Aug   shacharit 06:15   mincha 18:55 = shkia − 21   arvit —
+           30 Aug   shacharit 06:20   mincha 18:45 = shkia − 22   19:25 = tzeit − 20
+           06 Sep   shacharit 06:15   mincha 18:35 = shkia − 23   19:15 = tzeit − 20
+
+         THE SHACHARIT SETTLES IT ON ITS OWN: 06:15, then 06:20, then 06:15
+         again. Netz over those three weeks went 06:10 -> 06:14 -> 06:19,
+         monotonically later, so a time that steps forward and then back is
+         not tracking sunrise or anything else. It is a number somebody
+         retypes.
+
+         THE EVENING MINCHA IS THE NEAR MISS. It steps a round ten minutes a
+         week while shkia steps nine, so the offset creeps one minute weekly:
+         − 21, − 22, − 23. Close enough to look like `shkia − 22` from any two
+         readings, and wrong by a minute a week forever if stored as one. This
+         is what three boards buy that two cannot.
          ------------------------------------------------------------------ */
       {
         service: 'shacharit',
         dayType: 'weekday',
-        time: { kind: 'fixed', time: '06:20' },
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
-        note: 'first minyan',
+        time: { kind: 'fixed', time: '06:15' },
+        validFrom: '2026-09-06',
+        validUntil: '2026-09-11',
+        note: 'first minyan; 06:15 again after a week at 06:20',
       },
       {
         service: 'shacharit',
         dayType: 'weekday',
         time: { kind: 'fixed', time: '08:00' },
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
-        note: 'second minyan',
+        validFrom: '2026-09-06',
+        validUntil: '2026-09-11',
+        note: 'second minyan; unchanged for two weeks',
       },
       {
         service: 'mincha',
         dayType: 'weekday',
         time: { kind: 'fixed', time: '14:00' },
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
+        validFrom: '2026-09-06',
+        validUntil: '2026-09-11',
         // Would survive without a window — 14:00 is after mincha gedola and
         // before shkia on all 365 days — but it is printed on the same weekly
         // board as the rest and is vouched for exactly as long. Claiming more
-        // for it than the source does would be inventing durability.
+        // for it than the source does would be inventing durability. Three
+        // boards have now printed it unchanged, which is still not the shul
+        // saying it is permanent.
         note: 'first Mincha; the board calls it Mincha Gedola, which is a label',
       },
       {
         service: 'mincha',
         dayType: 'weekday',
-        time: { kind: 'fixed', time: '18:45' },
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
-        note: 'second Mincha; the board calls it Mincha Ketana, which is a label',
+        time: { kind: 'fixed', time: '18:35' },
+        validFrom: '2026-09-06',
+        validUntil: '2026-09-11',
+        note: 'second Mincha; shkia − 23 today, and shkia − 21 and − 22 the two weeks before',
       },
       {
         service: 'arvit',
         dayType: 'weekday',
-        time: { kind: 'fixed', time: '19:25' },
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
-        // The first weekday Arvit anywhere in the data. Until this the only
-        // Arvit we held was a Kabbalat Shabbat, so `?service=arvit` on a
-        // Sunday answered "in 5 days".
-        note: 'follows the second Mincha',
+        time: { kind: 'fixed', time: '19:15' },
+        validFrom: '2026-09-06',
+        validUntil: '2026-09-11',
+        // tzeit − 20 for the second week running, exactly. Recorded, NOT
+        // stored as an anchor: it is only two readings, the shkia offset moved
+        // underneath it (+18 then +17), and a tzeit-anchored row is held by
+        // ambiguous_tzeit anyway — so converting it would publish nothing and
+        // claim something. See held.
+        note: 'follows the second Mincha; tzeit − 20 two weeks running',
       },
 
       /* --- Shabbat and erev Shabbat: no window, these are rules or hold --- */
@@ -1183,11 +1163,26 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
       {
         what: 'a weekday time that outlives its week',
         why:
-          'RESOLVED, and worth keeping as the record of how. The evening Mincha ' +
-          'read 18:55 on 2026-08-26 and 18:45 on 2026-08-30 — shkia − 17 then ' +
-          'shkia − 22 — so there is no offset to extract, and the user confirmed ' +
-          'the board is reprinted weekly. The times are stored with a validity ' +
-          'window instead of being held or being claimed year-round.',
+          'RESOLVED by the third board, and worth keeping as the record of how. ' +
+          'Compared at each week\'s own Sunday the evening Mincha ran shkia − 21, ' +
+          '− 22, − 23: a round ten-minute step against a nine-minute one in ' +
+          'sunset, so the offset creeps a minute a week and there is nothing to ' +
+          'extract. Two readings would have suggested shkia − 22 and been wrong ' +
+          'by a minute a week forever. The Shacharit is blunter still — 06:15, ' +
+          '06:20, 06:15, against a netz that only moved later. Stored with ' +
+          'validity windows rather than held or claimed year-round.',
+      },
+      {
+        what: 'whether the weekday Arvit is tzeit − 20',
+        why:
+          'It has been exactly that for two weeks — 19:25 against a tzeit of ' +
+          '19:45, then 19:15 against 19:35 — which is a better fit than anything ' +
+          'else on this board has managed. Not stored as an anchor for three ' +
+          'reasons, any one of which is enough: two readings is what the Mincha ' +
+          'just proved insufficient, the shkia offset moved underneath it, and a ' +
+          'tzeit-anchored row is held by ambiguous_tzeit regardless — so storing ' +
+          'the rule would publish nothing while asserting something. One question ' +
+          'to the gabbai replaces all of it.',
       },
       {
         what: 'סליחות 00:40',
