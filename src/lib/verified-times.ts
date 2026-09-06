@@ -313,100 +313,151 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
    * Storing any of them as an anchor would be the "Mincha Gedola 14:00"
    * mistake — reading a name as arithmetic.
    */
+  /**
+   * תהילת אביב, שרגא פרידמן 1. SECOND WEEK read — 2026-09-06 to 2026-09-11.
+   *
+   * ---------------------------------------------------------------------------
+   * WHAT TWO WEEKS SETTLED
+   * ---------------------------------------------------------------------------
+   * This is the first shul read twice, which is the only way to tell a rule
+   * from a reprinted clock face without asking. Between the printed weeks
+   * netz moved +4 minutes and shkia −9. What the board did:
+   *
+   *   שחרית  05:40 07:13 08:15   unchanged, while netz moved +4
+   *   מנחה   13:15               unchanged, while shkia moved −9
+   *   מנחה   17:45 -> 17:35      −10; offset from shkia −80 -> −81
+   *   מנחה   18:50 -> 18:45      −5;  offset −15 -> −11
+   *   ערבית  18:10 -> 18:00      −10; offset from plag +25 -> +23
+   *   ערבית  19:35 -> 19:30      −5;  offset +30 -> +34
+   *   ערבית  20:00               unchanged
+   *
+   * THE נץ MINYAN DOES NOT TRACK NETZ. 05:40 held still while sunrise moved
+   * four minutes later, so it is netz − 36 one week and netz − 40 the next.
+   * That is the label-is-not-an-anchor rule proved rather than argued: had it
+   * been stored as `netz − 36` when it was first read, it would already be
+   * four minutes wrong, and by December — when netz is 06:37 — it would be an
+   * hour out. It keeps its `netz` style, because the style says what KIND of
+   * minyan it is and never how the time is computed.
+   *
+   * NOTHING IS PROMOTED TO A RULE. Only the 17:35 Mincha held its offset
+   * across the two weeks, and one interval agreeing within a minute is not
+   * evidence — a shul that adjusts in five-minute steps will coincide with
+   * sunset sometimes. CLAUDE.md asks for three consecutive weeks and it is
+   * right to. A third reading settles it.
+   *
+   * What this board actually looks like is a set of clock faces nudged in
+   * 5- and 10-minute steps every week or two, not offsets recomputed nightly.
+   * So every line is windowed again, and the shul goes quiet again on Friday
+   * unless somebody reads it a third time.
+   *
+   * Shabbat is still not here.
+   */
   'תהילת אביב': {
-    verifiedAt: '2026-08-30',
+    verifiedAt: '2026-09-06',
     verifiedBy: 'notice_board',
     minyanim: [
       {
         service: 'shacharit',
         dayType: 'weekday',
         time: { kind: 'fixed', time: '05:40' },
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
         style: 'netz',
-        note: 'first minyan; netz − 34 this week, which is not evidence of a rule',
+        validFrom: '2026-09-06',
+        validUntil: '2026-09-11',
+        note: 'first minyan; unchanged from last week while netz moved +4 — not netz-tracking',
       },
       {
         service: 'shacharit',
         dayType: 'weekday',
         time: { kind: 'fixed', time: '07:13' },
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
         style: 'hodu',
-        note: 'second minyan',
+        validFrom: '2026-09-06',
+        validUntil: '2026-09-11',
+        note: 'second minyan; unchanged',
       },
       {
         service: 'shacharit',
         dayType: 'weekday',
         time: { kind: 'fixed', time: '08:15' },
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
         style: 'hodu',
-        note: 'third minyan',
+        validFrom: '2026-09-06',
+        validUntil: '2026-09-11',
+        note: 'third minyan; unchanged',
       },
       {
         service: 'mincha',
         dayType: 'weekday',
         time: { kind: 'fixed', time: '13:15' },
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
-        note: 'first Mincha; before mincha gedola on 2026-03-27, so never year-round',
+        validFrom: '2026-09-06',
+        validUntil: '2026-09-11',
+        note: 'first Mincha; unchanged. Before mincha gedola on 2026-03-27, so never year-round',
       },
       {
         service: 'mincha',
         dayType: 'weekday',
-        time: { kind: 'fixed', time: '17:45' },
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
-        note: 'second Mincha',
+        time: { kind: 'fixed', time: '17:35' },
+        validFrom: '2026-09-06',
+        validUntil: '2026-09-11',
+        // The only line that held its offset: shkia − 80 then shkia − 81. One
+        // interval is not a rule; a third week decides.
+        note: 'second Mincha; was 17:45. Held shkia − 80 across both weeks — watch this one',
       },
       {
         service: 'mincha',
         dayType: 'weekday',
-        time: { kind: 'fixed', time: '18:50' },
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
-        note: 'third Mincha; shkia − 17 this week and after sunset from November',
+        time: { kind: 'fixed', time: '18:45' },
+        validFrom: '2026-09-06',
+        validUntil: '2026-09-11',
+        note: 'third Mincha; was 18:50. Offset moved shkia − 15 to − 11, so not a rule',
       },
       {
         service: 'arvit',
         dayType: 'weekday',
-        time: { kind: 'fixed', time: '18:10' },
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
+        time: { kind: 'fixed', time: '18:00' },
         style: 'plag',
-        note: 'first Arvit; plag + 23 this week, which is not a round offset',
+        validFrom: '2026-09-06',
+        validUntil: '2026-09-11',
+        note: 'first Arvit; was 18:10. plag + 25 then plag + 23',
       },
       {
         service: 'arvit',
         dayType: 'weekday',
-        time: { kind: 'fixed', time: '19:35' },
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
+        time: { kind: 'fixed', time: '19:30' },
         location: 'upstairs',
-        note: 'second Arvit',
+        validFrom: '2026-09-06',
+        validUntil: '2026-09-11',
+        note: 'second Arvit, למעלה; was 19:35',
       },
       {
         service: 'arvit',
         dayType: 'weekday',
         time: { kind: 'fixed', time: '20:00' },
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
         location: 'downstairs',
-        note: 'third Arvit',
+        validFrom: '2026-09-06',
+        validUntil: '2026-09-11',
+        note: 'third Arvit, למטה; unchanged',
       },
     ],
     noMinyanim: [],
     held: [
       {
-        what: 'נץ / הודו / פלג as anchors rather than labels',
+        what: 'whether any of these nine is a rule',
         why:
-          'The board writes them beside clock faces, and one week of arithmetic ' +
-          'is not evidence of a rule — 18:10 is plag + 23, which no shul would ' +
-          'choose as an offset. A netz minyan does track sunrise, but its offset ' +
-          'is whatever makes the Amidah land at netz, and that is not derivable ' +
-          'from a single printing. Three consecutive boards would settle all of ' +
-          'them; the windows hold the line until then.',
+          'Two weeks in, eight of nine are not: five clock faces did not move ' +
+          'at all while their anchors moved, and three moved by an amount that ' +
+          'does not match. Only the 17:35 Mincha held an offset (shkia − 80 ' +
+          'then − 81), and a single interval agreeing within a minute is a ' +
+          'coincidence a shul nudging times in five-minute steps will produce ' +
+          'often enough. A third consecutive reading decides it, or one ' +
+          'question to the gabbai does — see docs/gabbai-questions.md.',
+      },
+      {
+        what: 'נץ / הודו / פלג as anchors',
+        why:
+          'Now settled the other way and worth keeping as the evidence. 05:40 ' +
+          'is marked נץ and did NOT move while sunrise moved four minutes ' +
+          'later, so the label names the minyan and not the arithmetic. Storing ' +
+          'it as netz − 36 when first read would already be four minutes wrong ' +
+          'and would be an hour out by December.',
       },
     ],
   },

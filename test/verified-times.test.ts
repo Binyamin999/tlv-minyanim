@@ -332,12 +332,29 @@ describe('a stated room', () => {
   });
 
   it('distinguishes תהילת אביב\'s two evening Arvits', () => {
+    // The ROOMS, not the clock faces.
+    //
+    // This pinned '19:35 upstairs' and broke the first time that board was
+    // re-read — 19:35 became 19:30, which is the times doing exactly what
+    // they are supposed to do. A weekly-reprinted clock face is the most
+    // volatile value in this codebase and the last thing a test should
+    // hard-code. What must hold is that the two late Arvits are told apart,
+    // and that the earlier one is the upstairs one.
     const record = VERIFIED['תהילת אביב'];
     assert.ok(record);
     const evening = record.minyanim
       .filter((m) => m.service === 'arvit' && m.location)
-      .map((m) => `${m.time.kind === 'fixed' ? m.time.time : '?'} ${m.location}`);
-    assert.deepEqual(evening, ['19:35 upstairs', '20:00 downstairs']);
+      .map((m) => ({ at: m.time.kind === 'fixed' ? m.time.time : '?', where: m.location }));
+
+    assert.deepEqual(
+      evening.map((e) => e.where),
+      ['upstairs', 'downstairs'],
+      'both rooms are named, in board order',
+    );
+    assert.ok(
+      evening[0]!.at < evening[1]!.at,
+      `the upstairs minyan is the earlier of the two; got ${evening[0]!.at} then ${evening[1]!.at}`,
+    );
   });
 
   it('is absent on almost every row, and that is correct', () => {
