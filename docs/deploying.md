@@ -57,6 +57,23 @@ read during import and dropped.
 
 ---
 
+## Where the code runs
+
+`vercel.json` pins functions to **`fra1`**, the same region as the database.
+
+This is not a micro-optimisation. Vercel defaults new projects to `iad1`
+(Washington DC) regardless of where the data is, and `x-vercel-id` showed
+`fra1::iad1::` — the request reaching Frankfurt's edge and then being handed to
+a function in Virginia, which queried Frankfurt. Every page makes two queries,
+so each request crossed the Atlantic four times before rendering. Server time
+was ~650 ms.
+
+Choosing Frankfurt for the database to be near Tel Aviv, and then leaving the
+code in Virginia, is worse than putting both in Ohio would have been.
+
+Check it after any deploy: `curl -sI <url>/he | grep x-vercel-id` — the second
+segment is the function region and must read `fra1`.
+
 ## Once it is up
 
 **HTTPS makes the location feature work.** It is the reason `מצאו מניין לידי`
