@@ -936,9 +936,14 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
    * mistake, made from a better-looking starting point. A record replaces the
    * previous one wholesale, and sometimes wholesale means downward.
    *
-   * TWO NEW WORDS ON THE BOARD, both held rather than approximated: `רבי
-   * ישמעאל` beside the second and third Shacharit, and last week's `למנצח`
-   * beside Mincha, which was not reported this time. See held.
+   * `רבי ישמעאל` BESIDE THE SECOND AND THIRD SHACHARIT is now a stored style,
+   * not a held word. It was held for exactly one reading, then asked: the shul
+   * says it means what `hodu` means one step earlier — the minyan begins at
+   * ברייתא דרבי ישמעאל in the korbanot rather than at הודו. Migration 0012.
+   * Not folded into `hodu`, which names a different place to start.
+   *
+   * Last week's `למנצח` beside Mincha was not reported this time and stays
+   * held; see below.
    */
   'היכל חיים': {
     verifiedAt: '2026-09-06',
@@ -964,7 +969,8 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
         validFrom: '2026-09-06',
         validUntil: '2026-09-11',
         location: 'sukkah',
-        note: 'second minyan, in the sukkah; the board also marks it רבי ישמעאל',
+        style: 'rabbi_yishmael',
+        note: 'second minyan, in the sukkah',
       },
       {
         service: 'shacharit',
@@ -972,7 +978,8 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
         time: { kind: 'fixed', time: '07:25' },
         validFrom: '2026-09-06',
         validUntil: '2026-09-11',
-        note: 'third minyan; the board also marks it רבי ישמעאל',
+        style: 'rabbi_yishmael',
+        note: 'third minyan',
       },
       {
         service: 'mincha',
@@ -1008,19 +1015,6 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
           'sheet rather than assume we never had one.',
       },
       {
-        what: 'what `רבי ישמעאל` designates, beside two of the three Shacharit minyanim',
-        why:
-          'It reads like the family `hodu` belongs to — a minyan named for ' +
-          'where in the liturgy it begins, here at ברייתא דרבי ישמעאל in the ' +
-          'korbanot rather than at הודו. If that is right it is a new ' +
-          '`MinyanStyle` and the board has now demanded one, which is the ' +
-          'stated trigger for growing that vocabulary. But it could equally be ' +
-          'a room, or a minyan named after somebody, and the difference is not ' +
-          'visible from the words. Unmapped stays held rather than approximated ' +
-          'to the nearest available style — the same rule `location` follows. ' +
-          'One question to the gabbai settles it.',
-      },
-      {
         what: 'last week\'s `למנצח` beside Mincha, not reported this week',
         why:
           'Recorded so its absence is not read as the board having changed. It ' +
@@ -1029,15 +1023,16 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
           'mention it either way.',
       },
       {
-        what: 'whether the sukkah minyan really moved from 06:50 to 06:05',
+        what: 'why the sukkah minyan moved from 06:50 to 06:05',
         why:
-          'Every other line on this board moved by ten minutes or less between ' +
-          'the two readings, and the sukkah minyan moved forty-five, landing ' +
-          'five minutes after the נץ minyan rather than an hour after it. ' +
-          'Stored as read, because the reader is the evidence and second-' +
-          'guessing him from a pattern is exactly backwards. Flagged because a ' +
-          'transcription slip looks like this too, and one glance at the sign ' +
-          'separates the cases.',
+          'Every other line moved by ten minutes or less between the two ' +
+          'readings; this one moved forty-five, landing five minutes after the ' +
+          'נץ minyan rather than an hour after it. Asked, and the answer is ' +
+          'that this is what the shul says — not something readable off a sign ' +
+          'a second time. So it is stored as reported and the reason is simply ' +
+          'not known, which is a different state from a doubtful transcription ' +
+          'and is recorded as such. Nothing to resolve until someone asks the ' +
+          'shul why.',
       },
       {
         what: 'whether any of this is a rule',
@@ -1224,20 +1219,19 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
    * with a single Shabbat Shacharit at 07:00, and both halves of that are
    * wrong — there are two groups and neither davens at seven.
    *
-   * THE SECOND GROUP'S RITE IS STORED AS `general`, WHICH IS NOT A DODGE.
-   * `ספרדי` beside `תימני` is almost certainly עדות המזרח in Israeli usage,
-   * and `sefard` — the Chassidic-influenced Ashkenazi rite — would be a strange
-   * thing to find in a Yemenite shul. But "almost certainly" is how a rite gets
-   * assigned on a congregation's behalf, which is the same forbidden move as
-   * choosing baladi or shami for them. `general` on a MINYAN says what is
-   * actually true: a distinct group, whose rite the board named and our
-   * taxonomy cannot place. It is suppressed by `displayNusach`, so no reader is
-   * shown a label we cannot stand behind, and it is not NULL, so the rows do
-   * not read as the Yemenite house minyan — which is the one thing that would
-   * be actively false. One word from the gabbai replaces it.
+   * THE SECOND GROUP IS עדות המזרח, and that is a reading rather than a
+   * choice. It was stored as `general` for one day — a distinct group whose
+   * rite we would not assign — and then asked. The answer, `נוסח ספרדי`, is
+   * the same word `curation.ts` already resolves for כלל ישראל's
+   * `מניין אשכנזי-ספרדי`: in Israeli usage `ספרדי` is the Sephardi-Mizrahi
+   * rite, not the chassidic נוסח ספרד, which would be a strange thing to find
+   * nested inside a Yemenite congregation. Applying a reading this codebase
+   * has already established, for the same word from the same person, is not
+   * the forbidden step of picking a liturgy for a congregation.
    *
-   * `synagogues.nusachim` is left as the source wrote it, `{teimani}`, for the
-   * same reason: adding a rite we cannot name is not an improvement.
+   * `synagogues.nusachim` becomes `{teimani, edot_hamizrach}` through
+   * `NUSACHIM_SERVED`, so the building now answers a filter for either rite
+   * rather than only for the one the municipality wrote down.
    *
    * ALL OF IT FOLLOWS THE אור החיים LUACH, which the shul states and which
    * this codebase cannot yet honour — every zman here is GRA via the Rabbanut.
@@ -1329,14 +1323,14 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
         service: 'shacharit',
         dayType: 'weekday',
         time: { kind: 'fixed', time: '06:00' },
-        nusach: 'general',
+        nusach: 'edot_hamizrach',
         note: 'מניין ספרדי',
       },
       {
         service: 'mincha',
         dayType: 'weekday',
         time: { kind: 'relative', anchor: 'shkia', offsetMinutes: -15 },
-        nusach: 'general',
+        nusach: 'edot_hamizrach',
         // THE BEST KIND OF ROW THIS PROJECT CAN HOLD. A rule, so it is correct
         // in December as well as today, and it never expires because sunset
         // moves with it. Every windowed clock face in this file is a
@@ -1347,7 +1341,7 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
         service: 'arvit',
         dayType: 'weekday',
         time: { kind: 'unknown', rawText: 'אחרי מנחה' },
-        nusach: 'general',
+        nusach: 'edot_hamizrach',
         // Follows a Mincha that is itself shkia − 15, so it lands somewhere
         // around sunset — and "around" is not a time. Deriving one from the
         // Mincha rule would be inventing an offset the shul never stated.
@@ -1357,28 +1351,28 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
         service: 'mincha',
         dayType: 'erev_shabbat',
         time: { kind: 'relative', anchor: 'candle_lighting', offsetMinutes: 0 },
-        nusach: 'general',
+        nusach: 'edot_hamizrach',
         note: 'מניין ספרדי — at כניסת שבת',
       },
       {
         service: 'arvit',
         dayType: 'erev_shabbat',
         time: { kind: 'unknown', rawText: 'אחרי מנחה' },
-        nusach: 'general',
+        nusach: 'edot_hamizrach',
         note: 'מניין ספרדי — follows the erev-Shabbat Mincha',
       },
       {
         service: 'shacharit',
         dayType: 'shabbat',
         time: { kind: 'fixed', time: '07:45' },
-        nusach: 'general',
+        nusach: 'edot_hamizrach',
         note: 'מניין ספרדי',
       },
       {
         service: 'mincha',
         dayType: 'shabbat',
         time: { kind: 'relative', anchor: 'tzeit', offsetMinutes: -90 },
-        nusach: 'general',
+        nusach: 'edot_hamizrach',
         note: 'מניין ספרדי — 90 minutes before צאת שבת',
       },
     ],
@@ -1407,16 +1401,6 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
           'convention. Resolving 90 minutes before the wrong nightfall puts a ' +
           'Mincha up to half an hour off. This is the guard doing its job on a ' +
           'question that now has a specific, askable answer.',
-      },
-      {
-        what: 'which rite `מניין ספרדי` names',
-        why:
-          'Stored as `general` on those rows: a distinct group whose rite our ' +
-          'enum cannot place. עדות המזרח is the overwhelmingly likely reading ' +
-          'and is still a guess about how a congregation davens, which is the ' +
-          'one thing this file may never do. `general` shows a reader nothing, ' +
-          'which is honest, rather than showing them תימני, which would be ' +
-          'wrong.',
       },
       {
         what: "the GIS layer's Shabbat Shacharit at 07:00",

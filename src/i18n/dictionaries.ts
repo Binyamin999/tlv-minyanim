@@ -181,6 +181,7 @@ const he = {
   styles: {
     netz: 'נץ',
     hodu: 'הודו',
+    rabbi_yishmael: 'רבי ישמעאל',
     plag: 'פלג',
     carlebach: 'קרליבך',
     hashkama: 'השכמה',
@@ -453,6 +454,7 @@ const en: typeof he = {
   styles: {
     netz: 'sunrise (netz)',
     hodu: 'from Hodu',
+    rabbi_yishmael: 'from Rabbi Yishmael',
     plag: 'after plag',
     carlebach: 'Carlebach',
     hashkama: 'hashkama',

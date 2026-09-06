@@ -81,5 +81,17 @@ export type SynagogueStatus = 'active' | 'holidays_only' | 'seasonal' | 'dormant
  * `hodu` marks a minyan that begins at הודו rather than at the start of
  * pesukei d'zimra, which is a real choice for someone who has davened the
  * earlier part already. `plag` marks an Arvit after plag hamincha.
+ *
+ * `rabbi_yishmael` is the same idea one step earlier in the service: the
+ * minyan begins at ברייתא דרבי ישמעאל in the korbanot. היכל חיים marks two of
+ * its three Shacharit minyanim that way. Deliberately NOT folded into `hodu`,
+ * which names a different place to start — the vocabulary grows when a board
+ * demands a word, and until one did this was held rather than approximated.
  */
-export type MinyanStyle = 'carlebach' | 'hashkama' | 'netz' | 'hodu' | 'plag';
+export type MinyanStyle =
+  | 'carlebach'
+  | 'hashkama'
+  | 'netz'
+  | 'hodu'
+  | 'plag'
+  | 'rabbi_yishmael';

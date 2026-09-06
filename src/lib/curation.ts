@@ -112,6 +112,14 @@ export const NUSACHIM_SERVED: Record<string, readonly Nusach[]> = {
   // than the chassidic nusach sefard, so one minyan serves two rites and the
   // Teimani minyan is the third. Confirmed by the user, who davens there.
   'לכלל ישראל': ['ashkenaz', 'edot_hamizrach', 'teimani'],
+  // A מניין תימני and a מניין ספרדי under one roof; the GIS layer knew only
+  // the first. `ספרדי` is read as עדות המזרח by the same call recorded two
+  // lines up and confirmed by the user for כלל ישראל — in Israeli usage it is
+  // the Sephardi-Mizrahi rite, not the chassidic נוסח ספרד, which would be a
+  // strange thing to find nested inside a Yemenite congregation. Reading the
+  // word the way we have already established it reads is not the same as
+  // choosing a rite for them.
+  'משכן אחים': ['teimani', 'edot_hamizrach'],
 };
 
 /**

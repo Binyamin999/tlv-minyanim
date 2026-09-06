@@ -465,13 +465,24 @@ describe('a minyan style', () => {
    * time a minyan carried one: the row printed `כללי`, which looks exactly
    * like a rite tag and is a statement about our data instead. Caught by
    * reading the rendered page, which is where display bugs live.
+   *
+   * משכן אחים held `general` for one day and no longer does — asked, and
+   * `ספרדי` resolves to עדות המזרח by the reading `curation.ts` already
+   * records. So this asserts the contract rather than the data: a test that
+   * required the value to be in use would fail the moment a question got
+   * answered, which is backwards.
    */
   it('never shows `general` as if it were a rite', () => {
-    const onMinyanim = new Set(
-      Object.values(VERIFIED).flatMap((r) => r.minyanim.map((m) => m.nusach ?? null)),
-    );
-    assert.ok(onMinyanim.has('general'), 'the case is live — משכן אחים uses it');
     assert.equal(displayNusach('general'), null);
+    for (const [name, r] of Object.entries(VERIFIED)) {
+      for (const m of r.minyanim) {
+        if (!m.nusach) continue;
+        assert.ok(
+          displayNusach(m.nusach) !== null || m.nusach === 'general',
+          `${name}: ${m.nusach} would render as nothing`,
+        );
+      }
+    }
   });
 
   it('marks both sunrise minyanim in the data', () => {
