@@ -98,20 +98,26 @@ effort:
 **The dashboard** — vercel.com -> tlv-minyanim -> Analytics. Visitors, page
 views, top pages, referrers, countries. Panels export to CSV, up to 250 rows.
 
-**Vercel MCP** — `.mcp.json` points at `https://mcp.vercel.com`, the official
-remote server, and it carries Web Analytics tools alongside project and
-deployment ones. OAuth, per user, authorised once from the client. In the
-Claude desktop app that is Settings -> Connectors -> Add custom connector;
-from a terminal it is `claude mcp add --transport http vercel
-https://mcp.vercel.com` and then `/mcp`.
+**The MCP server in this repo** — `scripts/mcp/analytics-server.mjs`, wired up
+in `.mcp.json`, so an assistant can answer "how many people came this week"
+without anyone opening a dashboard. Four tools: `traffic_summary`,
+`traffic_by_day`, `traffic_breakdown`, `analytics_schema`.
 
-Worth knowing what that grants: the connection has **the same access as the
-Vercel account**, not a read-only slice of it — projects, deployments, logs and
-environment variables, not just the visitor count. That is Vercel's design, not
-a misconfiguration. If the only thing wanted is traffic numbers, the CLI below
-is narrower.
+It is read-only by construction. The subprocess is always `vercel metrics` —
+a string literal in the file — every argument is an integer in a range or a
+member of an allowlist, and it uses `execFile`, so there is no shell. Zero
+dependencies: MCP over stdio is newline-delimited JSON-RPC and the four
+methods a tools-only server needs are shorter than the SDK's import line.
+Tested in `test/mcp-analytics.test.ts`.
 
-**The CLI**, which needs `vercel login` once and then no token:
+**Vercel's own MCP was the obvious alternative and was deliberately not used.**
+`https://mcp.vercel.com` is better at everything except the property that
+decided it: authorising it grants the same access as the Vercel account —
+projects, deployments, runtime logs, environment variables. `DATABASE_URL` is
+an environment variable on this project. A traffic counter should not come
+with the database credentials attached.
+
+**The CLI**, which the MCP server wraps, and which needs `vercel login` once:
 
 ```
 npx vercel metrics vercel.analytics_pageview.count \

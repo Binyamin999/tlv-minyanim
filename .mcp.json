@@ -1,8 +1,9 @@
 {
   "mcpServers": {
-    "vercel": {
-      "type": "http",
-      "url": "https://mcp.vercel.com"
+    "tlv-analytics": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["scripts/mcp/analytics-server.mjs"]
     }
   }
 }
