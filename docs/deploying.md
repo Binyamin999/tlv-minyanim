@@ -88,3 +88,45 @@ countdown against a watch before showing anyone.
 in, and outside it a shul reads as honestly unknown rather than stale. That is
 the design, and it means the site needs boards re-read weekly until enough
 times are stored as rules.
+
+## Checking traffic
+
+`<Analytics />` in the root layout sends a page view per load; the numbers live
+in Vercel and nowhere else. Three ways to read them, in ascending order of
+effort:
+
+**The dashboard** — vercel.com -> tlv-minyanim -> Analytics. Visitors, page
+views, top pages, referrers, countries. Panels export to CSV, up to 250 rows.
+
+**Vercel MCP** — `.mcp.json` points at `https://mcp.vercel.com`, the official
+remote server, and it carries Web Analytics tools alongside project and
+deployment ones. OAuth, per user, authorised once from the client. In the
+Claude desktop app that is Settings -> Connectors -> Add custom connector;
+from a terminal it is `claude mcp add --transport http vercel
+https://mcp.vercel.com` and then `/mcp`.
+
+Worth knowing what that grants: the connection has **the same access as the
+Vercel account**, not a read-only slice of it — projects, deployments, logs and
+environment variables, not just the visitor count. That is Vercel's design, not
+a misconfiguration. If the only thing wanted is traffic numbers, the CLI below
+is narrower.
+
+**The CLI**, which needs `vercel login` once and then no token:
+
+```
+npx vercel metrics vercel.analytics_pageview.count \
+  --since 7d --granularity 1d --project tlv-minyanim --prod
+
+npx vercel metrics vercel.analytics_pageview.count \
+  --aggregation unique/visitor_id --since 30d --project tlv-minyanim --prod
+```
+
+Hobby includes 50k events a month and a **one-month reporting window**. The
+window binds the charts, not the lifetime total: `visits/count` in the REST API
+answers "how many people have ever opened this" without it.
+
+**Vercel cannot say what people searched for to get here.** It only sees a
+visitor once they have arrived. Since SEO is the discovery strategy, Google
+Search Console is the other half — free, sixteen months of history, and the
+only place impressions and ranking appear. It is blind to the WhatsApp traffic
+that is most of today's, so the two are complements rather than alternatives.
