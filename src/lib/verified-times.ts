@@ -234,49 +234,54 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
    * See `noMinyanim`.
    */
   'בית חב"ד קניון רמת אביב': {
-    verifiedAt: '2026-08-30',
+    verifiedAt: '2026-09-06',
     verifiedBy: 'notice_board',
     minyanim: [
       {
         service: 'shacharit',
         dayType: 'weekday',
-        time: { kind: 'fixed', time: '10:30' },
-        validFrom: '2026-08-30',
-        validUntil: '2026-08-31',
-        note: 'Sunday and Monday; from Tuesday it is 10:00',
-      },
-      {
-        service: 'shacharit',
-        dayType: 'weekday',
         time: { kind: 'fixed', time: '10:00' },
-        validFrom: '2026-09-01',
-        validUntil: '2026-09-04',
-        note: 'from Tuesday',
+        validFrom: '2026-09-06',
+        validUntil: '2026-09-11',
+        // Last week this was two rows with adjacent windows — 10:30 through
+        // Monday, 10:00 from Tuesday. This week it is one time all week, so
+        // the split was a fact about that week and not about the shul.
+        note: 'one Shacharit all week; last week it moved mid-week from 10:30',
       },
       {
         service: 'mincha',
         dayType: 'weekday',
         time: { kind: 'fixed', time: '15:30' },
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
-        note: 'the board writes 3:30; Mincha at 03:30 does not exist',
+        validFrom: '2026-09-06',
+        validUntil: '2026-09-11',
+        note: 'unchanged from last week',
       },
       {
         service: 'arvit',
         dayType: 'weekday',
-        // Stated by the shul as twenty minutes after shkia, which is what the
-        // board's צאת הכוכבים meant — the davening nightfall, not the luach's
-        // 8.5°. No window: a rule is correct in December as well as August,
-        // which is the whole reason a rule outranks a clock face.
+        // NO WINDOW, and it keeps the rule rather than reverting to held.
+        //
+        // The board says צאת הכוכבים again, which is the phrase that had this
+        // minyan held in the first place. It is not held now because the shul
+        // was asked what it means and answered twenty minutes after shkia —
+        // and that answer does not expire with the week the board was printed
+        // in. A rule outlives its board; that is the whole point of one.
         time: { kind: 'relative', anchor: 'shkia', offsetMinutes: 20 },
-        note: 'stated as 20 minutes after shkia, resolving the board\'s צאת הכוכבים',
+        note: "the board says צאת הכוכבים; the shul's own answer is shkia + 20",
       },
     ],
     // The mall closes for Shabbat, so there is no erev-Shabbat and no Shabbat
     // minyan here — stated by the shul, not inferred from an absence of rows.
-    // No service named: nothing at all happens on either day.
     noMinyanim: [{ dayType: 'erev_shabbat' }, { dayType: 'shabbat' }],
     held: [
+      {
+        what: 'that the minyan is on level −1 of the mall',
+        why:
+          'It is in the address — קניון רמת אביב, איינשטיין 40, קומה -1 — and ' +
+          'renders there. `minyanim.location` covers a room inside a building, ' +
+          'not a floor of a shopping centre, and adding a code for one floor ' +
+          'used once would be inventing vocabulary a board never wrote.',
+      },
     ],
   },
 
@@ -863,6 +868,60 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
           'reported as saying any of that. Matching times are not evidence of ' +
           'matching labels, and a label is what a reader chooses a minyan by — ' +
           'so they are held rather than assumed. One question at the shul settles it.',
+      },
+    ],
+  },
+
+  /**
+   * המרכזי, נח 20. Weekday board for the week of 2026-09-06.
+   *
+   * MINCHA AND ARVIT ONLY — the shul holds no weekday Shacharit at all,
+   * stated. The municipality claims one at 06:30, which makes this the sixth
+   * shul whose GIS times are simply wrong rather than merely stale, and the
+   * second where the correction is that a service does not happen.
+   *
+   * Without `synagogue_absences` this would have shown two rows and left a
+   * reader unable to tell a Shacharit we were missing from one that is not
+   * held. Scoped to weekdays: nothing was said about Shabbat, and the GIS
+   * Shabbat rows go with the rest rather than being kept as a better class of
+   * fact.
+   *
+   * Mincha 16:45 cannot hold all year — on 2026-11-08 shkia IS 16:45, so it
+   * would be a Mincha exactly at sunset. Windowed, and the 365-day sweep found
+   * it rather than an eye. Arvit 19:55 would survive unwindowed and takes one
+   * anyway, printed on the same board and vouched for exactly as long.
+   */
+  'המרכזי': {
+    verifiedAt: '2026-09-06',
+    verifiedBy: 'notice_board',
+    minyanim: [
+      {
+        service: 'mincha',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '16:45' },
+        validFrom: '2026-09-06',
+        validUntil: '2026-09-11',
+        note: 'exactly at shkia on 2026-11-08, so never year-round',
+      },
+      {
+        service: 'arvit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '19:55' },
+        validFrom: '2026-09-06',
+        validUntil: '2026-09-11',
+        note: 'shkia + 57 this week',
+      },
+    ],
+    noMinyanim: [{ dayType: 'weekday', service: 'shacharit' }],
+    held: [
+      {
+        what: "the GIS layer's weekday Shacharit at 06:30 and Shabbat rows",
+        why:
+          'The weekday Shacharit does not exist — the shul holds none, which is ' +
+          'now recorded as a stated absence rather than left as a silence. A ' +
+          'source wrong about whether a service happens at all has not earned ' +
+          'belief about Shabbat either, so its Shabbat Shacharit at 08:15 goes ' +
+          'with it and Shabbat reads as honestly unknown.',
       },
     ],
   },
