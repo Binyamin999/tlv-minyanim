@@ -49,7 +49,14 @@ import { createInterface } from 'node:readline';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
-const VERCEL = path.join(ROOT, 'node_modules', '.bin', 'vercel');
+
+/**
+ * The CLI to run. Overridable ONLY so the tests can point at a stub and
+ * exercise the shapes Vercel returns without a login or a network — including
+ * the error shape, which is the one that matters and the one that is otherwise
+ * unreachable on a working account.
+ */
+const VERCEL = process.env.TLV_VERCEL_BIN ?? path.join(ROOT, 'node_modules', '.bin', 'vercel');
 
 /** The Vercel project. A literal, so no tool call can point this elsewhere. */
 const PROJECT = 'tlv-minyanim';
@@ -101,18 +108,38 @@ function metrics(args) {
           });
           return;
         }
+        /*
+         * With `--json` the CLI reports failure as `{ "error": { message } }`
+         * on STDOUT and exits 1 — so the error arrives looking exactly like a
+         * result. Parse first and check for it, because the alternative is
+         * this server reading an error body, finding no rows in it, and
+         * answering "no visits": a confident number derived from not having
+         * asked. That is the same mistake as publishing a guessed minyan time,
+         * and it very nearly shipped — `vercel.function_invocation.count`
+         * needs a paid plan, and the refusal parsed as silence.
+         */
+        let parsed;
+        try {
+          parsed = JSON.parse(stdout);
+        } catch {
+          parsed = null;
+        }
+
+        if (parsed?.error) {
+          resolve({ ok: false, text: `Vercel refused the query: ${parsed.error.message}` });
+          return;
+        }
         if (error) {
           resolve({ ok: false, text: `vercel metrics failed:\n${output.trim()}` });
           return;
         }
-        try {
-          resolve({ ok: true, data: JSON.parse(stdout) });
-        } catch {
-          // The CLI's JSON shape is not contractual. Handing back what it
-          // actually said beats guessing at a field name and reporting a
-          // confident zero.
+        if (parsed === null) {
+          // The JSON shape is not contractual. Handing back what it actually
+          // said beats guessing at a field name.
           resolve({ ok: true, raw: stdout.trim() });
+          return;
         }
+        resolve({ ok: true, data: parsed });
       },
     );
   });
@@ -129,10 +156,37 @@ function limit(value, fallback) {
   return Math.min(50, Math.max(1, n));
 }
 
+/**
+ * Say what the numbers are, and say "none recorded" as its own sentence.
+ *
+ * An empty `data` array is a real measurement and must read like one. Printing
+ * `"data": []` and leaving the reader to interpret it is how an empty result
+ * and a failed query end up looking the same — which is precisely what went
+ * wrong the first time these tools were pointed at a live account.
+ */
 function render(result) {
   if (!result.ok) return result.text;
   if (result.raw !== undefined) return result.raw;
-  return JSON.stringify(result.data, null, 2);
+
+  const { data, query } = result.data;
+  const period =
+    query?.startTime && query?.endTime
+      ? ` between ${query.startTime.slice(0, 16).replace('T', ' ')} and ` +
+        `${query.endTime.slice(0, 16).replace('T', ' ')} UTC`
+      : '';
+
+  if (Array.isArray(data) && data.length === 0) {
+    return `None recorded${period}. This is a real zero, not a failed query.`;
+  }
+  if (!Array.isArray(data)) return JSON.stringify(result.data, null, 2);
+
+  const total = data.reduce((sum, row) => sum + (Number(row?.value ?? row?.count) || 0), 0);
+  const lines = data.map((row) => {
+    const label =
+      row?.timestamp ?? Object.entries(row ?? {}).find(([k]) => k !== 'value' && k !== 'count')?.[1];
+    return `  ${label ?? '?'}  ${row?.value ?? row?.count ?? JSON.stringify(row)}`;
+  });
+  return `Total ${total}${period}, across ${data.length} row(s):\n${lines.join('\n')}`;
 }
 
 const TOOLS = [

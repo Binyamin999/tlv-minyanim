@@ -13,10 +13,20 @@ import { spawn } from 'node:child_process';
 import { describe, it } from 'node:test';
 
 /** Feed the server some messages, collect whatever it writes back. */
-function converse(messages: readonly unknown[]): Promise<Array<Record<string, any>>> {
+function converse(
+  messages: readonly unknown[],
+  stub?: 'empty' | 'data' | 'refused',
+): Promise<Array<Record<string, any>>> {
   return new Promise((resolve, reject) => {
     const child = spawn('node', ['scripts/mcp/analytics-server.mjs'], {
       stdio: ['pipe', 'pipe', 'inherit'],
+      env: stub
+        ? {
+            ...process.env,
+            TLV_VERCEL_BIN: 'test/stubs/vercel-stub.mjs',
+            TLV_STUB_MODE: stub,
+          }
+        : process.env,
     });
     let out = '';
     child.stdout.setEncoding('utf8');
@@ -78,6 +88,52 @@ describe('the traffic MCP server', () => {
       replies.map((r) => r.id),
       [9],
     );
+  });
+
+  /**
+   * THE BUG THIS SUITE EXISTS FOR.
+   *
+   * With `--json` the Vercel CLI reports a refusal as `{ error: { message } }`
+   * on stdout, exiting 1 — an error body that looks structurally like a
+   * result and contains no rows. A server that reads rows out of it answers
+   * "nobody visited", which is a number nobody measured.
+   *
+   * It is not hypothetical. `vercel.function_invocation.count` needs a paid
+   * plan, and on first contact with a live account the refusal read as a
+   * clean zero and was very nearly reported as one. Same failure as
+   * publishing a guessed minyan time: an honest blank became a confident
+   * wrong answer somewhere in the plumbing.
+   */
+  it('reports a refused query as a refusal, never as zero visitors', async () => {
+    const [reply] = await converse(
+      [rpc(5, 'tools/call', { name: 'traffic_by_day', arguments: { days: 1 } })],
+      'refused',
+    );
+    const text: string = reply?.result.content[0].text;
+    assert.match(text, /Vercel refused the query/);
+    assert.match(text, /Observability Plus/);
+    assert.doesNotMatch(text, /None recorded/);
+  });
+
+  /** And a genuine zero has to read as a measurement, not as an empty array. */
+  it('says a real zero out loud', async () => {
+    const [reply] = await converse(
+      [rpc(6, 'tools/call', { name: 'traffic_by_day', arguments: { days: 1 } })],
+      'empty',
+    );
+    const text: string = reply?.result.content[0].text;
+    assert.match(text, /None recorded/);
+    assert.match(text, /real zero, not a failed query/);
+  });
+
+  it('totals the rows when there are some', async () => {
+    const [reply] = await converse(
+      [rpc(7, 'tools/call', { name: 'traffic_by_day', arguments: { days: 1 } })],
+      'data',
+    );
+    const text: string = reply?.result.content[0].text;
+    assert.match(text, /Total 8/);
+    assert.match(text, /2 row\(s\)/);
   });
 
   it('refuses a tool it does not have', async () => {
