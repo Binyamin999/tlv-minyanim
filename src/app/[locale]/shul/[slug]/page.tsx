@@ -323,6 +323,9 @@ function MinyanRow({
   // beside a stored 06:30 would be noise; `shkia - 20min` is the case this is
   // for. An unknown never gets one — there is nothing to resolve.
   const showResolved = minyan.time.kind === 'relative' && resolved !== undefined;
+  // `general` is stored and never displayed, on a minyan exactly as on a
+  // synagogue. See the tag below.
+  const rowNusach = displayNusach(minyan.nusach);
 
   return (
     <li className="minyan">
@@ -375,11 +378,26 @@ function MinyanRow({
         {/* Only when this minyan is its own group. The house minyan carries no
             nusach here and must not be labelled with the synagogue's — every
             row would then read as a separate congregation, which is the
-            opposite of what this column is for. */}
-        {minyan.nusach ? (
+            opposite of what this column is for.
+
+            Through displayNusach, like every other place a nusach is printed.
+            `general` on a MINYAN means a distinct group whose rite we cannot
+            name — משכן אחים's מניין ספרדי, which is either עדות המזרח or
+            נוסח ספרד and we may not choose for them — and printing `כללי`
+            beside it would show a reader a rite tag that looks exactly like
+            אשכנז while saying nothing about this congregation. The row still
+            reads as its own group, because its sibling above it is tagged
+            תימני and this one is not. */}
+        {rowNusach ? (
           <span className="minyan-nusach">
-            {minyan.service || minyan.season ? ' · ' : null}
-            {t.nusachim[minyan.nusach]}
+            {minyan.service ||
+            minyan.season ||
+            minyan.daysOfWeek.length > 0 ||
+            minyan.style ||
+            minyan.location
+              ? ' · '
+              : null}
+            {t.nusachim[rowNusach]}
           </span>
         ) : null}
       </span>

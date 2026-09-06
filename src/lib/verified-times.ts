@@ -168,47 +168,6 @@ export interface VerifiedSynagogue {
  */
 export const VERIFIED: Record<string, VerifiedSynagogue> = {
   /**
-   * כלל ישראל, אליהו חכים 5. Read from the weekday board and from the printed
-   * sheet for שבת פרשת כי־תבוא (2026-08-29).
-   *
-   * That sheet independently confirmed two of this codebase's decisions, which
-   * is worth recording because both were contested: it prints
-   * `כניסת השבת 18:48`, which is exactly `shkia − 22` and not hebcal's 20, and
-   * `צאת השבת 19:47`, which is exactly our 8.5° tzeit.
-   *
-   * It also corrected us. The GIS layer says Shabbat Mincha is
-   * `10 דק' לפי כניסת שבת`, which resolves to 18:38; the sheet says 18:50,
-   * which is `shkia − 20` — the same rule as their weekday Mincha. We would
-   * have sent someone twelve minutes early.
-   *
-   * TWO MINYANIM: `מניין אשכנזי-ספרדי` and `מניין תימני`, at different times.
-   * That is what the municipality's `כללי` meant — not "unclassified" but "more
-   * than one". Migration 0003 put a nusach on the minyan so both fit: the
-   * Teimani group carries `teimani`, and the main one carries nothing, because
-   * `אשכנזי-ספרדי` is two rites in one minyan and the house-minyan null claims
-   * nothing rather than claiming the wrong thing.
-   *
-   * What is still held is held for a DIFFERENT reason now — not "cannot say
-   * which minyan" but "cannot say whether it is a rule".
-   */
-  /**
-   * היכל חיים, אופנהיימר 5. Read from the weekday board for the week of
-   * 2026-08-30.
-   *
-   * The whole weekday block is this week's printing and carries its window.
-   * That the reading is right is corroborated by the times themselves: Mincha
-   * at 17:40 falls BEFORE plag (17:47 that day) and Arvit at 18:05 falls after
-   * it, which is the arrangement an early Arvit requires. Times that hang
-   * together that way were almost certainly transcribed correctly.
-   *
-   * WHAT THIS REPLACES, AND WHY WHOLESALE IS RIGHT HERE. The GIS layer claims
-   * weekday Shacharit at 06:15 and 07:30. The board says 05:50, 06:50 and
-   * 07:25 — not one of them matches. A source demonstrably wrong about this
-   * shul's weekdays has not earned belief about its Shabbat either, so its
-   * Shabbat rows go too rather than being kept as though they were a different
-   * kind of fact. They are recorded below instead.
-   */
-  /**
    * בית חב"ד קניון רמת אביב — level −1 of the mall. Not in the municipal
    * export at all; see `added-synagogues.ts`.
    *
@@ -955,57 +914,83 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
     ],
   },
 
+  /**
+   * היכל חיים, אופנהיימר 5. Weekday board for the week of 2026-09-06 — the
+   * SECOND consecutive reading, and it says the same thing תומכי תמימים's
+   * second board said: there is no rule here to extract.
+   *
+   *   נץ minyan   05:50 = netz − 24 (30 Aug)   06:00 = netz − 19 (6 Sep)
+   *   Mincha      17:40                         17:30
+   *   third       07:25                         07:25
+   *
+   * The נץ offset moved five minutes between two printings. A minyan that
+   * genuinely recomputed sunrise each week would hold its offset and move its
+   * clock face; this one moves both. So the `netz` style stays a LABEL and the
+   * time stays a windowed clock face — which is what the style's own docstring
+   * says it is for, now demonstrated twice rather than assumed.
+   *
+   * THE ARVIT LOST ITS TIME. Last week's board printed 18:05. This week says
+   * only that Arvit follows Mincha, so it is stored `unknown`: we know the
+   * service happens and not when. Carrying 18:05 forward would be inventing an
+   * offset from a Mincha that itself moved ten minutes — exactly the `בזמן`
+   * mistake, made from a better-looking starting point. A record replaces the
+   * previous one wholesale, and sometimes wholesale means downward.
+   *
+   * TWO NEW WORDS ON THE BOARD, both held rather than approximated: `רבי
+   * ישמעאל` beside the second and third Shacharit, and last week's `למנצח`
+   * beside Mincha, which was not reported this time. See held.
+   */
   'היכל חיים': {
-    verifiedAt: '2026-08-30',
+    verifiedAt: '2026-09-06',
     verifiedBy: 'notice_board',
     minyanim: [
       {
         service: 'shacharit',
         dayType: 'weekday',
-        time: { kind: 'fixed', time: '05:50' },
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
-        // The board marks this one נץ. Stored as the clock face it prints, not
-        // as `netz − 24`: a netz minyan's offset is what makes the Amidah land
-        // at sunrise, and one week's arithmetic is not evidence of the rule.
-        // The window is what keeps it honest until somebody reads the next board.
+        time: { kind: 'fixed', time: '06:00' },
+        validFrom: '2026-09-06',
+        validUntil: '2026-09-11',
+        // netz − 19 this week against netz − 24 last week. Two printings, two
+        // offsets: the label is not the arithmetic. Stored as the clock face
+        // the board prints, with the window every netz clock face must carry
+        // because sunrise moves an hour across the year.
         style: 'netz',
         note: 'first minyan, in the synagogue',
       },
       {
         service: 'shacharit',
         dayType: 'weekday',
-        time: { kind: 'fixed', time: '06:50' },
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
+        time: { kind: 'fixed', time: '06:05' },
+        validFrom: '2026-09-06',
+        validUntil: '2026-09-11',
         location: 'sukkah',
-        note: 'second minyan',
+        note: 'second minyan, in the sukkah; the board also marks it רבי ישמעאל',
       },
       {
         service: 'shacharit',
         dayType: 'weekday',
         time: { kind: 'fixed', time: '07:25' },
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
-        note: 'third minyan',
+        validFrom: '2026-09-06',
+        validUntil: '2026-09-11',
+        note: 'third minyan; the board also marks it רבי ישמעאל',
       },
       {
         service: 'mincha',
         dayType: 'weekday',
-        time: { kind: 'fixed', time: '17:40' },
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
-        // shkia − 87 this week and shkia + 60 in December. The window is not
+        time: { kind: 'fixed', time: '17:30' },
+        validFrom: '2026-09-06',
+        validUntil: '2026-09-11',
+        // shkia − 88 this week and shkia + 55 in December. The window is not
         // optional on this one.
-        note: 'the board marks it למנצח; before plag, which the early Arvit requires',
+        note: 'before plag (17:39 today), which is what the early Arvit needs',
       },
       {
         service: 'arvit',
         dayType: 'weekday',
-        time: { kind: 'fixed', time: '18:05' },
-        validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
-        note: 'follows Mincha; after plag, which is what makes an early Arvit valid',
+        time: { kind: 'unknown', rawText: 'אחרי מנחה' },
+        validFrom: '2026-09-06',
+        validUntil: '2026-09-11',
+        note: 'the board states only that it follows Mincha',
       },
     ],
     // Nothing stated either way, so everything unlisted stays unknown.
@@ -1015,22 +1000,81 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
         what: 'the GIS layer\'s Shabbat Shacharit, 07:30 and 08:30',
         why:
           'Dropped with the rest of the municipal record for this shul. It had ' +
-          'the weekdays wrong in every particular — 06:15 and 07:30 against an ' +
-          'actual 05:50, 06:50 and 07:25 — so its Shabbat times are not a ' +
-          'better class of evidence, they are the same evidence. Recorded here ' +
-          'so the loss is deliberate and recoverable, and so the next person ' +
-          'knows to read the Shabbat sheet rather than assume we never had one.',
+          'the weekdays wrong in every particular on two separate readings — ' +
+          '06:15 and 07:30 against 05:50/06:50/07:25 and then 06:00/06:05/' +
+          '07:25 — so its Shabbat times are not a better class of evidence, ' +
+          'they are the same evidence. Recorded here so the loss is deliberate ' +
+          'and recoverable, and so the next person knows to read the Shabbat ' +
+          'sheet rather than assume we never had one.',
+      },
+      {
+        what: 'what `רבי ישמעאל` designates, beside two of the three Shacharit minyanim',
+        why:
+          'It reads like the family `hodu` belongs to — a minyan named for ' +
+          'where in the liturgy it begins, here at ברייתא דרבי ישמעאל in the ' +
+          'korbanot rather than at הודו. If that is right it is a new ' +
+          '`MinyanStyle` and the board has now demanded one, which is the ' +
+          'stated trigger for growing that vocabulary. But it could equally be ' +
+          'a room, or a minyan named after somebody, and the difference is not ' +
+          'visible from the words. Unmapped stays held rather than approximated ' +
+          'to the nearest available style — the same rule `location` follows. ' +
+          'One question to the gabbai settles it.',
+      },
+      {
+        what: 'last week\'s `למנצח` beside Mincha, not reported this week',
+        why:
+          'Recorded so its absence is not read as the board having changed. It ' +
+          'was never stored — there is no field for it, and it is not a style ' +
+          'in the sense the enum means — and this reading simply did not ' +
+          'mention it either way.',
+      },
+      {
+        what: 'whether the sukkah minyan really moved from 06:50 to 06:05',
+        why:
+          'Every other line on this board moved by ten minutes or less between ' +
+          'the two readings, and the sukkah minyan moved forty-five, landing ' +
+          'five minutes after the נץ minyan rather than an hour after it. ' +
+          'Stored as read, because the reader is the evidence and second-' +
+          'guessing him from a pattern is exactly backwards. Flagged because a ' +
+          'transcription slip looks like this too, and one glance at the sign ' +
+          'separates the cases.',
       },
       {
         what: 'whether any of this is a rule',
         why:
-          'One board cannot say. The נץ minyan plainly tracks sunrise in ' +
-          'spirit; whether the shul recomputes it or reprints a season at a ' +
-          'time is unknown. Three consecutive weeks would settle it.',
+          'Two boards now, and they disagree about the נץ offset by five ' +
+          'minutes and about the Mincha by ten. So nothing here is a rule yet, ' +
+          'and the case is stronger than it was after one reading: a single ' +
+          'board could not tell a rule from a reprint, and two boards that ' +
+          'move differently rule the first out.',
       },
     ],
   },
 
+  /**
+   * כלל ישראל, אליהו חכים 5. Read from the weekday board and from the printed
+   * sheet for שבת פרשת כי־תבוא (2026-08-29).
+   *
+   * That sheet independently confirmed two of this codebase's decisions, which
+   * is worth recording because both were contested: it prints
+   * `כניסת השבת 18:48`, which is exactly `shkia − 22` and not hebcal's 20, and
+   * `צאת השבת 19:47`, which is exactly our 8.5° tzeit.
+   *
+   * It also corrected us. The GIS layer says Shabbat Mincha is
+   * `10 דק' לפי כניסת שבת`, which resolves to 18:38; the sheet says 18:50,
+   * which is `shkia − 20` — the same rule as their weekday Mincha. We would
+   * have sent someone twelve minutes early.
+   *
+   * TWO MINYANIM: `מניין אשכנזי-ספרדי` and `מניין תימני`, at different times.
+   * That is what the municipality's `כללי` meant — not "unclassified" but "more
+   * than one". Migration 0003 put a nusach on the minyan so both fit: the
+   * Teimani group carries `teimani`, and the main one carries nothing, because
+   * `אשכנזי-ספרדי` is two rites in one minyan and the house-minyan null claims
+   * nothing rather than claiming the wrong thing.
+   *
+   * What is still held is held for a DIFFERENT reason now — not "cannot say
+   * which minyan" but "cannot say whether it is a rule".
+   */
   'לכלל ישראל': {
     verifiedAt: '2026-08-28',
     verifiedBy: 'notice_board',
@@ -1170,6 +1214,229 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
       },
     ],
   },
+
+  /**
+   * משכן אחים, ברודצקי 21. Not a weekly board — a standing schedule, and the
+   * first record in this file that is mostly RULES rather than clock faces.
+   *
+   * TWO MINYANIM UNDER ONE ROOF, with different times for almost everything:
+   * a מניין תימני and a מניין ספרדי. The GIS layer has this shul as `תימני`
+   * with a single Shabbat Shacharit at 07:00, and both halves of that are
+   * wrong — there are two groups and neither davens at seven.
+   *
+   * THE SECOND GROUP'S RITE IS STORED AS `general`, WHICH IS NOT A DODGE.
+   * `ספרדי` beside `תימני` is almost certainly עדות המזרח in Israeli usage,
+   * and `sefard` — the Chassidic-influenced Ashkenazi rite — would be a strange
+   * thing to find in a Yemenite shul. But "almost certainly" is how a rite gets
+   * assigned on a congregation's behalf, which is the same forbidden move as
+   * choosing baladi or shami for them. `general` on a MINYAN says what is
+   * actually true: a distinct group, whose rite the board named and our
+   * taxonomy cannot place. It is suppressed by `displayNusach`, so no reader is
+   * shown a label we cannot stand behind, and it is not NULL, so the rows do
+   * not read as the Yemenite house minyan — which is the one thing that would
+   * be actively false. One word from the gabbai replaces it.
+   *
+   * `synagogues.nusachim` is left as the source wrote it, `{teimani}`, for the
+   * same reason: adding a rite we cannot name is not an improvement.
+   *
+   * ALL OF IT FOLLOWS THE אור החיים LUACH, which the shul states and which
+   * this codebase cannot yet honour — every zman here is GRA via the Rabbanut.
+   * What that costs, line by line:
+   *
+   *   shkia − 15        negligible. Sunset is sunset; luachot differ by
+   *                     seconds over נראית vs אמיתית, not by minutes.
+   *   candle_lighting   up to two minutes, if אור החיים prints 20 for Tel Aviv
+   *                     where the Religious Council prints 22. Ours is the
+   *                     earlier of the two, which is the side to be wrong on.
+   *   tzeit             unbounded, and already the reason those rows are held.
+   *
+   * So the luach question is no longer a design note — this is the first shul
+   * that needs it, and the tzeit rows below cannot be published until it is
+   * answered for אור החיים specifically.
+   *
+   * WHAT CANNOT BE SAID HERE. The Yemenite group holds no weekday Mincha and
+   * no weekday Arvit; the Sephardi group holds both. `synagogue_absences` is
+   * keyed on the BUILDING — a day plus an optional service — so it can say
+   * "this shul holds no weekday Mincha", which would be false, and it cannot
+   * say "this GROUP holds none", which is what is true. The absence is real
+   * and is recorded in `held` rather than asserted in a shape that would
+   * overstate it. נוה קודש needed absence narrower than a day; this needs it
+   * narrower than a building.
+   */
+  'משכן אחים': {
+    verifiedAt: '2026-09-06',
+    verifiedBy: 'notice_board',
+    minyanim: [
+      /* ---------------------------- מניין תימני ---------------------------- */
+      {
+        service: 'shacharit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '06:20' },
+        nusach: 'teimani',
+        // No window. This is not a reprinted board: the shul states a standing
+        // schedule, and 06:20 is a legal Shacharit on all 365 days.
+        note: 'מניין תימני',
+      },
+      {
+        service: 'mincha',
+        dayType: 'erev_shabbat',
+        time: { kind: 'relative', anchor: 'candle_lighting', offsetMinutes: 0 },
+        nusach: 'teimani',
+        // Stored on FRIDAY, not on Shabbat — the shul separated the two in the
+        // telling, which is the only thing that may set erev_shabbat. And the
+        // day comes from that separation, never from the anchor: כלל ישראל's
+        // erev-Shabbat Mincha is shkia − 20 and is still a Friday.
+        note: 'מניין תימני — at כניסת שבת',
+      },
+      {
+        service: 'arvit',
+        dayType: 'erev_shabbat',
+        time: { kind: 'unknown', rawText: 'אחרי מנחה' },
+        nusach: 'teimani',
+        note: 'מניין תימני — follows the erev-Shabbat Mincha',
+      },
+      {
+        service: 'shacharit',
+        dayType: 'shabbat',
+        time: { kind: 'fixed', time: '08:00' },
+        nusach: 'teimani',
+        // "Always at 8:00" — the shul's own word, and the rare case where a
+        // clock face is claimed to be durable by the source rather than merely
+        // surviving the sweep. No window, because none was implied.
+        note: 'מניין תימני — stated as always 08:00',
+      },
+      {
+        service: 'mincha',
+        dayType: 'shabbat',
+        time: { kind: 'relative', anchor: 'tzeit', offsetMinutes: -90 },
+        nusach: 'teimani',
+        // Held by ambiguous_tzeit, correctly. `צאת שבת` on a luach is the
+        // stringent value and would normally be unambiguous — but the luach in
+        // question is אור החיים, whose convention we do not have. The anchor is
+        // kept and never published, which is exactly what the guard is for.
+        note: 'מניין תימני — 90 minutes before צאת שבת',
+      },
+      {
+        service: 'arvit',
+        dayType: 'shabbat',
+        time: { kind: 'relative', anchor: 'tzeit', offsetMinutes: 0 },
+        nusach: 'teimani',
+        note: 'מניין תימני — motzaei Shabbat, at צאת הכוכבים',
+      },
+
+      /* --------------------------- מניין ספרדי ---------------------------- */
+      {
+        service: 'shacharit',
+        dayType: 'weekday',
+        time: { kind: 'fixed', time: '06:00' },
+        nusach: 'general',
+        note: 'מניין ספרדי',
+      },
+      {
+        service: 'mincha',
+        dayType: 'weekday',
+        time: { kind: 'relative', anchor: 'shkia', offsetMinutes: -15 },
+        nusach: 'general',
+        // THE BEST KIND OF ROW THIS PROJECT CAN HOLD. A rule, so it is correct
+        // in December as well as today, and it never expires because sunset
+        // moves with it. Every windowed clock face in this file is a
+        // placeholder for one of these.
+        note: 'מניין ספרדי — 15 minutes before shkia',
+      },
+      {
+        service: 'arvit',
+        dayType: 'weekday',
+        time: { kind: 'unknown', rawText: 'אחרי מנחה' },
+        nusach: 'general',
+        // Follows a Mincha that is itself shkia − 15, so it lands somewhere
+        // around sunset — and "around" is not a time. Deriving one from the
+        // Mincha rule would be inventing an offset the shul never stated.
+        note: 'מניין ספרדי — follows Mincha',
+      },
+      {
+        service: 'mincha',
+        dayType: 'erev_shabbat',
+        time: { kind: 'relative', anchor: 'candle_lighting', offsetMinutes: 0 },
+        nusach: 'general',
+        note: 'מניין ספרדי — at כניסת שבת',
+      },
+      {
+        service: 'arvit',
+        dayType: 'erev_shabbat',
+        time: { kind: 'unknown', rawText: 'אחרי מנחה' },
+        nusach: 'general',
+        note: 'מניין ספרדי — follows the erev-Shabbat Mincha',
+      },
+      {
+        service: 'shacharit',
+        dayType: 'shabbat',
+        time: { kind: 'fixed', time: '07:45' },
+        nusach: 'general',
+        note: 'מניין ספרדי',
+      },
+      {
+        service: 'mincha',
+        dayType: 'shabbat',
+        time: { kind: 'relative', anchor: 'tzeit', offsetMinutes: -90 },
+        nusach: 'general',
+        note: 'מניין ספרדי — 90 minutes before צאת שבת',
+      },
+    ],
+    // Nothing can be stated. The one absence this shul has is narrower than
+    // the building — see the note above and the held entry below.
+    noMinyanim: [],
+    held: [
+      {
+        what: 'that the Yemenite group holds no weekday Mincha and no weekday Arvit',
+        why:
+          'True, stated, and unrepresentable. `synagogue_absences` is keyed on ' +
+          'the building, so the only row available would say the SHUL holds no ' +
+          'weekday Mincha — and it does, at shkia − 15, with the Sephardi ' +
+          'group. Asserting it would turn a true statement about one minyan ' +
+          'into a false one about the shul, which is worse than the silence. ' +
+          'Recorded here so the absence is not lost while the schema cannot ' +
+          'hold it, and so nobody later reads the missing rows as data we ' +
+          'never had.',
+      },
+      {
+        what: 'the two Shabbat Mincha rules and the motzaei-Shabbat Arvit',
+        why:
+          'Stored with their anchors and held by ambiguous_tzeit, not dropped. ' +
+          '`צאת שבת` would normally be the stringent 8.5° value and unambiguous ' +
+          '— but this shul follows אור החיים, and we do not have that luach\'s ' +
+          'convention. Resolving 90 minutes before the wrong nightfall puts a ' +
+          'Mincha up to half an hour off. This is the guard doing its job on a ' +
+          'question that now has a specific, askable answer.',
+      },
+      {
+        what: 'which rite `מניין ספרדי` names',
+        why:
+          'Stored as `general` on those rows: a distinct group whose rite our ' +
+          'enum cannot place. עדות המזרח is the overwhelmingly likely reading ' +
+          'and is still a guess about how a congregation davens, which is the ' +
+          'one thing this file may never do. `general` shows a reader nothing, ' +
+          'which is honest, rather than showing them תימני, which would be ' +
+          'wrong.',
+      },
+      {
+        what: "the GIS layer's Shabbat Shacharit at 07:00",
+        why:
+          'It matches neither group — the Yemenite minyan is 08:00 and the ' +
+          'Sephardi 07:45 — and the source did not know there were two groups ' +
+          'at all. Dropped with the rest, wholesale.',
+      },
+      {
+        what: 'whether every zman here should be read from אור החיים',
+        why:
+          'The shul says its times follow that luach and ours are GRA via the ' +
+          'Rabbanut. Only the tzeit rows are actually blocked by it; the ' +
+          'shkia rule is unaffected and candle lighting is at most two minutes ' +
+          'and on the safe side. Written down because this is the first record ' +
+          'where the per-luach question stops being theoretical.',
+      },
+    ],
+  },
+
 };
 
 /** The verified record for a synagogue, or null if nobody has read its board. */

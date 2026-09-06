@@ -10,6 +10,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { getDictionary } from '../src/i18n/dictionaries.ts';
+import { displayNusach } from '../src/lib/taxonomy.ts';
  import { SHARED_BOARD, VERIFIED, verifiedFor } from '../src/lib/verified-times.ts';
 import { TEL_AVIV, addDays, isoDate, resolveOnDate, zmanimFor } from '../src/zmanim/index.ts';
 import type { JerusalemDate } from '../src/zmanim/index.ts';
@@ -30,7 +31,27 @@ describe('every verified time is structurally legal', () => {
           assert.ok(Number.isInteger(t.offsetMinutes));
           assert.ok(Math.abs(t.offsetMinutes) <= 180, 'an offset over three hours is a typo');
         } else {
-          assert.fail('a verified entry should never be unknown — do not store a blank');
+          /**
+           * `unknown` IS allowed here, but only carrying what the sign said.
+           *
+           * This used to fail outright, on the reasoning that somebody who
+           * stood in front of a board came away with a time. Two boards
+           * falsify it: היכל חיים prints `ערבית — אחרי מנחה` and משכן אחים
+           * says its Arvit follows Mincha in both minyanim. That is a real
+           * claim — the service happens — and dropping the row instead would
+           * leave a reader unable to tell an Arvit we are missing from one
+           * that is not held, which is the distinction `synagogue_absences`
+           * exists to protect.
+           *
+           * What the original test was actually right about is padding: a
+           * verified record must not carry blanks that claim verification for
+           * nothing. So the guard survives as its narrow form — an unknown
+           * must say what the board wrote where the time would have been.
+           */
+          assert.ok(
+            t.rawText.trim().length > 0,
+            'an unknown in a verified record must carry what the sign said instead of a time',
+          );
         }
       }
     });
@@ -420,11 +441,44 @@ describe('a minyan style', () => {
     }
   });
 
+  /**
+   * WHICH shuls run one, not what time they run it at.
+   *
+   * This pinned `היכל חיים 05:50` and broke the week that board was read
+   * again — 06:00 now, and it will be something else next week, because the
+   * whole point of the netz style is that the clock face beside it moves. A
+   * test that fails when the data is correctly updated is testing the
+   * transcription, not the claim. The claim worth guarding is that a netz
+   * minyan is a labelled clock face and never a netz-relative rule, and that
+   * is asserted just above.
+   */
+  /**
+   * `general` on a MINYAN, and what it costs if a component forgets.
+   *
+   * משכן אחים runs a מניין ספרדי beside its מניין תימני. Which rite `ספרדי`
+   * names is not ours to decide — עדות המזרח is the likely reading and
+   * `sefard` is a different rite entirely — so those rows carry `general`:
+   * a distinct group whose liturgy we cannot name. NULL would be wrong in the
+   * other direction, reading as the Yemenite house minyan.
+   *
+   * The value must never reach a label. It did, on the shul page, the first
+   * time a minyan carried one: the row printed `כללי`, which looks exactly
+   * like a rite tag and is a statement about our data instead. Caught by
+   * reading the rendered page, which is where display bugs live.
+   */
+  it('never shows `general` as if it were a rite', () => {
+    const onMinyanim = new Set(
+      Object.values(VERIFIED).flatMap((r) => r.minyanim.map((m) => m.nusach ?? null)),
+    );
+    assert.ok(onMinyanim.has('general'), 'the case is live — משכן אחים uses it');
+    assert.equal(displayNusach('general'), null);
+  });
+
   it('marks both sunrise minyanim in the data', () => {
     const netz = Object.entries(VERIFIED).flatMap(([name, r]) =>
-      r.minyanim.filter((m) => m.style === 'netz').map((m) => `${name} ${m.time.kind === 'fixed' ? m.time.time : '?'}`),
+      r.minyanim.filter((m) => m.style === 'netz').map(() => name),
     );
-    assert.deepEqual(netz.sort(), ['היכל חיים 05:50', 'תהילת אביב 05:40']);
+    assert.deepEqual(netz.sort(), ['היכל חיים', 'תהילת אביב']);
   });
 });
 
