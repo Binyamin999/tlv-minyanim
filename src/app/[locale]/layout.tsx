@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/next';
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
@@ -122,7 +123,36 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
         <link rel="stylesheet" href="/fonts/fonts.css" />
         <link rel="preload" as="image" href={photo} fetchPriority="high" />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        {/*
+          How many people actually opened the site. Vercel Web Analytics, and
+          the reasons it is this rather than something else:
+
+          NO COOKIES, so no consent banner. A visitor is a hash of the
+          request that resets every day, which means it also cannot follow
+          anyone between days or between sites. A site that will not publish a
+          gabbai's phone number should not be setting a tracking cookie to
+          count him.
+
+          IT COUNTS PEOPLE, NOT REQUESTS. The script runs in a browser, and
+          Vercel drops known bot user-agents on top of that. Since SEO is the
+          whole discovery strategy, a server-side request counter would
+          eventually report mostly Googlebot and answer a question nobody
+          asked.
+
+          It is one script, deferred, and it is the ONLY third-party code on
+          the page. If it ever shows up in the numbers a slow connection sees,
+          it comes back out — a directory of prayer times that got slower to
+          measure itself would have made a bad trade.
+
+          The dashboard lives at vercel.com -> tlv-minyanim -> Analytics, and
+          it has to be switched on there once before this component does
+          anything. Hobby keeps one rolling month of history, so anything
+          worth remembering longer has to be written down somewhere else.
+        */}
+        <Analytics />
+      </body>
     </html>
   );
 }

@@ -458,6 +458,14 @@ served a small static page by `src/middleware.ts` — search engines deliberatel
 excluded, because serving Googlebot something different is cloaking and SEO is
 the whole discovery strategy.
 
+**Traffic is counted by Vercel Web Analytics** — `<Analytics />` in the root
+layout, switched on in the project dashboard. Cookieless (a per-day request
+hash), so no consent banner, and it counts browsers rather than requests, which
+matters because SEO is the discovery strategy and a server-side counter would
+report mostly Googlebot. Hobby keeps **one rolling month** and 50k events; write
+down anything worth remembering longer. It is the only third-party script on the
+page and comes out again if it ever costs a slow connection anything.
+
 **The share card is a photograph, not a composition.** No clock time may appear
 on it: chat apps cache the image for weeks and a printed time would be wrong
 within the hour and unfixable. Its filename carries a content hash, because
