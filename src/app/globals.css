@@ -2120,3 +2120,38 @@ body {
   color: var(--ink-quiet);
   font-size: 0.71875rem;
 }
+
+/* The tap acknowledged while the server is still thinking.
+
+   A small spinner rather than a colour change: a chip that merely darkens is
+   indistinguishable from the chip that is already selected, which is the one
+   state it must not be confused with. Sized and positioned so the chip does
+   not change width and shift the row beneath it — a filter row that reflows
+   under a thumb is worse than one that waits. */
+.chip-pending {
+  display: inline-block;
+  inline-size: 0.6em;
+  block-size: 0.6em;
+  margin-inline-start: 0.4em;
+  border: 1.5px solid currentColor;
+  border-block-start-color: transparent;
+  border-radius: 50%;
+  vertical-align: -0.02em;
+  animation: chip-spin 0.6s linear infinite;
+}
+
+@keyframes chip-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Somebody who has asked for less motion gets a static mark instead, which
+   still says "heard you" without spinning. */
+@media (prefers-reduced-motion: reduce) {
+  .chip-pending {
+    animation: none;
+    border-block-start-color: currentColor;
+    opacity: 0.5;
+  }
+}

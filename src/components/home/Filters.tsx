@@ -1,5 +1,7 @@
 import Link from 'next/link';
 
+import { ChipPending } from './ChipPending';
+
 import type { Dictionary } from '@/i18n/dictionaries';
 import type { Locale } from '@/i18n/locales';
 import type { Nusach } from '@/lib/taxonomy';
@@ -13,6 +15,10 @@ import { SERVICE_FILTERS, homeHref } from '@/lib/home-filters';
  * a crawler can follow and a person can send to a friend, and the page it
  * lands on is server-rendered — which is the whole discovery strategy. A
  * client-side filter would make four views of this page invisible to Google.
+ *
+ * The cost of real links is that a tap waits on the server. Each chip carries a
+ * <ChipPending>, which acknowledges the tap in the same frame — see that file
+ * for why the alternative, filtering on the client, is not on the table.
  */
 export function Filters({
   locale,
@@ -46,6 +52,7 @@ export function Filters({
             aria-current={option === service ? 'true' : undefined}
           >
             {option === 'shabbat' ? t.filterShabbat : t.services[option]}
+            <ChipPending />
           </Link>
         ))}
       </nav>
@@ -57,6 +64,7 @@ export function Filters({
           aria-current={nusach === null ? 'true' : undefined}
         >
           {t.filterAllNusachim}
+          <ChipPending />
         </Link>
         {availableNusachim.map((option) => (
           <Link
@@ -66,6 +74,7 @@ export function Filters({
             aria-current={option === nusach ? 'true' : undefined}
           >
             {t.nusachim[option]}
+            <ChipPending />
           </Link>
         ))}
       </nav>
