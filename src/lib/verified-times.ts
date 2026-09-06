@@ -428,7 +428,8 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
 
   /**
    * המרכז למורשת היהדות ע"ש צימבליסטה, חיים לבנון 42 — the synagogue on the
-   * Tel Aviv University campus. Weekday board for the week of 2026-08-30.
+   * Tel Aviv University campus. Weekday board read 2026-08-30 and again
+   * 2026-09-06: every line identical.
    *
    * THE FIRST RECORD THAT NEEDS `daysOfWeek`. Shacharit is 07:15 on Sunday,
    * Tuesday and Wednesday and 07:10 on Monday and Thursday, because Monday and
@@ -437,14 +438,26 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
    * reader five minutes late twice a week, and holding both would have shown
    * nothing for a time we know.
    *
-   * Only the Arvit forces a window — 19:10 is three minutes before shkia on
-   * 2026-04-15. The rest of the block takes one anyway, because it is printed
-   * on the same board and vouched for exactly as long — and the user has
-   * confirmed these boards are reprinted weekly, so that is the literal scope
-   * of the claim rather than a cautious reading of it.
+   * A BOARD THAT DID NOT MOVE IS EVIDENCE, and here it is the clearest yet
+   * that these are clock faces rather than rules. Shkia fell nine minutes
+   * between the two readings — 19:07 to 18:58 — and the Arvit stayed at 19:10,
+   * going from shkia + 3 to shkia + 12. A shul recomputing its Arvit from
+   * sunset could not have printed the same number twice. Four shuls have now
+   * been read twice and not one of them holds an offset:
+   *
+   *   צימבליסטה     unchanged while shkia moved 9   -> not sunset-derived
+   *   נוה קודש      unchanged while netz moved 5    -> not sunrise-derived
+   *   תומכי תמימים  moved 8 where shkia moved 9     -> near, and not a rule
+   *   היכל חיים     netz − 24 became netz − 19      -> near, and not a rule
+   *
+   * The windows stay for the reason they were set: the user has confirmed
+   * these boards are reprinted weekly, so one printing vouches for one week
+   * whatever it happens to say. Two identical printings are two weeks, not a
+   * promise about the third — and 19:10 is three minutes BEFORE shkia on
+   * 2026-04-15, which is what a promise about the third would have to survive.
    */
   'אוניברסיטת ת"א - צימבוליסטה': {
-    verifiedAt: '2026-08-30',
+    verifiedAt: '2026-09-06',
     verifiedBy: 'notice_board',
     minyanim: [
       {
@@ -453,7 +466,7 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
         time: { kind: 'fixed', time: '07:15' },
         daysOfWeek: [0, 2, 3],
         validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
+        validUntil: '2026-09-11',
         note: 'Sunday, Tuesday, Wednesday — the days without קריאת התורה',
       },
       {
@@ -462,7 +475,7 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
         time: { kind: 'fixed', time: '07:10' },
         daysOfWeek: TORAH_READING_DAYS,
         validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
+        validUntil: '2026-09-11',
         note: 'Monday and Thursday — five minutes earlier for קריאת התורה',
       },
       {
@@ -470,7 +483,7 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
         dayType: 'weekday',
         time: { kind: 'fixed', time: '13:30' },
         validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
+        validUntil: '2026-09-11',
         note: 'first Mincha',
       },
       {
@@ -478,7 +491,7 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
         dayType: 'weekday',
         time: { kind: 'fixed', time: '13:55' },
         validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
+        validUntil: '2026-09-11',
         note: 'second Mincha, ללא חזרת הש״ץ — see held',
       },
       {
@@ -486,7 +499,7 @@ export const VERIFIED: Record<string, VerifiedSynagogue> = {
         dayType: 'weekday',
         time: { kind: 'fixed', time: '19:10' },
         validFrom: '2026-08-30',
-        validUntil: '2026-09-04',
+        validUntil: '2026-09-11',
         note: 'three minutes before shkia on 2026-04-15, so never year-round',
       },
     ],
