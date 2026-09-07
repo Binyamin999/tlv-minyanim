@@ -21,3 +21,8 @@ design/_headers.html
 
 # macOS
 .DS_Store
+
+# Throwaway probes. They live inside the repo rather than in /tmp because
+# `@hebcal/core` and the `@/` alias only resolve from here, and three of them
+# reached a commit before this line existed.
+.scratch/
