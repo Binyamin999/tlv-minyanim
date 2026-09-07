@@ -24,7 +24,50 @@ export type Mode = 'light' | 'dark';
 /** `auto` = follow the sky. The other two are the user overruling it. */
 export type ModePreference = 'auto' | Mode;
 
+/**
+ * Every value the cookie may hold. NOT the buttons — see `modeOptionsFor`,
+ * which offers two of these at a time. All three remain valid stored states:
+ * the control simply stops being able to create the third.
+ */
 export const MODE_PREFERENCES: readonly ModePreference[] = ['auto', 'light', 'dark'];
+
+/**
+ * The override worth offering right now, which is only ever the OTHER one.
+ *
+ * Three buttons meant one of them never did anything a reader could see: at
+ * night, "dark" is what the page already is. A control whose third of the
+ * width changes nothing is asking someone to work out which two matter.
+ *
+ * So the control is `auto` plus the mode the sky is not — at night the sun,
+ * by day the moon — and it says what it does: keep following the sky, or
+ * don't.
+ */
+export function offeredOverride(skyMode: Mode): Mode {
+  return skyMode === 'light' ? 'dark' : 'light';
+}
+
+/** The buttons, in order. `auto` first, so it is the outer one in both scripts. */
+export function modeOptionsFor(skyMode: Mode): readonly ModePreference[] {
+  return ['auto', offeredOverride(skyMode)];
+}
+
+/**
+ * An override lapses once the sky agrees with it.
+ *
+ * Someone picks light at ten at night because the room is bright. By morning
+ * the sky is light too and the choice has stopped doing anything — and the
+ * button that would show it is no longer on screen, because it is no longer
+ * an override. Left in the cookie it would surface hours later as a page that
+ * refuses to go dark at shkia, under a control reading `אוטו׳`.
+ *
+ * So a preference that matches the sky IS auto, which keeps the two buttons a
+ * complete description of the state rather than two thirds of one. The cost
+ * is that "always light, forever" cannot be expressed — and it could not be
+ * expressed by a two-button control in any case.
+ */
+export function lapseIfSkyAgrees(preference: ModePreference, skyMode: Mode): ModePreference {
+  return preference === skyMode ? 'auto' : preference;
+}
 
 /**
  * The cookie the override lives in.

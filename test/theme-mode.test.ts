@@ -16,6 +16,9 @@ import {
   modeCookieValue,
   readModePreference,
   resolveMode,
+  lapseIfSkyAgrees,
+  modeOptionsFor,
+  offeredOverride,
 } from '../src/lib/theme.ts';
 
 describe('the light/dark override', () => {
@@ -46,6 +49,45 @@ describe('the light/dark override', () => {
       assert.equal(readModePreference(cookie.split(';')[0]?.split('=')[1]), preference);
       assert.match(cookie, /SameSite=Lax/);
       assert.match(cookie, /Path=\//);
+    }
+  });
+
+  /**
+   * The control offers `auto` and the mode the sky is NOT.
+   *
+   * A third button repeating what the page already is spends a third of the
+   * control on a choice nobody can see the result of. What is left is the only
+   * decision there is: keep following the sky, or overrule it.
+   */
+  it('offers only the override that would change something', () => {
+    assert.equal(offeredOverride('dark'), 'light');
+    assert.equal(offeredOverride('light'), 'dark');
+    assert.deepEqual(modeOptionsFor('dark'), ['auto', 'light']);
+    assert.deepEqual(modeOptionsFor('light'), ['auto', 'dark']);
+    // Two buttons, and `auto` is always the first of them.
+    for (const sky of ['light', 'dark'] as const) {
+      assert.equal(modeOptionsFor(sky).length, 2);
+      assert.equal(modeOptionsFor(sky)[0], 'auto');
+      assert.notEqual(modeOptionsFor(sky)[1], sky);
+    }
+  });
+
+  /**
+   * And an override lapses once the sky catches up with it — otherwise a
+   * choice made at ten at night reappears as a page that will not go dark at
+   * shkia, under a control that says it is following the sky.
+   */
+  it('lets an override lapse when the sky agrees with it', () => {
+    assert.equal(lapseIfSkyAgrees('light', 'light'), 'auto');
+    assert.equal(lapseIfSkyAgrees('dark', 'dark'), 'auto');
+    // A real override survives, and auto is already auto.
+    assert.equal(lapseIfSkyAgrees('light', 'dark'), 'light');
+    assert.equal(lapseIfSkyAgrees('dark', 'light'), 'dark');
+    assert.equal(lapseIfSkyAgrees('auto', 'light'), 'auto');
+    // The surviving override is always the one the control still shows.
+    for (const sky of ['light', 'dark'] as const) {
+      const survivor = lapseIfSkyAgrees(offeredOverride(sky), sky);
+      assert.ok(modeOptionsFor(sky).includes(survivor));
     }
   });
 

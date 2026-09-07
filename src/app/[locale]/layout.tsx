@@ -7,7 +7,13 @@ import { getDictionary } from '@/i18n/dictionaries';
 import { SITE_URL } from '@/i18n/alternates';
 import { OG_IMAGE } from '@/lib/og-image';
 import { HTML_LANG, LOCALES, dirOf, isLocale, type Locale } from '@/i18n/locales';
-import { MODE_COOKIE, modeAt, readModePreference, resolveMode } from '@/lib/theme';
+import {
+  MODE_COOKIE,
+  lapseIfSkyAgrees,
+  modeAt,
+  readModePreference,
+  resolveMode,
+} from '@/lib/theme';
 
 import '../globals.css';
 
@@ -100,7 +106,13 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   // override flash-free: `data-mode` is right in the first byte of HTML, so
   // there is never a light paint that snaps to dark. A cookie can do that; a
   // localStorage value read after hydration cannot.
-  const preference = readModePreference((await cookies()).get(MODE_COOKIE)?.value);
+  // An override the sky has caught up with is no longer an override, and the
+  // control no longer has a button for it. Lapsing it here rather than in the
+  // browser keeps `data-mode-pref` honest from the first byte.
+  const preference = lapseIfSkyAgrees(
+    readModePreference((await cookies()).get(MODE_COOKIE)?.value),
+    skyMode,
+  );
   const mode = resolveMode(preference, skyMode);
 
   // Only the photograph the page is about to show. The other mode's file is a

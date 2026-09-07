@@ -1,17 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
-  MODE_PREFERENCES,
+  lapseIfSkyAgrees,
   modeCookieValue,
+  modeOptionsFor,
   resolveMode,
   type Mode,
   type ModePreference,
 } from '@/lib/theme';
 
 /**
- * The one genuine control on the page: אוטו׳ / sun / moon.
+ * The one genuine control on the page: אוטו׳ and the mode the sky is not.
  *
  * CLAUDE.md is explicit that two of the three chips above the artboards are
  * scaffolding and one ships. This is the one that ships — "for when the clock
@@ -40,6 +41,23 @@ import {
  * dictionary is full of formatter *functions* — `inMinutes`, `verifiedShort` —
  * and a function cannot cross the server/client boundary. Passing the four
  * strings this control needs keeps the payload to four strings, too.
+ *
+ * ---------------------------------------------------------------------------
+ * TWO BUTTONS, NOT THREE
+ * ---------------------------------------------------------------------------
+ * The third one never did anything a reader could see: at night the moon
+ * repeats what the page already is, and by day so does the sun. What anyone
+ * can actually decide is whether to keep following the sky or to overrule it,
+ * and that is one choice — so it is one button beside `auto`.
+ *
+ * Which button it is changes with the sky, and only ever to the useful one:
+ * the sun after shkia, the moon after netz. Nothing else about the control
+ * moves, so what sits under a thumb stays where it was.
+ *
+ * The state that made this awkward is an override the sky has since caught up
+ * with — see `lapseIfSkyAgrees`, which is applied on the SERVER so the control
+ * is right in the first byte, and again here so the cookie stops disagreeing
+ * with what is on screen.
  */
 export interface ModeToggleLabels {
   group: string;
@@ -55,7 +73,17 @@ export function ModeToggle({
   skyMode: Mode;
   labels: ModeToggleLabels;
 }) {
-  const [chosen, setChosen] = useState<ModePreference>(preference);
+  // A stored override that the sky has since caught up with is not an
+  // override any more — see lapseIfSkyAgrees. Displayed as auto immediately,
+  // and written back so the cookie and the control agree.
+  const settled = lapseIfSkyAgrees(preference, skyMode);
+  const [chosen, setChosen] = useState<ModePreference>(settled);
+
+  useEffect(() => {
+    if (settled === preference) return;
+    document.cookie = modeCookieValue(settled);
+    document.documentElement.dataset.modePref = settled;
+  }, [settled, preference]);
 
   function choose(next: ModePreference) {
     setChosen(next);
@@ -70,7 +98,7 @@ export function ModeToggle({
 
   return (
     <div className="segmented mode-toggle" role="radiogroup" aria-label={labels.group}>
-      {MODE_PREFERENCES.map((option) => (
+      {modeOptionsFor(skyMode).map((option) => (
         <button
           key={option}
           type="button"

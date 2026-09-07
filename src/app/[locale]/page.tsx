@@ -21,7 +21,7 @@ import {
 } from '@/lib/home-filters';
 import { sunsetWarmth } from '@/lib/sunset-warmth';
 import { NUSACHIM, type Nusach } from '@/lib/taxonomy';
-import { MODE_COOKIE, modeAt, readModePreference } from '@/lib/theme';
+import { MODE_COOKIE, lapseIfSkyAgrees, modeAt, readModePreference } from '@/lib/theme';
 import {
   TEL_AVIV,
   clockFaceOf,
@@ -92,7 +92,10 @@ export default async function LocaleHome({
 
   const now = new Date();
   const skyMode = modeAt(now);
-  const modePreference = readModePreference((await cookies()).get(MODE_COOKIE)?.value);
+  const modePreference = lapseIfSkyAgrees(
+    readModePreference((await cookies()).get(MODE_COOKIE)?.value),
+    modeAt(new Date()),
+  );
 
   const synagogues = await listSynagoguesWithMinyanim();
   const timeline = nextMinyanim({
