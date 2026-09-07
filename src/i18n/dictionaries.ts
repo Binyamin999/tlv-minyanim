@@ -71,6 +71,15 @@ const he = {
     tzeit: 'צאת הכוכבים',
     candle_lighting: 'כניסת שבת',
   } satisfies Record<Zman, string>,
+  /**
+   * The ribbon's own label, which is NOT `zmanim.candle_lighting`.
+   *
+   * That one names the ANCHOR a minyan rule is measured from, and reads
+   * `כניסת שבת` because that is what a board writes beside a Friday Mincha.
+   * The ribbon announces the lighting itself, which also happens on erev Rosh
+   * Hashana and erev Yom Kippur — days when `כניסת שבת` would be wrong.
+   */
+  candlesLabel: 'הדלקת נרות',
   /** Before a zman, e.g. "20 דק' לפני שקיעה". */
   minutesBefore: (minutes: number, zman: string) => `${minutes} דק' לפני ${zman}`,
   minutesAfter: (minutes: number, zman: string) => `${minutes} דק' אחרי ${zman}`,
@@ -379,6 +388,7 @@ const en: typeof he = {
     tzeit: 'tzeit hakochavim',
     candle_lighting: 'candle lighting',
   },
+  candlesLabel: 'Candle lighting',
   minutesBefore: (minutes: number, zman: string) => `${minutes} min before ${zman}`,
   minutesAfter: (minutes: number, zman: string) => `${minutes} min after ${zman}`,
   atZman: (zman: string) => `at ${zman}`,

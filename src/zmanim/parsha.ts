@@ -45,7 +45,11 @@ export function parshaOn(hd: HDate, il: boolean): Parsha | null {
   const result = sedraFor(hd.getFullYear(), il).lookup(hd);
   if (result.chag) return null;
   const event = new ParshaEvent(result);
-  return { he: event.render('he'), en: event.render('en') };
+  // `he-x-nonikud`, not `he`: hebcal's pointed `פָּרָשַׁת הַאֲזִינוּ` is right in a
+  // siddur and wrong in a UI strip, where it sits beside unpointed Hebrew
+  // everywhere else and beside an equally unpointed chag name. Still the
+  // library's own string, from its own locale — not one stripped by hand.
+  return { he: event.render('he-x-nonikud'), en: event.render('en') };
 }
 
 /**

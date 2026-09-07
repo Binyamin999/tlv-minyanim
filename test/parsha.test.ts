@@ -19,7 +19,14 @@ describe('the parsha of the week', () => {
     const parsha = parshaOn(new HDate(new Date(2026, 7, 19)), true);
     assert.ok(parsha, 'expected a parsha on an ordinary Wednesday in Elul');
     assert.match(parsha.en, /Ki Teitzei/);
-    assert.match(parsha.he, /תֵצֵא/);
+    // Unpointed. hebcal's `he` locale returns `פָּרָשַׁת כִּי־תֵצֵא`, which belongs in a
+    // siddur rather than in a 11.5px ribbon beside an unpointed chag name and
+    // unpointed Hebrew everywhere else on the page. `he-x-nonikud` is hebcal's
+    // own locale, so this is still the library's string.
+    assert.match(parsha.he, /^פרשת כי־תצא$/);
+    // U+05BE MAQAF is skipped: `כי־תצא` is hyphenated in the name itself, and
+    // the maqaf sits inside the same Unicode block as the marks being excluded.
+    assert.doesNotMatch(parsha.he, /[\u0591-\u05BD\u05BF-\u05C7]/, 'no nikud or cantillation');
   });
 
   it('names nothing when that Shabbat is a chag', () => {

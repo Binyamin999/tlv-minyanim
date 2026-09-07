@@ -25,7 +25,10 @@ import { MODE_COOKIE, lapseIfSkyAgrees, modeAt, readModePreference } from '@/lib
 import {
   TEL_AVIV,
   clockFaceOf,
+  dayOfWeek,
+  nextCandleLighting,
   nextMinyanim,
+  occasionAt,
   parshaAt,
   type UnconfirmedMinyan,
   type UpcomingMinyan,
@@ -161,6 +164,34 @@ export default async function LocaleHome({
   );
 
   const parsha = parshaAt(TEL_AVIV, now);
+
+  // What today is called, rolled at sunset like the Hebrew date beside it.
+  const occasion = occasionAt(TEL_AVIV, now);
+
+  /*
+   * The next candle lighting, looked up to a week ahead.
+   *
+   * Not "today's": candles are lit on about one day in seven, so a ribbon
+   * showing only today's would be blank six days out of seven for the person
+   * it is most for — a visitor working out on Wednesday where to daven on
+   * Friday night. Printed luachot carry the coming Shabbat all week.
+   *
+   * The weekday is printed whenever the lighting is not today, because a bare
+   * clock face in a ribbon reads as today's and this one usually is not. The
+   * value itself is shkia − 22 from `DayZmanim`, which already refuses the
+   * second night of a two-day yom tov — so this cannot offer a lighting that
+   * is not כניסת שבת or כניסת חג.
+   */
+  const upcomingCandles = nextCandleLighting(TEL_AVIV, timeline.today.date);
+  const candles = upcomingCandles
+    ? {
+        clock: clockFaceOf(upcomingCandles.instant),
+        day:
+          upcomingCandles.daysAhead === 0
+            ? null
+            : t.weekdaysShort[dayOfWeek(upcomingCandles.date)] ?? null,
+      }
+    : null;
   const hebrewDate =
     locale === 'he' ? timeline.hebrewNow.renderGematriya : timeline.hebrewNow.renderEn;
 
@@ -184,7 +215,9 @@ export default async function LocaleHome({
         modePreference={modePreference}
         skyMode={skyMode}
         hebrewDate={hebrewDate}
+        occasion={occasion ? (locale === 'he' ? occasion.he : occasion.en) : null}
         parsha={parsha ? (locale === 'he' ? parsha.he : parsha.en) : null}
+        candles={candles}
         zmanim={ribbonZmanim}
         heroWarmth={heroWarmth}
         localeHrefs={Object.fromEntries(

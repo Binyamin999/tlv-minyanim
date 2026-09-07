@@ -56,7 +56,9 @@ export function Masthead({
   modePreference,
   skyMode,
   hebrewDate,
+  occasion,
   parsha,
+  candles,
   zmanim,
   heroWarmth,
   localeHrefs,
@@ -68,8 +70,25 @@ export function Masthead({
   skyMode: Mode;
   /** Already gematriya in Hebrew, spelled out in English. Rolled at sunset. */
   hebrewDate: string;
+  /**
+   * What today is called — ערב ראש השנה, צום גדליה, ראש חודש — or null on an
+   * ordinary day. Today's, not the coming week's: a ribbon that named a chag
+   * four days early would be answering a question nobody asked while looking
+   * exactly like an answer to "what is today".
+   */
+  occasion: string | null;
   /** null on a week whose Shabbat is a chag — we do not name a parsha then. */
   parsha: string | null;
+  /**
+   * The next candle lighting, and null when there is none within the week.
+   *
+   * `day` is set only when it is NOT today, and then it is shown — a time
+   * printed bare in a ribbon reads as today's, and this one usually is not.
+   * Carried all week because the visitor this site is for decides on a
+   * Wednesday where to daven on Friday night, which is also why every printed
+   * luach does the same.
+   */
+  candles: { clock: string; day: string | null } | null;
   /**
    * The zmanim strip, in the order the day happens. All four are rendered;
    * only `PHONE_ZMAN` is visible below the desktop breakpoint, because the
@@ -148,19 +167,35 @@ export function Masthead({
             Hebrew, Latin and digits on one line is exactly where RTL breaks. */}
           <p className="ribbon-date">
             <span dir={locale === 'he' ? 'rtl' : 'ltr'}>{hebrewDate}</span>
-            {parsha ? (
-              <>
+            {[occasion, parsha].filter(Boolean).map((label) => (
+              <span key={label}>
                 <span aria-hidden="true"> · </span>
-                <span dir={locale === 'he' ? 'rtl' : 'ltr'}>{parsha}</span>
-              </>
-            ) : null}
+                <span dir={locale === 'he' ? 'rtl' : 'ltr'}>{label}</span>
+              </span>
+            ))}
           </p>
           <div className="ribbon-zmanim">
+            {/* Candles first, and on the phone too. On the one day in seven it
+                exists it is the time on this strip that decides an evening —
+                so it takes the narrow screen's single slot, and shkia steps
+                back to the desktop row. Shkia is not lost by that: candle
+                lighting IS shkia − 22, so the sunset is still on the line. */}
+            {candles ? (
+              <p className="ribbon-zman ribbon-zman-candles">
+                <span className="ribbon-zman-name">{t.candlesLabel}</span>
+                <span className="time tabular">
+                  {candles.day ? `${candles.day} ` : ''}
+                  {candles.clock}
+                </span>
+              </p>
+            ) : null}
             {zmanim.map(({ zman, clock }) => (
               <p
                 key={zman}
                 className={
-                  zman === PHONE_ZMAN ? 'ribbon-zman' : 'ribbon-zman ribbon-zman-wide'
+                  zman === PHONE_ZMAN && !candles
+                    ? 'ribbon-zman'
+                    : 'ribbon-zman ribbon-zman-wide'
                 }
               >
                 <span className="ribbon-zman-name">{t.zmanim[zman]}</span>

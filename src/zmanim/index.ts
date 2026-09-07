@@ -27,6 +27,9 @@ export { TEL_AVIV, TZEIT_DEGREES, USE_ELEVATION } from './location.ts';
 export type { Parsha } from './parsha.ts';
 export { parshaAt, parshaOn } from './parsha.ts';
 
+export type { Occasion, UpcomingCandles } from './occasions.ts';
+export { nextCandleLighting, occasionAt, occasionOn } from './occasions.ts';
+
 export type { DayZmanim, HebrewDay } from './day.ts';
 export { anchorInstant, clearZmanimCache, hebrewDayAt, isDaylight, zmanimFor } from './day.ts';
 
