@@ -104,6 +104,13 @@ export interface UpcomingMinyan extends Placed {
   /** The same moment as a wall clock, "HH:MM". Print this, never a Date. */
   clock: string;
   minutesFromNow: number;
+  /**
+   * The minyan is already under way — within `GRACE_MINUTES` of its start.
+   *
+   * A card showing one must say `התחיל 15:00` rather than count down to it:
+   * the information is "this is happening now", not "be there at three".
+   */
+  hasStarted: boolean;
   /** The rule that produced it. Keep showing the rule — it is the honest thing. */
   basis: ResolutionBasis;
   /** Shkia on this minyan's day. */
@@ -388,6 +395,15 @@ const REASON_RANK: Record<UnconfirmedReason['code'], number> = {
   unknown_offset: 6,
 };
 
+/**
+ * How long a minyan stays on the board after it has begun.
+ *
+ * See the cutoff in `nextMinyanim`. Not a tolerance for clock skew — it is a
+ * deliberate statement that a service already in progress is still worth
+ * knowing about, and every row it keeps is labelled as begun.
+ */
+export const GRACE_MINUTES = 5;
+
 export function nextMinyanim(options: NextMinyanimOptions): Timeline {
   const { now, within, location, synagogues } = options;
   const services = options.services ?? ALL_SERVICES;
@@ -460,13 +476,28 @@ export function nextMinyanim(options: NextMinyanimOptions): Timeline {
         // Friday afternoon: Friday's weekday window closes at chatzot.
         if (at < window.from.getTime() || at >= window.to.getTime()) continue;
         slotsWithAKnownTime.add(slotKey(placed));
-        if (at < now.getTime() || at > until.getTime()) continue;
+        // Five minutes of grace AFTER the start, not none.
+        //
+        // A Mincha runs about a quarter of an hour, so at 15:02 someone three
+        // minutes' walk away can still daven a 15:00 minyan — and dropping it
+        // on the stroke told them the next one was tomorrow. What it must
+        // never do is read as an invitation to arrive on time, so the entry
+        // comes back marked `hasStarted` and the card says `התחיל 15:00`
+        // instead of counting down to it.
+        //
+        // Five rather than fifteen: the promise is "you can still get some of
+        // it", not "you have not missed it". Past that the shul's card moves
+        // to its next occurrence, which is usually tomorrow.
+        if (at < now.getTime() - GRACE_MINUTES * 60_000 || at > until.getTime()) continue;
 
         upcoming.push({
           ...placed,
           instant: resolved.instant,
           clock: resolved.clock,
           minutesFromNow: Math.round((at - now.getTime()) / 60_000),
+          // Strictly before, so the minute a minyan is due still reads
+          // `עכשיו` and only 15:00:01 becomes `התחיל 15:00`.
+          hasStarted: at < now.getTime(),
           basis: resolved.basis,
           shkia: window.zmanim.shkia,
           minutesUntilShkia: Math.round(

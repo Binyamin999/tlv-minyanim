@@ -253,6 +253,17 @@ const he = {
     if (days === 2) return 'בעוד יומיים';
     return `בעוד ${days} ימים`;
   },
+  /**
+   * A minyan that has already begun, in the slot where a countdown would be.
+   *
+   * Deliberately not `עכשיו`, which the last half-minute before the start
+   * already uses and which invites someone to set off expecting to arrive at
+   * the beginning. `התחיל` says what is true and lets the reader decide
+   * whether the walk is worth it.
+   */
+  started: 'התחיל',
+  /** The hero's heading when the minyan it shows is already under way. */
+  nowNearYou: 'מתפללים עכשיו לידך',
   noneUpcoming: 'אין מניין עם שעה ידועה בטווח הזה',
   /** The honest-unknown list. Quiet on purpose — see CLAUDE.md. */
   unconfirmedTimesHeading: 'מתפללים כאן, השעה לא ידועה',
@@ -492,6 +503,8 @@ const en: typeof he = {
     const days = Math.floor(hours / 24);
     return days === 1 ? 'in 1 day' : `in ${days} days`;
   },
+  started: 'Started',
+  nowNearYou: 'Davening now near you',
   noneUpcoming: 'No minyan with a known time in this window',
   unconfirmedTimesHeading: 'Davening here, time not known',
   unconfirmedTimesNote:

@@ -44,6 +44,12 @@ export function ShulCard({
   // Mincha, and without this it reads exactly like one starting shortly.
   const day = relativeDayLabel(row.instant, now, locale, t);
 
+  // A minyan that has begun takes the same slot the day label uses, and takes
+  // priority over it — both answer "when", and `התחיל` is the more urgent
+  // half of the answer. `day` is null on a started row anyway, since it is
+  // today's by definition; the ?? is belt and braces rather than a branch.
+  const when = row.hasStarted ? t.started : day;
+
   return (
     <CardShell
       synagogue={row.synagogue}
@@ -56,7 +62,7 @@ export function ShulCard({
         <>
           <p className="card-clock">
             <span className="time tabular">{row.clock}</span>
-            {day ? <span className="card-day">{day}</span> : null}
+            {when ? <span className="card-day">{when}</span> : null}
           </p>
           <p className="card-service-pill">{t.services[row.service]}</p>
         </>

@@ -79,7 +79,12 @@ export function HeroCard({
       </p>
 
       <div className="hero-meta">
-        <span className="hero-pill tabular">{t.inMinutes(row.minutesFromNow)}</span>
+        {/* A minyan already under way says so instead of counting down. The
+            last half-minute before the start reads `עכשיו`, which is an
+            invitation; once it has begun that would be a false one. */}
+        <span className="hero-pill tabular">
+          {row.hasStarted ? t.started : t.inMinutes(row.minutesFromNow)}
+        </span>
         {row.minyan.time.kind === 'relative' ? <span className="hero-rule">{rule.text}</span> : null}
       </div>
 

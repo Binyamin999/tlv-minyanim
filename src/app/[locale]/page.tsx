@@ -227,7 +227,13 @@ export default async function LocaleHome({
         {/* The page's h1, and it is the question rather than the brand: this
             page exists to answer "where can I daven next", and the wordmark
             above it is navigation. */}
-        <h1 className="band-hero-label">{t.nextNearYou}</h1>
+        {/* The heading follows the card. "המניין הבא לידך" over a minyan that
+            began four minutes ago is the site saying something untrue about
+            its own content, and the whole point of the grace period is that
+            the row is honest about being late. */}
+        <h1 className="band-hero-label">
+          {hero?.hasStarted ? t.nowNearYou : t.nextNearYou}
+        </h1>
         {hero ? (
           // Mincha only: the window that closes at shkia is Mincha's. A
           // Shacharit does not get warmer because the sun is going down.

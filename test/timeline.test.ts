@@ -161,11 +161,54 @@ describe('the timeline sorts resolved minyanim by real instant', () => {
     assert.ok(timeline.upcoming.every((r) => r.instant <= timeline.until));
   });
 
-  it('never returns a minyan that has already started', () => {
+  /**
+   * FIVE MINUTES OF GRACE, AND NOT A SIXTH.
+   *
+   * Dropping a minyan on the stroke of its start told someone standing three
+   * minutes away that the next one was tomorrow, while the one they wanted
+   * was in its opening lines. A service runs a quarter of an hour, so a short
+   * window after the start is real information — and every row inside it is
+   * marked `hasStarted`, because "this is happening" and "be there at seven"
+   * are different sentences and only one of them is true.
+   */
+  it('keeps a minyan for five minutes after it starts, and marks it', () => {
     const timeline = run('2026-08-25', '06:30', 240, ['shacharit']);
+
+    // Half an hour gone is gone.
     assert.equal(timeline.upcoming.some((r) => r.clock === '06:00'), false);
+
+    // Five minutes gone is still on the board — and says so.
+    const started = timeline.upcoming.filter((r) => r.clock === '06:25');
+    assert.ok(started.length > 0, 'a minyan five minutes old is still listed');
+    for (const row of started) {
+      assert.equal(row.hasStarted, true);
+      assert.ok(row.minutesFromNow < 0, 'the countdown has gone negative');
+    }
+
+    // And something genuinely ahead is not marked as begun.
+    const ahead = timeline.upcoming.filter((r) => r.clock === '07:00');
+    assert.ok(ahead.length > 0);
+    for (const row of ahead) assert.equal(row.hasStarted, false);
+  });
+
+  it('lets go one minute later', () => {
+    // 06:31 is six minutes past 06:25, which is past the grace.
+    const timeline = run('2026-08-25', '06:31', 240, ['shacharit']);
     assert.equal(timeline.upcoming.some((r) => r.clock === '06:25'), false);
-    assert.ok(timeline.upcoming.some((r) => r.clock === '07:00'));
+  });
+
+  /**
+   * The minute a minyan is DUE still reads as an invitation.
+   *
+   * `hasStarted` is strictly-before, so at 07:00:00 the card still counts down
+   * (`עכשיו`) and only 07:00:01 becomes `התחיל`. Someone at the door as the
+   * minyan begins has not missed it.
+   */
+  it('does not call a minyan started on the minute it starts', () => {
+    const timeline = run('2026-08-25', '07:00', 240, ['shacharit']);
+    const due = timeline.upcoming.filter((r) => r.clock === '07:00');
+    assert.ok(due.length > 0);
+    for (const row of due) assert.equal(row.hasStarted, false);
   });
 });
 
